@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import PersianDatePicker from "react-native-persian-date-picker2";
+// import PersianDatePicker from "react-native-persian-date-picker2";
 
 const Index = () => {
   const [startDate, setStartDate] = useState("");
@@ -98,7 +98,7 @@ const Index = () => {
       </ScrollView>
 
       {/* Persian Date Pickers */}
-      {isStartPickerVisible && (
+      {/* {isStartPickerVisible && (
         <PersianDatePicker
           mode="date"
           onConfirm={(date) => {
@@ -120,7 +120,7 @@ const Index = () => {
           onCancel={() => setEndPickerVisible(false)}
           title="انتخاب تاریخ پایان"
         />
-      )}
+      )} */}
     </SafeAreaView>
   );
 };
