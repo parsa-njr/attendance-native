@@ -28,10 +28,10 @@ const Index = () => {
     phoneNumber: "09191693237",
   });
 
-  const [isEditing, setIsEditing] = useState(false); // << New Edit Mode State
+  // const [isEditing, setIsEditing] = useState(false); // << New Edit Mode State
 
   const pickImage = async () => {
-    if (!isEditing) return;
+    // if (!isEditing) return;
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -49,13 +49,13 @@ const Index = () => {
 
   const handleSave = () => {
     console.log("Saved:", profile);
-    setIsEditing(false);
+    // setIsEditing(false);
   };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 mt-9">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        <View className="absolute top-5 left-5 z-10">
+        {/* <View className="absolute top-5 left-5 z-10">
           {!isEditing && (
             <TouchableOpacity
               onPress={() => setIsEditing(true)}
@@ -69,14 +69,14 @@ const Index = () => {
               />
             </TouchableOpacity>
           )}
-        </View>
+        </View> */}
 
         {/* Profile Header */}
         <View className="px-5 pt-8 items-center">
           <View className="relative">
             <TouchableOpacity
               onPress={pickImage}
-              activeOpacity={isEditing ? 0.7 : 1}
+              activeOpacity={0.7}
               className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 bg-gray-200 shadow-md"
             >
               <Image
@@ -87,17 +87,15 @@ const Index = () => {
             </TouchableOpacity>
 
             {/* Small Plus Icon - only show if editing */}
-            {isEditing && (
-              <View className="absolute bottom-0 left-0 bg-blue-500 w-8 h-8 rounded-full justify-center items-center border-2 border-white">
-                <Text className="text-white text-lg font-bold">+</Text>
-              </View>
-            )}
+            {/* {isEditing && ( */}
+            <View className="absolute bottom-0 left-0 bg-blue-500 w-8 h-8 rounded-full justify-center items-center border-2 border-white">
+              <Text className="text-white text-lg font-bold">+</Text>
+            </View>
+            {/* )} */}
           </View>
 
           <Text className="text-sm text-gray-400 mt-2">
-            {isEditing
-              ? "روی عکس کلیک کنید تا تغییر دهید"
-              : "برای تغییر عکس وارد حالت ویرایش شوید"}
+            "روی عکس کلیک کنید تا تغییر دهید"
           </Text>
         </View>
 
@@ -112,7 +110,7 @@ const Index = () => {
               onChangeText={(text) =>
                 setProfile((prev) => ({ ...prev, firstName: text }))
               }
-              editable={isEditing}
+              // editable={isEditing}
               className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
               placeholder="نام خود را وارد کنید"
               placeholderTextColor="#aaa"
@@ -130,7 +128,7 @@ const Index = () => {
               onChangeText={(text) =>
                 setProfile((prev) => ({ ...prev, lastName: text }))
               }
-              editable={isEditing}
+              // editable={isEditing}
               className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
               placeholder="نام خانوادگی خود را وارد کنید"
               placeholderTextColor="#aaa"
@@ -138,68 +136,29 @@ const Index = () => {
             />
           </View>
 
-          {/* Email Input */}
-          <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right">
-              آدرس ایمیل
-            </Text>
-            <TextInput
-              value={profile.email}
-              onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, email: text }))
-              }
-              editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
-              placeholder="ایمیل خود را وارد کنید"
-              placeholderTextColor="#aaa"
-              keyboardType="email-address"
-              style={{ writingDirection: "rtl" }}
-            />
-          </View>
-
-          {/* Phone Number Input */}
-          <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right">
-              شماره موبایل
-            </Text>
-            <TextInput
-              value={profile.phoneNumber}
-              onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, phoneNumber: text }))
-              }
-              editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
-              placeholder="شماره موبایل خود را وارد کنید"
-              placeholderTextColor="#aaa"
-              keyboardType="phone-pad"
-              style={{ writingDirection: "rtl" }}
-            />
-          </View>
-
           {/* Edit or Save Button */}
-          {isEditing && (
-            <View className="flex-row justify-center gap-4 mt-8">
-              {/* Save Button */}
-              <TouchableOpacity
-                onPress={handleSave}
-                className="flex-1 bg-green-500 rounded-full py-4 items-center shadow-md"
-              >
-                <Text className="text-white text-base font-semibold">
-                  ذخیره تغییرات
-                </Text>
-              </TouchableOpacity>
+          {/* {isEditing && ( */}
+          <View className="flex-row justify-center gap-4 mt-8">
+            {/* Save Button */}
+            <TouchableOpacity
+              onPress={handleSave}
+              className="flex-1 bg-blue-500 rounded-lg py-4 items-center shadow-md"
+            >
+              <Text className="text-white text-base font-semibold">
+                ذخیره تغییرات
+              </Text>
+            </TouchableOpacity>
 
-              {/* Cancel Button */}
-              <TouchableOpacity
+            {/* Cancel Button */}
+            {/* <TouchableOpacity
                 onPress={() => setIsEditing(false)}
                 className="flex-1 bg-gray-400 rounded-full py-4 items-center shadow-md"
               >
                 <Text className="text-white text-base font-semibold">
                   انصراف
                 </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+              </TouchableOpacity> */}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
