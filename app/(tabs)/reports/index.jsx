@@ -39,12 +39,12 @@ const Index = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-gray-50 mt-10">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         
         {/* Date Range Picker */}
         <View className="px-5 pt-5">
-          <Text className="text-xl font-semibold text-gray-800 mb-4">گزارش حضور و غیاب</Text>
+          {/* <Text className="text-xl font-semibold text-gray-800 mb-4">گزارش حضور و غیاب</Text> */}
           
           <View className="flex-row justify-between space-x-4">
             <TouchableOpacity
@@ -68,20 +68,20 @@ const Index = () => {
         {/* Report List */}
         <View className="px-5 mt-8 space-y-4">
           {attendanceData.map((day, index) => (
-            <View key={index} className="bg-white rounded-2xl shadow-sm">
+            <View key={index} className="bg-white rounded-2xl mt-2 shadow-sm">
               <TouchableOpacity
-                className="flex-row justify-between items-center p-5"
+                className="flex-row justify-between items-center p-3"
                 onPress={() => toggleExpand(index)}
               >
-                <View>
-                  <Text className="text-gray-800 font-semibold">{new Date(day.date).toDateString()}</Text>
-                  <Text className="text-gray-500 text-sm">{day.workedHours} کار شده</Text>
-                </View>
                 <Ionicons
                   name={expandedDay === index ? "chevron-up-outline" : "chevron-down-outline"}
                   size={24}
                   color="gray"
                 />
+                <View>
+                  <Text className="text-gray-800 font-semibold">1404/05/23</Text>
+                  <Text className="text-gray-500 text-sm text-right">{day.workedHours} کار شده</Text>
+                </View>
               </TouchableOpacity>
 
               {expandedDay === index && (
