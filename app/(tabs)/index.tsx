@@ -72,8 +72,8 @@ const Dashboard = () => {
               <Text className="text-lg font-semibold text-gray-800">
                 Good Morning, Alex!
               </Text>
-              <Text className="text-sm text-gray-500 mt-1">
-                Here’s your dashboard for today.
+              <Text className="text-sm text-gray-500 mt-1 font-vazir">
+                سلام دادا
               </Text>
             </View>
           </View>
