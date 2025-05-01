@@ -58,7 +58,15 @@ const Dashboard = () => {
         {/* Profile & Greeting Section */}
         <View className="px-5 pt-5 mt-9">
           <View className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
-            <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+            <View className="flex-1">
+              <Text className="text-lg font-semibold text-gray-800 text-right font-sans">
+                علی اصلانی
+              </Text>
+            </View>
+              <Text className="text-sm text-gray-500 mt-1 text-right font-sans">
+                داشبورد امروز شما اینجاست.
+              </Text>
+            <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden ml-4">
               {/* Replace this View with an actual Image if you have a URL */}
               <Image
                 source={{
@@ -67,14 +75,6 @@ const Dashboard = () => {
                 className="w-full h-full"
                 resizeMode="cover"
               />
-            </View>
-            <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-800">
-                Good Morning, Alex!
-              </Text>
-              <Text className="text-sm text-gray-500 mt-1 font-vazir">
-                سلام دادا
-              </Text>
             </View>
           </View>
         </View>
@@ -98,8 +98,9 @@ const Dashboard = () => {
               color="text-amber-500"
             />
             <StatCard
+            
               label="Pending Approvals"
-              value={dashboardData.pendingApprovals}
+              value={dashboardData.lateCheckIns}
               color="text-blue-500"
             />
           </View>
@@ -107,8 +108,8 @@ const Dashboard = () => {
 
         {/* Charts Section */}
         <View className="px-5 mt-8">
-          <Text className="text-xl font-semibold text-gray-800 mb-4">
-            Employee Status
+          <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+            وضعیت کارمندان
           </Text>
           <View className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
             <PieChart
@@ -148,15 +149,15 @@ const Dashboard = () => {
 
         {/* Latest Activity */}
         <View className="px-5 mt-8">
-          <Text className="text-xl font-semibold text-gray-800 mb-4">
-            Latest Activities
+          <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+            آخرین فعالیت‌ها
           </Text>
           {dashboardData.latestActivity.map((activity) => (
             <View
               key={activity.id}
               className="bg-white p-4 rounded-2xl mb-4 shadow-sm"
             >
-              <Text className="text-gray-700">{activity.text}</Text>
+              <Text className="text-gray-700 text-right">{activity.text}</Text>
             </View>
           ))}
         </View>
@@ -176,9 +177,11 @@ const StatCard = ({
 }) => {
   return (
     <View className="w-[48%] bg-white p-4 rounded-2xl mb-4 shadow-sm">
-      <Text className={`text-3xl font-bold ${color}`}>{value}</Text>
-      <Text className="text-gray-600 text-sm mt-2">{label}</Text>
-    </View>
+    <Text className={`text-3xl font-bold ${color} font-sans text-right`}>{value}</Text>
+    <Text className="text-gray-600 text-sm mt-2 font-sans text-right">
+      {label}
+    </Text>
+  </View>
   );
 };
 

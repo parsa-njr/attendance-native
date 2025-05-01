@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         vazir: ["vazir"],
+        sans:["sans"]
         
       },
     },

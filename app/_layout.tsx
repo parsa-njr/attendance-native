@@ -18,7 +18,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    vazir: require("../assets/fonts/Vazirmatn-Regular.ttf"),
+    sans: require("../assets/fonts/IRANSansWeb.ttf"),
+    vazir: require("../assets/fonts/Vazirmatn-Regular.ttf")
   });
 
   useEffect(() => {
