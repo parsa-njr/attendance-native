@@ -10,11 +10,7 @@ import {
 } from "react-native";
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
-import DropDownPicker from "react-native-dropdown-picker";
-// import { ChevronDown } from "lucide-react-native";
 
-// import PersianDatePicker from "react-native-persian-date-picker2";
 
 const Index = () => {
   const currentYear = 2000;
