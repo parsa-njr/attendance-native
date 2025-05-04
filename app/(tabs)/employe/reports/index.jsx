@@ -11,7 +11,6 @@ import {
 import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
 
-
 const Index = () => {
   const currentYear = 2000;
 
@@ -52,7 +51,7 @@ const Index = () => {
       className="py-3 px-5 border-b border-gray-100"
       onPress={() => handleSelect(item)}
     >
-      <Text className="text-lg text-center">{item}</Text>
+      <Text className="text-lg text-center font-sans">{item}</Text>
     </Pressable>
   );
 
@@ -87,19 +86,19 @@ const Index = () => {
 
   const DetailRow = ({ label, value }) => (
     <View className="flex-row justify-between mb-1 border-b-[1px] border-gray-200 py-2">
-      <Text className="text-sm text-gray-800 font-medium">{value}</Text>
-      <Text className="text-sm text-gray-500">{label}:</Text>
+      <Text className="text-sm text-gray-800 font-medium font-sans">
+        {value}
+      </Text>
+      <Text className="text-sm text-gray-500 font-sans">{label}:</Text>
     </View>
   );
-  
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 mt-10 ">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-
-      <Text className="text-lg text-right mt-8 mx-5 text-gray-600 tracking-tight leading-relaxed">
-  بازه‌ی مورد نظر خود را انتخاب کنید
-</Text>
+        <Text className="text-lg text-right mt-8 mx-5 text-gray-600 tracking-tight leading-relaxed font-sans">
+          بازه‌ی مورد نظر خود را انتخاب کنید
+        </Text>
 
         {/* Date Range Picker */}
         <View className="flex flex-row gap-2 justify-between mx-10 mt-10">
@@ -109,14 +108,9 @@ const Index = () => {
             onPress={() => openModal("year")}
           >
             <Ionicons name="chevron-down-outline" size={20} color="gray" />
-            {/* <View className="flex-col"> */}
-              {/* <Text className=" text-right text-lg text-gray-500 mb-1">
-                سال
-              </Text> */}
-              <Text className="text-lg text-gray-500">
-                {selectedYear || "سال"}
-              </Text>
-            {/* </View> */}
+            <Text className="text-lg text-gray-500 font-sans">
+              {selectedYear || "سال"}
+            </Text>
           </TouchableOpacity>
 
           {/* Month Select */}
@@ -125,12 +119,9 @@ const Index = () => {
             onPress={() => openModal("month")}
           >
             <Ionicons name="chevron-down-outline" size={20} color="gray" />
-            {/* <View className="flex-col"> */}
-             
-              <Text className="text-base text-gray-500">
-                {selectedMonth || "ماه"}
-              </Text>
-            {/* </View> */}
+            <Text className="text-base text-gray-500 font-sans">
+              {selectedMonth || "ماه"}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -140,7 +131,7 @@ const Index = () => {
           style={{ justifyContent: "flex-end", margin: 0 }}
         >
           <View className="bg-white rounded-t-3xl p-4 max-h-[60%]">
-            <Text className="text-center text-lg font-semibold mb-4">
+            <Text className="text-center text-lg font-semibold mb-4 font-sans">
               {modalType === "year" ? "انتخاب سال" : "انتخاب ماه"}
             </Text>
             <FlatList
@@ -158,7 +149,9 @@ const Index = () => {
             // onPress={handleSave}
             className="flex-1 bg-blue-500 rounded-lg py-2 items-center mx-8 shadow-md"
           >
-            <Text className="text-white text-base font-semibold">مشاهده</Text>
+            <Text className="text-white text-base font-semibold font-sans">
+              مشاهده
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -180,10 +173,10 @@ const Index = () => {
                   color="gray"
                 />
                 <View>
-                  <Text className="text-gray-800 font-semibold">
+                  <Text className="text-gray-800 font-semibold font-sans">
                     1404/05/23
                   </Text>
-                  <Text className="text-gray-500 text-sm text-right">
+                  <Text className="text-gray-500 text-sm text-right font-sans">
                     {day.workedHours} کار شده
                   </Text>
                 </View>
@@ -191,42 +184,16 @@ const Index = () => {
 
               {expandedDay === index && (
                 <View className="bg-gray-50 rounded-xl my-3 mx-5 px-4 py-3 shadow-sm">
-                <DetailRow label="ورود" value={day.checkIn} />
-                <DetailRow label="خروج" value={day.checkOut} />
-                <DetailRow label="ساعات کاری" value={day.workedHours} />
-                <DetailRow label="غیبت" value={day.absentHours} />
-              </View>
-              
+                  <DetailRow label="ورود" value={day.checkIn} />
+                  <DetailRow label="خروج" value={day.checkOut} />
+                  <DetailRow label="ساعات کاری" value={day.workedHours} />
+                  <DetailRow label="غیبت" value={day.absentHours} />
+                </View>
               )}
             </View>
           ))}
         </View>
       </ScrollView>
-
-      {/* Persian Date Pickers */}
-      {/* {isStartPickerVisible && (
-        <PersianDatePicker
-          mode="date"
-          onConfirm={(date) => {
-            setStartDate(date.format("jYYYY/jMM/jDD"));
-            setStartPickerVisible(false);
-          }}
-          onCancel={() => setStartPickerVisible(false)}
-          title="انتخاب تاریخ شروع"
-        />
-      )}
-
-      {isEndPickerVisible && (
-        <PersianDatePicker
-          mode="date"
-          onConfirm={(date) => {
-            setEndDate(date.format("jYYYY/jMM/jDD"));
-            setEndPickerVisible(false);
-          }}
-          onCancel={() => setEndPickerVisible(false)}
-          title="انتخاب تاریخ پایان"
-        />
-      )} */}
     </SafeAreaView>
   );
 };

@@ -8,50 +8,50 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import AddUserModal from "../../../components/modals/AddUserModal";
+import AddUserModal from "../../../../components/modals/AddUserModal";
 
 const Index = () => {
   const data = [
     {
       id: 1,
       image: "https://bootdey.com/img/Content/avatar/avatar1.png",
-      name: "Frank Odalthh",
+      name: "پارسا نجات پور",
       status: "Online",
     },
     {
       id: 2,
       image: "https://bootdey.com/img/Content/avatar/avatar6.png",
-      name: "John DoeLink",
+      name: "علی اصلانی",
       status: "Offline",
     },
     {
       id: 3,
       image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-      name: "March SoulLaComa",
+      name: "ارسلان اسدی",
       status: "Busy",
     },
     {
       id: 4,
       image: "https://bootdey.com/img/Content/avatar/avatar2.png",
-      name: "Finn DoRemiFaso",
+      name: "امیر علی نوروزی",
       status: "Away",
     },
     {
       id: 5,
       image: "https://bootdey.com/img/Content/avatar/avatar3.png",
-      name: "Maria More More",
+      name: "حسن شماعی زاده",
       status: "Online",
     },
     {
       id: 6,
       image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-      name: "Clark June Boom!",
+      name: "داریوش اقبالی",
       status: "Offline",
     },
     {
       id: 7,
       image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-      name: "The Googler",
+      name: "عمو حسن",
       status: "Online",
     },
   ];
@@ -60,7 +60,7 @@ const Index = () => {
   const [users, setUsers] = useState(data);
   const [search, setSearch] = useState("");
 
-  const handleSearch = (text) => {
+  const handleSearch = (text : any) => {
     setSearch(text);
     if (text) {
       const filtered = data.filter((user) =>
@@ -72,7 +72,7 @@ const Index = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status : any) => {
     switch (status.toLowerCase()) {
       case "online":
         return "text-green-500";
@@ -90,10 +90,10 @@ const Index = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-50 relative">
       {/* Search Bar */}
-      <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6 ">
+      <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6">
         <TextInput
-          className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner"
-          placeholder="Search users..."
+          className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans"
+          placeholder="جستجو..."
           placeholderTextColor="#888"
           value={search}
           onChangeText={handleSearch}
@@ -109,7 +109,7 @@ const Index = () => {
           <View className="h-px bg-gray-200 mx-5" />
         )}
         renderItem={({ item }) => (
-          <View className="flex-row items-center px-4 py-3 bg-white">
+          <View className="flex-row-reverse items-center px-4 py-3 bg-white">
             <TouchableOpacity
               onPress={() => {}} // 👈 EMPTY, no navigation call
               className="w-14 h-14 rounded-full border-2 border-blue-500 overflow-hidden"
@@ -119,19 +119,24 @@ const Index = () => {
                 className="w-full h-full rounded-full"
               />
             </TouchableOpacity>
-        
-            <View className="flex-1 ml-4 border-b border-gray-100 pb-3">
+
+            <View className="flex-1 mr-4 border-b border-gray-100 pb-3">
               <View className="flex-row justify-between items-center">
-                <Text className="text-base font-semibold text-gray-800">{item.name}</Text>
-                <Text className="text-xs text-gray-400">9:58 AM</Text>
+                <Text className="text-xs text-gray-400 text-left">9:58 AM</Text>
+                <Text className="text-base font-semibold text-gray-800 font-sans text-right">
+                  {item.name}
+                </Text>
               </View>
-              <Text className={`text-sm mt-1 ${getStatusColor(item.status)}`}>
+              <Text
+                className={`text-sm mt-1 ${getStatusColor(
+                  item.status
+                )} text-right`}
+              >
                 {item.status}
               </Text>
             </View>
           </View>
         )}
-        
       />
 
       {/* Floating Add Button */}
@@ -150,7 +155,10 @@ const Index = () => {
       </TouchableOpacity>
 
       {/* Add User Modal */}
-      <AddUserModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <AddUserModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };

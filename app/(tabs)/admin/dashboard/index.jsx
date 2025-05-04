@@ -24,9 +24,9 @@ const Dashboard = () => {
     lateCheckIns: 3,
     pendingApprovals: 2,
     latestActivity: [
-      { id: 1, text: "John Doe checked in at 9:03 AM" },
-      { id: 2, text: "Sarah Smith requested leave" },
-      { id: 3, text: "Mike Johnson checked out at 4:57 PM" },
+      { id: 1, text: "جان دو در ساعت ۹:۰۳ صبح ورود زد" },
+      { id: 2, text: "سارا اسمیت درخواست مرخصی داد" },
+      { id: 3, text: "مایک جانسون در ساعت ۴:۵۷ بعدازظهر خروج زد" },
     ],
   };
 
@@ -59,19 +59,18 @@ const Dashboard = () => {
         <View className="px-5 pt-5 mt-9">
           <View className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
             <View className="flex-1">
-              <Text className="text-lg font-semibold text-gray-800 text-right font-sans">
-                علی اصلانی
+              <Text className="text-base  text-gray-800 text-right font-sans">
+                سلام مدیر عزیز 👋
               </Text>
-            </View>
               <Text className="text-sm text-gray-500 mt-1 text-right font-sans">
                 داشبورد امروز شما اینجاست.
               </Text>
+            </View>
             <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden ml-4">
-              {/* Replace this View with an actual Image if you have a URL */}
               <Image
                 source={{
                   uri: "https://randomuser.me/api/portraits/men/32.jpg",
-                }} // dummy manager profile
+                }}
                 className="w-full h-full"
                 resizeMode="cover"
               />
@@ -83,23 +82,22 @@ const Dashboard = () => {
         <View className="px-5 mt-5">
           <View className="flex-row flex-wrap justify-between mt-9">
             <StatCard
-              label="Active Employees"
+              label="کارمندان حاضر"
               value={dashboardData.activeEmployees}
               color="text-green-500"
             />
             <StatCard
-              label="Absent Employees"
+              label="کارمندان غایب"
               value={dashboardData.absentEmployees}
               color="text-red-500"
             />
             <StatCard
-              label="Late Check-ins"
+              label="ورود های با تاخیر"
               value={dashboardData.lateCheckIns}
               color="text-amber-500"
             />
             <StatCard
-            
-              label="Pending Approvals"
+              label="کارمندان معلق"
               value={dashboardData.lateCheckIns}
               color="text-blue-500"
             />
@@ -115,21 +113,21 @@ const Dashboard = () => {
             <PieChart
               data={[
                 {
-                  name: "Active",
+                  name: "حاضر",
                   population: dashboardData.activeEmployees,
                   color: "#34D399",
                   legendFontColor: "#4B5563",
                   legendFontSize: 14,
                 },
                 {
-                  name: "Absent",
+                  name: "غایب",
                   population: dashboardData.absentEmployees,
                   color: "#F87171",
                   legendFontColor: "#4B5563",
                   legendFontSize: 14,
                 },
                 {
-                  name: "Late",
+                  name: "ورود دیرهنگام",
                   population: dashboardData.lateCheckIns,
                   color: "#FBBF24",
                   legendFontColor: "#4B5563",
@@ -157,7 +155,9 @@ const Dashboard = () => {
               key={activity.id}
               className="bg-white p-4 rounded-2xl mb-4 shadow-sm"
             >
-              <Text className="text-gray-700 text-right">{activity.text}</Text>
+              <Text className="text-sm text-gray-700 text-right font-sans">
+                {activity.text}
+              </Text>
             </View>
           ))}
         </View>
@@ -166,22 +166,16 @@ const Dashboard = () => {
   );
 };
 
-const StatCard = ({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: string;
-}) => {
+const StatCard = ({ label, value, color }) => {
   return (
     <View className="w-[48%] bg-white p-4 rounded-2xl mb-4 shadow-sm">
-    <Text className={`text-3xl font-bold ${color} font-sans text-right`}>{value}</Text>
-    <Text className="text-gray-600 text-sm mt-2 font-sans text-right">
-      {label}
-    </Text>
-  </View>
+      <Text className={`text-3xl font-bold ${color} font-sans text-right`}>
+        {value}
+      </Text>
+      <Text className="text-gray-600 text-sm mt-2 font-sans text-right">
+        {label}
+      </Text>
+    </View>
   );
 };
 
@@ -189,7 +183,7 @@ const chartConfig = {
   backgroundGradientFrom: "#ffffff",
   backgroundGradientTo: "#ffffff",
   color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(75, 85, 99, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // pure black for better readability
   strokeWidth: 2,
   barPercentage: 0.5,
   useShadowColorFromDataset: false,
