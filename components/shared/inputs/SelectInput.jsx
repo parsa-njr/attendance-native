@@ -10,7 +10,8 @@ const SelectInput = ({
   options = [],
   value,
   onChange,
-  placeholder = ""
+  placeholder = "",
+  className =""
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -24,7 +25,7 @@ const SelectInput = ({
   return (
     <>
       <TouchableOpacity
-        className="bg-white px-4 py-2 rounded-lg shadow-md w-1/2  flex-row items-center justify-between"
+        className={`bg-white px-4 py-2 rounded-lg shadow-md   flex-row items-center justify-between ${className}`}
         onPress={() => setVisible(true)}
       >
         <Ionicons name="chevron-down-outline" size={20} color="gray" />

@@ -35,11 +35,6 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
 
-
-
-
-
-
   const [expandedDay, setExpandedDay] = useState(null);
   const attendanceData = [
     {
@@ -88,16 +83,16 @@ const Index = () => {
             value={selectedMonth}
             onChange={setSelectedMonth}
             placeholder="ماه"
+            className="w-1/2"
           />
           <SelectInput
             options={years}
             value={selectedYear}
             onChange={setSelectedYear}
             placeholder="سال"
+            className="w-1/2"
           />
         </View>
-
-        
 
         <View className="flex-row justify-center gap-4 mt-8">
           {/* Save Button */}
@@ -148,8 +143,6 @@ const Index = () => {
           ))}
         </View>
       </ScrollView>
-
-      
     </SafeAreaView>
   );
 };
