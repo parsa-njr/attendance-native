@@ -5,55 +5,35 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  FlatList,
-  Pressable,
 } from "react-native";
-import Modal from "react-native-modal";
 import { Ionicons } from "@expo/vector-icons";
+import SelectInput from "../../../components/shared/inputs/SelectInput";
 
 const Index = () => {
   const currentYear = 2000;
 
-  const years = Array.from({ length: 20 }, (_, i) => currentYear - i);
+  const years = Array.from({ length: 20 }, (_, i) => {
+    const year = currentYear - i;
+    return {
+      label: year.toString(),
+      value: year.toString(), // You can keep value as string or number
+    };
+  });
   const months = [
-    "فروردین",
-    "اردیبهشت",
-    "خرداد",
-    "تیر",
-    "مرداد",
-    "شهریور",
-    "مهر",
-    "آبان",
-    "آذر",
-    "دی",
-    "بهمن",
-    "اسفند",
+    { label: "فروردین", value: "01" },
+    { label: "اردیبهشت", value: "02" },
+    { label: "خرداد", value: "03" },
+    { label: "تیر", value: "04" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
+    { label: "مرداد", value: "05" },
   ];
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalType, setModalType] = useState(null); // "year" or "month"
-
-  const openModal = (type) => {
-    setModalType(type);
-    setModalVisible(true);
-  };
-
-  const handleSelect = (value) => {
-    if (modalType === "year") setSelectedYear(value);
-    else setSelectedMonth(value);
-    setModalVisible(false);
-  };
-
-  const renderItem = ({ item }) => (
-    <Pressable
-      className="py-3 px-5 border-b border-gray-100"
-      onPress={() => handleSelect(item)}
-    >
-      <Text className="text-lg text-center font-sans">{item}</Text>
-    </Pressable>
-  );
 
   const [expandedDay, setExpandedDay] = useState(null);
   const attendanceData = [
@@ -83,7 +63,6 @@ const Index = () => {
   const toggleExpand = (index) => {
     setExpandedDay(expandedDay === index ? null : index);
   };
-
   const DetailRow = ({ label, value }) => (
     <View className="flex-row justify-between mb-1 border-b-[1px] border-gray-200 py-2">
       <Text className="text-sm text-gray-800 font-medium font-sans">
@@ -94,54 +73,28 @@ const Index = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50 mt-10 ">
+    <SafeAreaView className="flex-1 bg-gray-50 mt-10">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        <Text className="text-lg text-right mt-8 mx-5 text-gray-600 tracking-tight leading-relaxed font-sans">
+        <Text className="text-lg  text-right mt-8 mx-10 text-gray-600 tracking-tight leading-relaxed">
           بازه‌ی مورد نظر خود را انتخاب کنید
         </Text>
 
-        {/* Date Range Picker */}
         <View className="flex flex-row gap-2 justify-between mx-10 mt-10">
-          {/* Year Select */}
-          <TouchableOpacity
-            className="bg-white px-4 py-2 rounded-lg shadow-md w-1/2  flex-row items-center justify-between"
-            onPress={() => openModal("year")}
-          >
-            <Ionicons name="chevron-down-outline" size={20} color="gray" />
-            <Text className="text-lg text-gray-500 font-sans">
-              {selectedYear || "سال"}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Month Select */}
-          <TouchableOpacity
-            className="bg-white px-4  py-2 rounded-lg shadow-md w-1/2 flex-row items-center justify-between"
-            onPress={() => openModal("month")}
-          >
-            <Ionicons name="chevron-down-outline" size={20} color="gray" />
-            <Text className="text-base text-gray-500 font-sans">
-              {selectedMonth || "ماه"}
-            </Text>
-          </TouchableOpacity>
+          <SelectInput
+            options={months}
+            value={selectedMonth}
+            onChange={setSelectedMonth}
+            placeholder="ماه"
+            className="w-1/2"
+          />
+          <SelectInput
+            options={years}
+            value={selectedYear}
+            onChange={setSelectedYear}
+            placeholder="سال"
+            className="w-1/2"
+          />
         </View>
-
-        <Modal
-          isVisible={modalVisible}
-          onBackdropPress={() => setModalVisible(false)}
-          style={{ justifyContent: "flex-end", margin: 0 }}
-        >
-          <View className="bg-white rounded-t-3xl p-4 max-h-[60%]">
-            <Text className="text-center text-lg font-semibold mb-4 font-sans">
-              {modalType === "year" ? "انتخاب سال" : "انتخاب ماه"}
-            </Text>
-            <FlatList
-              data={modalType === "year" ? years : months}
-              keyExtractor={(item, index) => String(item) + index}
-              renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        </Modal>
 
         <View className="flex-row justify-center gap-4 mt-8">
           {/* Save Button */}
