@@ -94,7 +94,7 @@ const Index = () => {
             {/* )} */}
           </View>
 
-          <Text className="text-sm text-gray-400 mt-2">
+          <Text className="text-sm text-gray-400 mt-2 font-sans">
             "روی عکس کلیک کنید تا تغییر دهید"
           </Text>
         </View>
@@ -104,14 +104,16 @@ const Index = () => {
           {/* Name Input */}
           {/* First Name Input */}
           <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right">نام</Text>
+            <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+              نام
+            </Text>
             <TextInput
               value={profile.firstName}
               onChangeText={(text) =>
                 setProfile((prev) => ({ ...prev, firstName: text }))
               }
               // editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
+              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
               placeholder="نام خود را وارد کنید"
               placeholderTextColor="#aaa"
               style={{ writingDirection: "rtl" }}
@@ -120,7 +122,7 @@ const Index = () => {
 
           {/* Last Name Input */}
           <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right">
+            <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
               نام خانوادگی
             </Text>
             <TextInput
@@ -129,7 +131,7 @@ const Index = () => {
                 setProfile((prev) => ({ ...prev, lastName: text }))
               }
               // editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right"
+              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
               placeholder="نام خانوادگی خود را وارد کنید"
               placeholderTextColor="#aaa"
               style={{ writingDirection: "rtl" }}
@@ -144,7 +146,7 @@ const Index = () => {
               onPress={handleSave}
               className="flex-1 bg-blue-500 rounded-lg py-4 items-center shadow-md"
             >
-              <Text className="text-white text-base font-semibold">
+              <Text className="text-white text-base font-semibold font-sans">
                 ذخیره تغییرات
               </Text>
             </TouchableOpacity>

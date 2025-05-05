@@ -67,14 +67,14 @@ const Login = () => {
               backdropFilter: "blur(10px)", // Glassmorphism effect
             }}
           >
-            <Text className="text-4xl font-extrabold text-center text-white mb-8">
+            <Text className=" text-center text-white mb-8 font-sans">
               خوش آمدید
             </Text>
 
             <View className="space-y-6">
               {/* Phone Number Input */}
               <TextInput
-                className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg"
+                className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg "
                 placeholder="شماره موبایل"
                 placeholderTextColor="#ccc"
                 keyboardType="phone-pad"
@@ -86,7 +86,7 @@ const Login = () => {
               />
               {/* Password Input */}
               <TextInput
-                className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg"
+                className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg font-sans"
                 placeholder="رمز عبور"
                 placeholderTextColor="#ccc"
                 secureTextEntry
@@ -119,14 +119,14 @@ const Login = () => {
                   elevation: 5,
                 }}
               >
-                <Text className="text-white font-bold text-lg">ورود</Text>
+                <Text className="text-white font-sans text-lg">ورود</Text>
               </TouchableOpacity>
             </Animated.View>
 
             {/* Sign Up Link */}
-            <Text className="text-center text-sm text-gray-200 mt-6">
+            <Text className="text-center text-sm text-gray-200 mt-6 font-sans">
               حساب کاربری ندارید؟{" "}
-              <Text className="text-blue-400 font-semibold">ثبت نام</Text>
+              <Text className="text-blue-400 font-sans">ثبت نام</Text>
             </Text>
           </BlurView>
         </TouchableWithoutFeedback>
