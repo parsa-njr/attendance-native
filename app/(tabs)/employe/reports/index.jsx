@@ -65,8 +65,10 @@ const Index = () => {
   };
   const DetailRow = ({ label, value }) => (
     <View className="flex-row justify-between mb-1 border-b-[1px] border-gray-200 py-2">
-      <Text className="text-sm text-gray-800 font-medium">{value}</Text>
-      <Text className="text-sm text-gray-500">{label}:</Text>
+      <Text className="text-sm text-gray-800 font-medium font-sans">
+        {value}
+      </Text>
+      <Text className="text-sm text-gray-500 font-sans">{label}:</Text>
     </View>
   );
 
@@ -100,7 +102,9 @@ const Index = () => {
             // onPress={handleSave}
             className="flex-1 bg-blue-500 rounded-lg py-2 items-center mx-8 shadow-md"
           >
-            <Text className="text-white text-base font-semibold">مشاهده</Text>
+            <Text className="text-white text-base font-semibold font-sans">
+              مشاهده
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -122,10 +126,10 @@ const Index = () => {
                   color="gray"
                 />
                 <View>
-                  <Text className="text-gray-800 font-semibold">
+                  <Text className="text-gray-800 font-semibold font-sans">
                     1404/05/23
                   </Text>
-                  <Text className="text-gray-500 text-sm text-right">
+                  <Text className="text-gray-500 text-sm text-right font-sans">
                     {day.workedHours} کار شده
                   </Text>
                 </View>

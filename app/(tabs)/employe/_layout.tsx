@@ -28,49 +28,29 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="dashboard/index"
         options={{
-          title: "Home",
+          title: "home",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Ionicons name="home-outline" size={28} color={color} />
           ),
         }}
-
       />
       <Tabs.Screen
-        name="explore"
+        name="reports/index"
         options={{
-          title: "explore",
+          title: "reports",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+            <Ionicons name="document-text-outline" size={28} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: "Profile",
+          title: "profile",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="users/index"
-        options={{
-          title: "Users",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="people" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="employe/index"
-        options={{
-          title: "employe",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="book-outline" size={28} color={color} />
+            <Ionicons name="person-outline" size={28} color={color} />
           ),
         }}
       />
