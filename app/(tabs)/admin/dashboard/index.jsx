@@ -177,7 +177,7 @@ const StatCard = ({ label, value, color }) => {
       </Text>
     </View>
   );
-};
+}
 
 const chartConfig = {
   backgroundGradientFrom: "#ffffff",
