@@ -71,6 +71,16 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="location/index"
+        options={{
+          title: "location",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="location-outline" size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

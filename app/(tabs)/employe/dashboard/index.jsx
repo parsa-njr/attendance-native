@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CheckInModal from "../../../../components/modals/CheckInModal";
+
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
 } from "react-native";
 
 const EmployeeDashboard = () => {
-  const [checkInModal, setCheckInModal] = useState(false);
   const [checkOutModal, setCheckOutModal] = useState(false);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
@@ -72,7 +71,6 @@ const EmployeeDashboard = () => {
                   handleCheckOut();
                   setCheckOutModal(true);
                 } else {
-                  setCheckInModal(true);
                   handleCheckIn();
                 }
               }}
@@ -87,8 +85,8 @@ const EmployeeDashboard = () => {
 
             {isCheckedIn && (
               <Text className="text-gray-500 mt-4 text-sm text-right font-sans">
-              ورود ثبت شده در {checkInTime}
-            </Text>
+                ورود ثبت شده در {checkInTime}
+              </Text>
             )}
           </View>
         </View>
@@ -125,10 +123,6 @@ const EmployeeDashboard = () => {
           </View>
         </View>
       </ScrollView>
-      <CheckInModal
-        visible={checkInModal}
-        onClose={() => setCheckInModal(false)}
-      />
     </SafeAreaView>
   );
 };

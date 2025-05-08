@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import AddUserModal from "../../../../components/modals/AddUserModal";
+import AddUser from "../../../../components/modals/AddUser";
 
 const Index = () => {
   const data = [
@@ -59,8 +59,14 @@ const Index = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [users, setUsers] = useState(data);
   const [search, setSearch] = useState("");
+  const [newUser, setNewUser] = useState({
+    name: "",
+    position: "",
+    email: "",
+    phone: "",
+  });
 
-  const handleSearch = (text : any) => {
+  const handleSearch = (text: any) => {
     setSearch(text);
     if (text) {
       const filtered = data.filter((user) =>
@@ -72,7 +78,7 @@ const Index = () => {
     }
   };
 
-  const getStatusColor = (status : any) => {
+  const getStatusColor = (status: any) => {
     switch (status.toLowerCase()) {
       case "online":
         return "text-green-500";
@@ -111,7 +117,7 @@ const Index = () => {
         renderItem={({ item }) => (
           <View className="flex-row-reverse items-center px-4 py-3 bg-white">
             <TouchableOpacity
-              onPress={() => {}} // 👈 EMPTY, no navigation call
+              onPress={() => {}}
               className="w-14 h-14 rounded-full border-2 border-blue-500 overflow-hidden"
             >
               <Image
@@ -154,11 +160,8 @@ const Index = () => {
         <Text className="text-white text-4xl">+</Text>
       </TouchableOpacity>
 
-      {/* Add User Modal */}
-      <AddUserModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      {/* BottomSheet Modal */}
+      <AddUser visible={modalVisible} onClose={() => setModalVisible(false)} />
     </SafeAreaView>
   );
 };

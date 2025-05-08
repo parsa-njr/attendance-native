@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Replace with real auth logic
-  const [userRole, setUserRole] = useState("employee"); // Replace with real user role logic
+  const [userRole, setUserRole] = useState("admin"); // Replace with real user role logic
   const router = useRouter();
 
   // Simulate app initialization or loading

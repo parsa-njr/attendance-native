@@ -11,7 +11,7 @@ import {
   Animated,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import LottieView from "lottie-react-native"; // Importing Lottie
+// import LottieView from "lottie-react-native"; // Importing Lottie
 
 const Login = () => {
   const [scaleValue] = useState(new Animated.Value(1));
@@ -34,7 +34,7 @@ const Login = () => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       {/* Background Animation: Typing Animation */}
-      <LottieView
+      {/* <LottieView
         source={require("../../assets/animations/Animation - 1745700345349 (1).json")}
         autoPlay
         loop
@@ -47,7 +47,7 @@ const Login = () => {
           width: "100%",
           height: "100%",
         }}
-      />
+      /> */}
 
       <View className="absolute inset-0 bg-black/40" />
 

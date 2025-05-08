@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import SelectInput from "../../../components/shared/inputs/SelectInput";
+import SelectInput from "../../../../components/shared/inputs/SelectInput";
 
 const Index = () => {
   const currentYear = 2000;
