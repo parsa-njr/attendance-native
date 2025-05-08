@@ -74,7 +74,7 @@ const Index = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50 mt-10">
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView  contentContainerStyle={{ paddingBottom: 100 }}>
         <Text className="text-lg  text-right mt-8 mx-10 text-gray-600 tracking-tight leading-relaxed">
           بازه‌ی مورد نظر خود را انتخاب کنید
         </Text>
