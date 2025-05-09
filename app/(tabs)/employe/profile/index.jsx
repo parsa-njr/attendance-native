@@ -53,26 +53,12 @@ const Index = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50 mt-9">
+    <SafeAreaView className="flex-1 bg-gray-50 ">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* <View className="absolute top-5 left-5 z-10">
-          {!isEditing && (
-            <TouchableOpacity
-              onPress={() => setIsEditing(true)}
-              className="flex-row bg-blue-500 rounded-lg  items-center shadow-md"
-            >
-              <AntDesign
-                className="text-white text-base font-semibold p-2"
-                name="edit"
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
-          )}
-        </View> */}
+       
 
         {/* Profile Header */}
-        <View className="px-5 pt-8 items-center">
+        <View className="px-5 pt-8 items-center mt-5">
           <View className="relative">
             <TouchableOpacity
               onPress={pickImage}
@@ -95,7 +81,7 @@ const Index = () => {
           </View>
 
           <Text className="text-sm text-gray-400 mt-2 font-sans">
-            "روی عکس کلیک کنید تا تغییر دهید"
+            روی عکس کلیک کنید تا تغییر دهید
           </Text>
         </View>
 
@@ -144,7 +130,7 @@ const Index = () => {
             {/* Save Button */}
             <TouchableOpacity
               onPress={handleSave}
-              className="flex-1 bg-blue-500 rounded-lg py-4 items-center shadow-md"
+              className="flex-1 bg-blue-600 rounded-lg py-4 items-center shadow-md"
             >
               <Text className="text-white text-base font-semibold font-sans">
                 ذخیره تغییرات
