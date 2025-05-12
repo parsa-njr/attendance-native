@@ -24,13 +24,10 @@ const Loading = ({ children, onRefresh }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {children}
+        {typeof children === "function" ? children({ refreshing }) : children}
       </ScrollView>
 
-      {/* Only show the loader when refreshing */}
-      {refreshing && (
-        <ActivityIndicator style={styles.loader} size="large" color="#0000ff" />
-      )}
+      
     </View>
   );
 };
@@ -39,16 +36,10 @@ const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
   },
   container: {
     flexGrow: 1,
-    paddingBottom: 100,
-  },
-  loader: {
-    position: "absolute", 
-    top: "50%",
+ 
   },
 });
 
