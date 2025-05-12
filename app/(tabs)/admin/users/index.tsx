@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import AddUser from "../../../../components/modals/AddUser";
+import AddUser from "../../../../components/admin/users/AddUser";
+import AddButton from "../../../../components/shared/buttons/AddButton";
 
 const Index = () => {
   const data = [
@@ -146,19 +147,7 @@ const Index = () => {
       />
 
       {/* Floating Add Button */}
-      <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        className="absolute bottom-6 right-6 w-16 h-16 bg-blue-500 rounded-full justify-center items-center shadow-lg"
-        style={{
-          elevation: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-        }}
-      >
-        <Text className="text-white text-4xl">+</Text>
-      </TouchableOpacity>
+      <AddButton onPress={() => setModalVisible(true)} />
 
       {/* BottomSheet Modal */}
       <AddUser visible={modalVisible} onClose={() => setModalVisible(false)} />

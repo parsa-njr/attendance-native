@@ -11,7 +11,8 @@ const SelectInput = ({
   value,
   onChange,
   placeholder = "",
-  className =""
+  className = "",
+  inputKey,
 }) => {
   const [visible, setVisible] = useState(false);
 
@@ -25,7 +26,7 @@ const SelectInput = ({
   return (
     <>
       <TouchableOpacity
-        className={`bg-white px-4 py-2 rounded-lg shadow-md   flex-row items-center justify-between ${className}`}
+        className={`border border-gray-200 bg-gray-50 rounded-xl px-4 py-3   flex-row items-center justify-between font-sans ${className}`}
         onPress={() => setVisible(true)}
       >
         <Ionicons name="chevron-down-outline" size={20} color="gray" />
@@ -35,7 +36,11 @@ const SelectInput = ({
         </Text>
       </TouchableOpacity>
 
-      <BottomSheet visible={visible} onClose={() => setVisible(false)}>
+      <BottomSheet
+        key={inputKey}
+        visible={visible}
+        onClose={() => setVisible(false)}
+      >
         <Text
           style={{
             fontSize: 18,
@@ -43,6 +48,7 @@ const SelectInput = ({
             textAlign: "center",
             marginBottom: 12,
           }}
+          className="font-sans"
         >
           {placeholder}
         </Text>
@@ -60,7 +66,7 @@ const SelectInput = ({
                 borderColor: "#eee",
               }}
             >
-              <Text className="text-center">{item.label}</Text>
+              <Text className="text-center font-sans">{item.label}</Text>
             </TouchableOpacity>
           )}
         />

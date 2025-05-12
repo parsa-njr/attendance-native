@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import RequestForm from "../../../../components/employee/requests/RequestForm";
+import AddButton from "../../../../components/shared/buttons/AddButton";
 // import { FlatList } from "react-native-web";
 
 const mockRequests = [
@@ -99,22 +100,8 @@ const Index = () => {
         ))}
       </ScrollView>
 
-      <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        className="absolute bottom-6 right-6 w-16 h-16 bg-blue-500 rounded-full justify-center items-center shadow-lg"
-        style={{
-          elevation: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-        }}
-      >
-        <Text className="text-white text-4xl">+</Text>
-      </TouchableOpacity>
 
-     
-
+      <AddButton  onPress={() => setModalVisible(true)}/>
       <RequestForm
         open={modalVisible}
         onClose={() => setModalVisible(false)}
