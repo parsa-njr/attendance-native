@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Menu, Provider } from "react-native-paper";
-import AddLocation from "../../../../components/modals/AddLocation";
+import AddLocation from "../../../../components/admin/locations/AddLocation";
+import AddButton from "../../../../components/shared/buttons/AddButton";
 
 const Index = () => {
   const data = [
@@ -162,7 +163,9 @@ const Index = () => {
         />
 
         {/* Floating Add Button */}
-        <TouchableOpacity
+        <AddButton  onPress={() => setModalVisible(true)}/>
+
+        {/* <TouchableOpacity
           onPress={() => setModalVisible(true)}
           className="absolute bottom-6 right-6 w-16 h-16 bg-blue-500 rounded-full justify-center items-center shadow-lg"
           style={{
@@ -174,7 +177,7 @@ const Index = () => {
           }}
         >
           <Text className="text-white text-4xl">+</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <AddLocation
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

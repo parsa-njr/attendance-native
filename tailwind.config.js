@@ -8,7 +8,6 @@ module.exports = {
       fontFamily: {
         vazir: ["vazir"],
         sans:["sans"]
-        
       },
     },
   },
