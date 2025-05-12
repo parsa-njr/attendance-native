@@ -54,6 +54,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="requests/index"
+        options={{
+          title: "requests",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="clipboard-outline" size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
