@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
-import BottomSheet from "../shared/BottomSheet";
+import BottomSheet from "../../shared/BottomSheet";
+import Header from "../../shared/Header";
+import SubmitButton from "../../shared/buttons/SubmitButton";
+import TextFeild from "../../shared/inputs/TextFeild";
 
 const AddLocation = ({ visible, onClose }) => {
   const [location, setLocation] = useState(null);
@@ -49,35 +52,20 @@ const AddLocation = ({ visible, onClose }) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} extraHeight={350}>
-      <View className="bg-white rounded-t-3xl p-8 relative">
-        {/* Close button */}
-        <TouchableOpacity
-          className="absolute top-4 left-4 z-10"
-          onPress={onClose}
-        >
-          <Text className="text-2xl text-gray-500">✕</Text>
-        </TouchableOpacity>
-
-        {/* Title */}
-        <Text className="text-xl text-center text-gray-800 mb-4 font-sans">
-          انتخاب موقعیت روی نقشه
-        </Text>
+      <View style={{paddingHorizontal:32, paddingTop:4}} className="bg-white rounded-t-3xl relative">
+        <Header classname="mb-4" title="افزودن مکان جدید" />
 
         {/* Name input */}
-        <TextInput
-          placeholder="نام مکان"
-          placeholderTextColor="#aaa"
-          className="border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 mb-4 text-right text-base text-gray-800 font-sans"
+
+        <TextFeild
           value={name}
           onChangeText={setName}
+          placeholder="نام مکان"
+          className="mb-4"
         />
 
         {/* Range input */}
-        <TextInput
-          placeholder="فاصله (متر)"
-          placeholderTextColor="#aaa"
-          className="border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 mb-4 text-right text-base text-gray-800 font-sans"
-          keyboardType="numeric"
+        <TextFeild
           value={range}
           onChangeText={(value) => {
             // Only allow numbers and prevent negative values
@@ -85,6 +73,9 @@ const AddLocation = ({ visible, onClose }) => {
               setRange(value);
             }
           }}
+          placeholder="فاصله (متر)"
+          className="mb-4"
+          keyboardType="numeric"
         />
 
         {/* Label */}
@@ -131,23 +122,20 @@ const AddLocation = ({ visible, onClose }) => {
                 <Marker coordinate={location} />
                 {/* Circle (Radius) */}
                 {range && (
-
                   <>
-                  <Circle
-                    center={location}
-                    radius={parseInt(range, 10)} // Convert range to number and use as radius
-                    strokeColor="rgba(0, 0, 255, 0.5)"
-                    fillColor="rgba(0, 0, 255, 0.1)"
-                  />
+                    <Circle
+                      center={location}
+                      radius={parseInt(range, 10)} // Convert range to number and use as radius
+                      strokeColor="rgba(0, 0, 255, 0.5)"
+                      fillColor="rgba(0, 0, 255, 0.1)"
+                    />
                   </>
-
                 )}
               </>
             )}
           </MapView>
         </View>
 
-        {/* Coordinate + Address Card */}
         {location && (
           <View className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4">
             <Text className="text-sm text-gray-600 font-sans text-right">
@@ -159,9 +147,8 @@ const AddLocation = ({ visible, onClose }) => {
           </View>
         )}
 
-        {/* Save button */}
-        <TouchableOpacity
-          className="bg-blue-500 rounded-full py-3"
+        <SubmitButton
+          title="ذخیره موقعیت"
           onPress={() => {
             if (name && location && range) {
               const newItem = {
@@ -177,11 +164,7 @@ const AddLocation = ({ visible, onClose }) => {
               onClose();
             }
           }}
-        >
-          <Text className="text-white text-center font-sans text-base">
-            ذخیره موقعیت
-          </Text>
-        </TouchableOpacity>
+        />
       </View>
     </BottomSheet>
   );

@@ -85,14 +85,14 @@ const Index = () => {
             value={selectedMonth}
             onChange={setSelectedMonth}
             placeholder="ماه"
-            className="w-1/2"
+            className="w-1/2 bg-white"
           />
           <SelectInput
             options={years}
             value={selectedYear}
             onChange={setSelectedYear}
             placeholder="سال"
-            className="w-1/2"
+            className="w-1/2 bg-white"
           />
         </View>
 
