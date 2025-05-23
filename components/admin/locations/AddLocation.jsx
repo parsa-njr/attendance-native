@@ -54,7 +54,9 @@ const AddLocation = ({ visible, onClose }) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} extraHeight={350}>
+
       <Container>
+
         <Header classname="mb-4" title="افزودن مکان جدید" />
 
         {/* Name input */}

@@ -55,6 +55,18 @@ const Index = () => {
       name: "عمو حسن",
       status: "Online",
     },
+      {
+      id: 8,
+      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
+      name: "عمو حسن",
+      status: "Online",
+    },
+       {
+      id: 9,
+      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
+      name: "عمو حسن",
+      status: "Online",
+    },
   ];
 
   const [modalVisible, setModalVisible] = useState(false);

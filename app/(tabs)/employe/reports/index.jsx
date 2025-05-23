@@ -99,7 +99,6 @@ const Index = () => {
     return <ReportsSkeleton />;
   }
   return (
-
     <Loading onRefresh={onRefresh}>
       {() => (
         <SafeAreaView className="flex-1 bg-gray-50">
@@ -108,7 +107,6 @@ const Index = () => {
               <Text className="text-lg mt-20 mx-6 text-gray-700 font-sans text-center">
                 بازه‌ی مورد نظر خود را انتخاب کنید
               </Text>
-
 
               <View className="flex-row gap-4 justify-between mx-6 mt-6">
                 <View className="flex-1">
