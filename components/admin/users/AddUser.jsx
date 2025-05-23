@@ -4,6 +4,7 @@ import BottomSheet from "../../shared/BottomSheet";
 import Header from "../../shared/Header";
 import SubmitButton from "../../shared/buttons/SubmitButton";
 import TextFeild from "../../shared/inputs/TextFeild";
+import Container from "../../shared/Container";
 
 const AddUser = ({ visible, onClose }) => {
   const [newUser, setNewUser] = useState({
@@ -17,7 +18,7 @@ const AddUser = ({ visible, onClose }) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose}>
-      <View style={{paddingHorizontal:32, paddingTop:4}} className=" rounded-t-3xl relative bg-white">
+      <Container>
         <Header classname="mb-4" title="افزودن کارمند جدید" />
 
         <TextFeild
@@ -72,7 +73,7 @@ const AddUser = ({ visible, onClose }) => {
             }
           }}
         />
-      </View>
+      </Container>
     </BottomSheet>
   );
 };

@@ -13,6 +13,8 @@ import BottomSheet from "../../shared/BottomSheet";
 import Header from "../../shared/Header";
 import SubmitButton from "../../shared/buttons/SubmitButton";
 import TextFeild from "../../shared/inputs/TextFeild";
+import Container from "../../shared/Container";
+
 
 const AddLocation = ({ visible, onClose }) => {
   const [location, setLocation] = useState(null);
@@ -52,10 +54,9 @@ const AddLocation = ({ visible, onClose }) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} extraHeight={350}>
-      <View
-        style={{ paddingHorizontal: 32, paddingTop: 4 }}
-        className="bg-white rounded-t-3xl relative"
-      >
+
+      <Container>
+
         <Header classname="mb-4" title="افزودن مکان جدید" />
 
         {/* Name input */}
@@ -168,7 +169,7 @@ const AddLocation = ({ visible, onClose }) => {
             }
           }}
         />
-      </View>
+      </Container>
     </BottomSheet>
   );
 };

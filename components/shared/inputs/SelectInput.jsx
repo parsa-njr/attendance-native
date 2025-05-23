@@ -31,7 +31,7 @@ const SelectInput = ({
       >
         <Ionicons name="chevron-down-outline" size={20} color="gray" />
 
-        <Text className="text-lg text-gray-500">
+        <Text className="text-lg text-gray-500 font-sans">
           {selectedLabel || placeholder}
         </Text>
       </TouchableOpacity>
