@@ -59,7 +59,7 @@ const BottomSheet = ({ visible, onClose, children, extraHeight = 0 }) => {
         >
           <View
             style={{
-              maxHeight:( height + extraHeight)* 0.6,
+              maxHeight: (height + extraHeight) * 0.6,
               backgroundColor: "white",
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,

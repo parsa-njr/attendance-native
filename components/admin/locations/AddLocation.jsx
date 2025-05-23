@@ -52,7 +52,10 @@ const AddLocation = ({ visible, onClose }) => {
 
   return (
     <BottomSheet visible={visible} onClose={onClose} extraHeight={350}>
-      <View style={{paddingHorizontal:32, paddingTop:4}} className="bg-white rounded-t-3xl relative">
+      <View
+        style={{ paddingHorizontal: 32, paddingTop: 4 }}
+        className="bg-white rounded-t-3xl relative"
+      >
         <Header classname="mb-4" title="افزودن مکان جدید" />
 
         {/* Name input */}
