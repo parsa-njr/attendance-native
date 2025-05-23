@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   TextInput,
-  FlatList
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import RequestForm from "../../../../components/employee/requests/RequestForm";
 import AddButton from "../../../../components/shared/buttons/AddButton";
-// import { FlatList } from "react-native-web";
 
 const mockRequests = [
   { id: 1, type: "مرخصی", date: "1404/02/15", status: "pending" },

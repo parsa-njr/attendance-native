@@ -7,6 +7,7 @@ import DatePicker from "react-native-jalali-persian-date-picker";
 import DatePickerInput from "../../shared/inputs/DatePickerInput";
 import Header from "../../shared/Header";
 import SubmitButton from "../../shared/buttons/SubmitButton";
+import Container from "../../shared/Container";
 // import PersianDatePicker from "react-native-persian-date-picker2";
 
 const RequestForm = ({ open, onClose }) => {
@@ -25,7 +26,9 @@ const RequestForm = ({ open, onClose }) => {
   return (
     <>
       <BottomSheet key="request_modal" visible={open} onClose={onClose}>
-        
+        <Container>
+
+       
         <Header classname="mb-4"  title="افزودن درخواست جدید" />
       
         <View className="h-24 ">
@@ -95,6 +98,7 @@ const RequestForm = ({ open, onClose }) => {
           />
         </View>
         <SubmitButton className="mx-10  mt-4"  title="ثبت درخواست" onPress={() => {}} />
+        </Container>
       </BottomSheet>
     </>
   );
