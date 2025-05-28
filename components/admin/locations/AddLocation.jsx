@@ -60,6 +60,8 @@ const AddLocation = ({ visible, onClose }) => {
         <TextFeild
           value={name}
           onChangeText={setName}
+          // onChangeText={(e)=>{setName(e)}}
+
           placeholder="نام مکان"
           className="mb-4"
         />
