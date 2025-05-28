@@ -15,6 +15,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const Index = () => {
   const [profileImage, setProfileImage] = useState(
@@ -111,7 +112,7 @@ const Index = () => {
             <View className="px-5 mt-8 space-y-5 flex">
               <>
                 {/* First Name Input */}
-                <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
+                <CardComponent className=" p-5 mb-3">
                   <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
                     نام
                   </Text>
@@ -125,10 +126,10 @@ const Index = () => {
                     placeholderTextColor="#aaa"
                     style={{ writingDirection: "rtl" }}
                   />
-                </View>
+                </CardComponent>
 
                 {/* Last Name Input */}
-                <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
+                <CardComponent className=" p-5 mb-3">
                   <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
                     نام خانوادگی
                   </Text>
@@ -142,7 +143,7 @@ const Index = () => {
                     placeholderTextColor="#aaa"
                     style={{ writingDirection: "rtl" }}
                   />
-                </View>
+                </CardComponent>
 
                 <View className="flex-row justify-center gap-4 mt-8">
                   <TouchableOpacity

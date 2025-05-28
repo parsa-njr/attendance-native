@@ -1,17 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  TextInput,
-  FlatList
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, ScrollView, SafeAreaView, TextInput } from "react-native";
 import RequestForm from "../../../../components/employee/requests/RequestForm";
 import AddButton from "../../../../components/shared/buttons/AddButton";
-// import { FlatList } from "react-native-web";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const mockRequests = [
   { id: 1, type: "مرخصی", date: "1404/02/15", status: "pending" },
@@ -33,7 +24,7 @@ const Index = () => {
       );
       setRequestList(filtered);
     } else {
-        setRequestList(mockRequests);
+      setRequestList(mockRequests);
     }
   };
 
@@ -66,7 +57,7 @@ const Index = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-50 px-5 pt-10">
       {/* Search Bar */}
-      <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6">
+      <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6 ">
         <TextInput
           className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans"
           placeholder="جستجو..."
@@ -76,12 +67,12 @@ const Index = () => {
         />
       </View>
 
-      <ScrollView className="space-y-4">
+      <ScrollView >
         {requestList.map((req) => (
-          <View
+          <CardComponent
             key={req.id}
             className="bg-white p-4 rounded-2xl shadow-sm flex-row-reverse justify-between items-center 
-            my-1"
+             mx-1 mt-3"
           >
             <View>
               <Text className="text-lg text-right font-sans text-gray-800">
@@ -91,21 +82,15 @@ const Index = () => {
                 {req.date}
               </Text>
             </View>
-            <Text className={`text-sm font-sans ${getStatusColor(
-                  req.status
-                )}`}>
-              {translateStatus(req.status) }
+            <Text className={`text-sm font-sans ${getStatusColor(req.status)}`}>
+              {translateStatus(req.status)}
             </Text>
-          </View>
+          </CardComponent>
         ))}
       </ScrollView>
 
-
-      <AddButton  onPress={() => setModalVisible(true)}/>
-      <RequestForm
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
+      <AddButton onPress={() => setModalVisible(true)} />
+      <RequestForm open={modalVisible} onClose={() => setModalVisible(false)} />
     </SafeAreaView>
   );
 };

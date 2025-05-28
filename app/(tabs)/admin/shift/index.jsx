@@ -8,64 +8,26 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import AddUser from "../../../../components/admin/users/AddUser";
+// import AddUser from "../../../../components/admin/users/AddUser";
 import AddButton from "../../../../components/shared/buttons/AddButton";
+import ShiftForm from "../../../../components/admin/shift/ShiftForm";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const Index = () => {
   const data = [
     {
       id: 1,
-      image: "https://bootdey.com/img/Content/avatar/avatar1.png",
-      name: "پارسا نجات پور",
-      status: "Online",
+      name: "شیفت اصلی",
+      status: "active",
+      startDate: "1/1/1403",
+      endDate: "1/11404",
     },
     {
       id: 2,
-      image: "https://bootdey.com/img/Content/avatar/avatar6.png",
-      name: "علی اصلانی",
-      status: "Offline",
-    },
-    {
-      id: 3,
-      image: "https://bootdey.com/img/Content/avatar/avatar7.png",
-      name: "ارسلان اسدی",
-      status: "Busy",
-    },
-    {
-      id: 4,
-      image: "https://bootdey.com/img/Content/avatar/avatar2.png",
-      name: "امیر علی نوروزی",
-      status: "Away",
-    },
-    {
-      id: 5,
-      image: "https://bootdey.com/img/Content/avatar/avatar3.png",
-      name: "حسن شماعی زاده",
-      status: "Online",
-    },
-    {
-      id: 6,
-      image: "https://bootdey.com/img/Content/avatar/avatar4.png",
-      name: "داریوش اقبالی",
-      status: "Offline",
-    },
-    {
-      id: 7,
-      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-      name: "عمو حسن",
-      status: "Online",
-    },
-      {
-      id: 8,
-      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-      name: "عمو حسن",
-      status: "Online",
-    },
-       {
-      id: 9,
-      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
-      name: "عمو حسن",
-      status: "Online",
+      name: "شیفت فرعی",
+      status: "active",
+      startDate: "1/1/1403",
+      endDate: "1/11404",
     },
   ];
 
@@ -79,7 +41,7 @@ const Index = () => {
     phone: "",
   });
 
-  const handleSearch = (text: any) => {
+  const handleSearch = (text) => {
     setSearch(text);
     if (text) {
       const filtered = data.filter((user) =>
@@ -91,18 +53,27 @@ const Index = () => {
     }
   };
 
-  const getStatusColor = (status: any) => {
+  const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case "online":
+      case "active":
         return "text-green-500";
-      case "offline":
-        return "text-gray-400";
-      case "busy":
+
+      case "inactive":
         return "text-orange-500";
-      case "away":
-        return "text-sky-400";
+
       default:
-        return "text-black";
+        return "text-yellow-400";
+    }
+  };
+
+  const translateStatus = (status) => {
+    switch (status.toLowerCase()) {
+      case "active":
+        return "فعال";
+      case "inactive":
+        return "غیرفعال";
+      default:
+        return "تعیین وظعیت نشده";
     }
   };
 
@@ -120,7 +91,28 @@ const Index = () => {
       </View>
 
       {/* User List */}
-      <FlatList
+      {data?.map((item) => (
+        <>
+          <CardComponent
+            key={item.id}
+            className="bg-white p-4 rounded-2xl shadow-sm flex-row-reverse justify-between items-center 
+             mx-1 mt-3"
+          >
+            <View>
+              <Text className="text-lg text-right font-sans text-gray-800">
+                {item.name}
+              </Text>
+              <Text className="text-sm text-right text-gray-500 font-sans">
+                {item.date}
+              </Text>
+            </View>
+            <Text className={`text-sm font-sans ${getStatusColor(item.status)}`}>
+              {translateStatus(item.status)}
+            </Text>
+          </CardComponent>
+        </>
+      ))}
+      {/* <FlatList
         contentContainerStyle={{ paddingBottom: 100 }}
         data={users}
         keyExtractor={(item) => item.id.toString()}
@@ -129,16 +121,6 @@ const Index = () => {
         )}
         renderItem={({ item }) => (
           <View className="flex-row-reverse items-center px-4 py-3 bg-white">
-            <TouchableOpacity
-              onPress={() => {}}
-              className="w-14 h-14 rounded-full border-2 border-blue-500 overflow-hidden"
-            >
-              <Image
-                source={{ uri: item.image }}
-                className="w-full h-full rounded-full"
-              />
-            </TouchableOpacity>
-
             <View className="flex-1 mr-4 border-b border-gray-100 pb-3">
               <View className="flex-row justify-between items-center">
                 <Text className="text-xs text-gray-400 text-left">9:58 AM</Text>
@@ -151,18 +133,21 @@ const Index = () => {
                   item.status
                 )} text-right`}
               >
-                {item.status}
+                {translateStatus(item.status)}
               </Text>
             </View>
           </View>
         )}
-      />
+      /> */}
 
       {/* Floating Add Button */}
       <AddButton onPress={() => setModalVisible(true)} />
 
       {/* BottomSheet Modal */}
-      <AddUser visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <ShiftForm
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
