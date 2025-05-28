@@ -9,6 +9,7 @@ import {
   Dimensions,
   Image,
 } from "react-native";
+import CardComponent from "../../../../components/shared/CardComponent"
 import { router } from "expo-router";
 import { PieChart, LineChart } from "react-native-chart-kit";
 
@@ -57,7 +58,7 @@ const Dashboard = () => {
         {/* Manager Profile Section */}
         {/* Profile & Greeting Section */}
         <View className="px-5 pt-5 mt-9">
-          <View className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
+          <CardComponent className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
             <View className="flex-1">
               <Text className="text-base  text-gray-800 text-right font-sans">
                 سلام مدیر عزیز 👋
@@ -75,7 +76,7 @@ const Dashboard = () => {
                 resizeMode="cover"
               />
             </View>
-          </View>
+          </CardComponent>
         </View>
 
         {/* Stats Section */}
@@ -109,7 +110,7 @@ const Dashboard = () => {
           <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
             وضعیت کارمندان
           </Text>
-          <View className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
+          <CardComponent className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
             <PieChart
               data={[
                 {
@@ -142,7 +143,7 @@ const Dashboard = () => {
               paddingLeft="15"
               absolute
             />
-          </View>
+          </CardComponent>
         </View>
 
         {/* Latest Activity */}
@@ -151,14 +152,14 @@ const Dashboard = () => {
             آخرین فعالیت‌ها
           </Text>
           {dashboardData.latestActivity.map((activity) => (
-            <View
+            <CardComponent
               key={activity.id}
-              className="bg-white p-4 rounded-2xl mb-4 shadow-sm"
+              className="bg-white p-4 mb-4"
             >
               <Text className="text-sm text-gray-700 text-right font-sans">
                 {activity.text}
               </Text>
-            </View>
+            </CardComponent>
           ))}
         </View>
       </ScrollView>
@@ -168,14 +169,14 @@ const Dashboard = () => {
 
 const StatCard = ({ label, value, color }) => {
   return (
-    <View className="w-[48%] bg-white p-4 rounded-2xl mb-4 shadow-sm">
+    <CardComponent className="w-[48%] bg-white p-4 rounded-2xl mb-4 shadow-sm">
       <Text className={`text-3xl font-bold ${color} font-sans text-right`}>
         {value}
       </Text>
       <Text className="text-gray-600 text-sm mt-2 font-sans text-right">
         {label}
       </Text>
-    </View>
+    </CardComponent>
   );
 }
 

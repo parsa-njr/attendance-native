@@ -11,6 +11,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import CardComponent from "@/components/shared/CardComponent";
 
 const Index = () => {
   const [profileImage, setProfileImage] = useState(
@@ -102,41 +103,39 @@ const Index = () => {
         {/* Form Section */}
         <View className="px-5 mt-8 space-y-5 flex">
           {/* Name Input */}
-          {/* First Name Input */}
-          <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
-              نام
-            </Text>
-            <TextInput
-              value={profile.firstName}
-              onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, firstName: text }))
-              }
-              // editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
-              placeholder="نام خود را وارد کنید"
-              placeholderTextColor="#aaa"
-              style={{ writingDirection: "rtl" }}
-            />
-          </View>
+            {/* First Name Input */}
+                <CardComponent className=" p-5 mb-3">
+                  <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+                    نام
+                  </Text>
+                  <TextInput
+                    value={profile.firstName}
+                    onChangeText={(text) =>
+                      setProfile((prev) => ({ ...prev, firstName: text }))
+                    }
+                    className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
+                    placeholder="نام خود را وارد کنید"
+                    placeholderTextColor="#aaa"
+                    style={{ writingDirection: "rtl" }}
+                  />
+                </CardComponent>
 
-          {/* Last Name Input */}
-          <View className="bg-white rounded-2xl p-5 mb-3 shadow-sm">
-            <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
-              نام خانوادگی
-            </Text>
-            <TextInput
-              value={profile.lastName}
-              onChangeText={(text) =>
-                setProfile((prev) => ({ ...prev, lastName: text }))
-              }
-              // editable={isEditing}
-              className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
-              placeholder="نام خانوادگی خود را وارد کنید"
-              placeholderTextColor="#aaa"
-              style={{ writingDirection: "rtl" }}
-            />
-          </View>
+                {/* Last Name Input */}
+                <CardComponent className=" p-5 mb-3">
+                  <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+                    نام خانوادگی
+                  </Text>
+                  <TextInput
+                    value={profile.lastName}
+                    onChangeText={(text) =>
+                      setProfile((prev) => ({ ...prev, lastName: text }))
+                    }
+                    className="border-b border-gray-200 pb-2 text-base text-gray-800 text-right font-sans"
+                    placeholder="نام خانوادگی خود را وارد کنید"
+                    placeholderTextColor="#aaa"
+                    style={{ writingDirection: "rtl" }}
+                  />
+                </CardComponent>
 
           {/* Edit or Save Button */}
           {/* {isEditing && ( */}

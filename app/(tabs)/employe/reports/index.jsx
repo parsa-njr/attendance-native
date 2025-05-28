@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SelectInput from "../../../../components/shared/inputs/SelectInput";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const Index = () => {
   const currentYear = 2000;
@@ -137,9 +138,9 @@ const Index = () => {
 
               <View className="px-5 mt-10 space-y-4">
                 {attendanceData.map((day, index) => (
-                  <View
+                  <CardComponent
                     key={index}
-                    className="bg-white rounded-2xl shadow-lg mb-3"
+                    className="mb-3"
                   >
                     <TouchableOpacity
                       className="flex-row justify-between items-center p-4"
@@ -172,7 +173,7 @@ const Index = () => {
                         <DetailRow label="غیبت" value={day.absentHours} />
                       </View>
                     )}
-                  </View>
+                  </CardComponent>
                 ))}
               </View>
             </>

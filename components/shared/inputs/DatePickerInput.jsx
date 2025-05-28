@@ -6,10 +6,11 @@ import TextFeild from "./TextFeild";
 const DatePickerInput = ({
   inputKey,
   label,
+  placeholder,
   inputClassName,
   value,
   onChange,
-  type
+  type,
 }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,6 +23,13 @@ const DatePickerInput = ({
 
   return (
     <>
+      {label && (
+        <>
+          <Text className="font-sans text-sm text-gray-700 mb-1 text-center">
+            {label}{" "}
+          </Text>
+        </>
+      )}
       <TouchableOpacity
         key={`${inputKey}_handler_${datePickerKey}`}
         onPress={handleOpenModal}
@@ -33,7 +41,7 @@ const DatePickerInput = ({
           }}
           className="text-right text-[#6b7280]   font-sans"
         >
-          {value || label}
+          {value || placeholder}
         </Text>
       </TouchableOpacity>
 
@@ -82,7 +90,6 @@ const DatePickerInput = ({
               onTimeChange={(date) => {
                 onChange(date);
                 setModalOpen(false);
-
               }}
             />
           </View>
