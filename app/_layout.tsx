@@ -3,7 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-
+import Toast from "react-native-toast-message";
 import "../global.css";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -19,7 +19,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     sans: require("../assets/fonts/IRANSansWeb.ttf"),
-    vazir: require("../assets/fonts/Vazirmatn-Regular.ttf")
+    vazir: require("../assets/fonts/Vazirmatn-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider  value={colorScheme === "dark" ? DarkTheme : DefaultTheme} >
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)/admin" options={{ headerShown: false }} />
@@ -42,6 +42,7 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
+      <Toast />
     </ThemeProvider>
   );
 }

@@ -1,36 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
 const Index = () => {
   const [isReady, setIsReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Replace with real auth logic
-  const [userRole, setUserRole] = useState("admin"); // Replace with real user role logic
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const router = useRouter();
 
-  // Simulate app initialization or loading
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsReady(true);
-    }, 1000);
-    return () => clearTimeout(timeout);
+    const checkAuth = async () => {
+      try {
+        const authDataStr = await AsyncStorage.getItem("authData");
+        if (authDataStr) {
+          const authData = JSON.parse(authDataStr);
+          if (authData.token && authData.user) {
+            setIsAuthenticated(false);
+            setUserRole(authData.user.role || null); // adjust this if your user role key is different
+          } else {
+            setIsAuthenticated(false);
+            setUserRole(null);
+          }
+        } else {
+          setIsAuthenticated(false);
+          setUserRole(null);
+        }
+      } catch (error) {
+        console.error("Error reading auth data:", error);
+        setIsAuthenticated(false);
+        setUserRole(null);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   useEffect(() => {
     if (isReady) {
-      console.log("isAuthenticated:", isAuthenticated);
-      console.log("userRole:", userRole);
-
       if (isAuthenticated) {
-        if (userRole === "admin") {
-          console.log("Redirecting to /admin/dashboard");
+        if (userRole === "customer") {
           router.replace("/admin/dashboard");
-        } else if (userRole === "employee") {
-          console.log("Redirecting to /employee/dashboard");
-          router.replace("/employe");
+        } else if (userRole === "user") {
+          router.replace("/employe/dashboard");
+        } else {
+          // fallback if role unknown
+          router.replace("/Auth/login");
         }
       } else {
-        console.log("Redirecting to /Auth/login");
         router.replace("/Auth/login");
       }
     }
@@ -44,7 +63,7 @@ const Index = () => {
     );
   }
 
-  return null; // Redirection happens, so nothing to render
+  return null;
 };
 
 export default Index;
