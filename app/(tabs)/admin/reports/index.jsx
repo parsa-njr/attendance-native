@@ -19,6 +19,7 @@ import DatePickerInput from "../../../../components/shared/inputs/DatePickerInpu
 import SelectInput from "../../../../components/shared/inputs/SelectInput";
 import SubmitButton from "../../../../components/shared/buttons/SubmitButton";
 import Loading from "../../../../components/loading/Loading";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const Index = () => {
   const locations = [
@@ -263,52 +264,54 @@ const Index = () => {
     return activeTab === "daily" ? (
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {attendanceData.map((day, index) => (
-          <TouchableOpacity
-            key={index}
-            className="bg-white rounded-xl shadow-md px-4 py-5 border border-gray-100 mb-3"
-            activeOpacity={0.8}
-            onPress={() => {
-              setDayModalVisible(true);
-            }}
-          >
-            <View className="flex-row items-center justify-end border-b border-gray-200 pb-2 mb-3">
-              <Ionicons name="calendar-outline" size={18} color="#334155" />
-              <Text className="ml-3 font-sans text-sm text-gray-700">
-                تاریخ: ۱۴۰۳/۰۲/۲۳
-              </Text>
-            </View>
-
-            <View className="flex-row justify-between mb-3">
-              <View className="flex-row items-center">
-                <Ionicons name="log-in-outline" size={18} color="#334155" />
-                <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                  ورود: {day.checkIn}
+          <CardComponent className="mx-2 px-4 py-5  mb-3">
+            <TouchableOpacity
+              key={index}
+              // className="bg-white rounded-xl shadow-md px-4 py-5 border border-gray-100 mb-3"
+              activeOpacity={0.8}
+              onPress={() => {
+                setDayModalVisible(true);
+              }}
+            >
+              <View className="flex-row items-center justify-end border-b border-gray-200 pb-2 mb-3">
+                <Ionicons name="calendar-outline" size={18} color="#334155" />
+                <Text className="ml-3 font-sans text-sm text-gray-700">
+                  تاریخ: ۱۴۰۳/۰۲/۲۳
                 </Text>
               </View>
 
-              <View className="flex-row items-center">
-                <Ionicons name="log-out-outline" size={18} color="#334155" />
-                <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                  خروج: {day.checkOut}
-                </Text>
-              </View>
-            </View>
+              <View className="flex-row justify-between mb-3">
+                <View className="flex-row items-center">
+                  <Ionicons name="log-in-outline" size={18} color="#334155" />
+                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
+                    ورود: {day.checkIn}
+                  </Text>
+                </View>
 
-            <View className="flex-row justify-between">
-              <View className="flex-row items-center">
-                <Ionicons name="timer-outline" size={18} color="#334155" />
-                <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                  کارکرد: {day.workedHours}
-                </Text>
+                <View className="flex-row items-center">
+                  <Ionicons name="log-out-outline" size={18} color="#334155" />
+                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
+                    خروج: {day.checkOut}
+                  </Text>
+                </View>
               </View>
 
-              <View className="flex-row items-center">
-                <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                  غیبت: {day.absentHours}
-                </Text>
+              <View className="flex-row justify-between">
+                <View className="flex-row items-center">
+                  <Ionicons name="timer-outline" size={18} color="#334155" />
+                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
+                    کارکرد: {day.workedHours}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
+                    غیبت: {day.absentHours}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </CardComponent>
         ))}
       </ScrollView>
     ) : (
@@ -385,10 +388,9 @@ const Index = () => {
                     <View className="flex-row-reverse flex-wrap justify-between gap-6">
                       <View style={{ flex: 1, minWidth: "45%" }}>
                         {/* Start Date Picker */}
-                        <Text className="font-sans text-sm text-gray-700 mb-1 text-center">
-                          تاریخ شروع
-                        </Text>
+                        
                         <DatePickerInput
+                          label="تاریخ شروع"
                           placeholder="تاریخ شروع"
                           value={startDate}
                           onChange={setStartDate}
@@ -397,10 +399,9 @@ const Index = () => {
 
                       <View style={{ flex: 1, minWidth: "45%" }}>
                         {/* End Date Picker */}
-                        <Text className="font-sans text-sm text-gray-700 mb-1 text-center">
-                          تاریخ پایان
-                        </Text>
+                    
                         <DatePickerInput
+                          label="تاریخ پایان"
                           placeholder="تاریخ پایان"
                           value={endDate}
                           onChange={setEndDate}

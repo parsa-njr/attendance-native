@@ -99,27 +99,32 @@ const ShiftForm = ({ visible, onClose }) => {
           className="mb-4"
           keyboardType="numeric"
         />
-        <View className="h-24 flex flex-row justify-between mx-10 mb-5">
-          <DatePickerInput
-            inputKey="endDate"
-            label="تاریخ پایان شیفت"
-            inputClassName=" w-[48%]"
-            value={formData?.endDate}
-            type="calender"
-            onChange={(val) => {
-              setFormData((prev) => ({ ...prev, endDate: val }));
-            }}
-          />
-          <DatePickerInput
-            inputKey="startDate"
-            label="تاریخ شروع شیفت"
-            inputClassName=" w-[48%]"
-            value={formData?.startDate}
-            type="calender"
-            onChange={(val) => {
-              setFormData((prev) => ({ ...prev, startDate: val }));
-            }}
-          />
+        <View className="h-24 flex gap-4 flex-row justify-between mx-10 mb-5">
+          <View style={{ flex: 1, minWidth: "45%" }}>
+            <DatePickerInput
+              inputKey="endDate"
+              label="تاریخ پایان شیفت"
+              // placeholder="تاریخ پایان شیفت"
+              // inputClassName=" w-[48%]"
+              value={formData?.endDate}
+              type="calender"
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, endDate: val }));
+              }}
+            />
+          </View>
+          <View style={{ flex: 1, minWidth: "45%" }}>
+            <DatePickerInput
+              inputKey="startDate"
+              label="تاریخ شروع شیفت"
+              // inputClassName=" w-[48%]"
+              value={formData?.startDate}
+              type="calender"
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, startDate: val }));
+              }}
+            />
+          </View>
         </View>
 
         {/* Range input */}
@@ -179,27 +184,31 @@ const ShiftForm = ({ visible, onClose }) => {
         {formData.shiftDays.map((item, index) => (
           <>
             <SeparatorWithTitle title={`روز ${item?.day}`} className="mt-10" />
-            <View className="h-24 flex flex-row justify-between mx-10 mb-5">
-              <DatePickerInput
-                inputKey={`start_time_${index + 2}`}
-                type="time"
-                label="ساعت ورود"
-                inputClassName="h-10 w-[48%]"
-                value={""}
-                onChange={(val) => {
-                  // setStartTime(val);
-                }}
-              />
-              <DatePickerInput
-                inputKey={`end_time_${index + 2}`}
-                type="time"
-                label="ساعت خروج"
-                inputClassName="h-10 w-[48%]"
-                value={""}
-                onChange={(val) => {
-                  // setStartTime(val);
-                }}
-              />
+            <View className="h-24 flex flex-row justify-between mx-10 mb-5 gap-4">
+              <View style={{ flex: 1, minWidth: "45%" }}>
+                <DatePickerInput
+                  inputKey={`end_time_${index + 2}`}
+                  type="time"
+                  label="ساعت خروج"
+                  inputClassName="h-10 "
+                  value={""}
+                  onChange={(val) => {
+                    // setStartTime(val);
+                  }}
+                />
+              </View>
+              <View style={{ flex: 1, minWidth: "45%" }}>
+                <DatePickerInput
+                  inputKey={`start_time_${index + 2}`}
+                  type="time"
+                  label="ساعت ورود"
+                  inputClassName="h-10 "
+                  value={""}
+                  onChange={(val) => {
+                    // setStartTime(val);
+                  }}
+                />
+              </View>
             </View>
             {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Checkbox status="checked" onPress={() => {}} />
@@ -219,73 +228,69 @@ const ShiftForm = ({ visible, onClose }) => {
         {formData.exceptionDays.map((item, index) => (
           <>
             <SeparatorWithTitle title={`روز ${item?.day}`} className="mt-10" />
-            <View className="h-24 flex flex-row justify-between mx-10 flex-wrap">
-              <DatePickerInput
-                inputKey={`start_time_${index + 2}`}
-                type="time"
-                label="ساعت ورود"
-                inputClassName="h-10 w-[48%]"
-                value={""}
-                onChange={(val) => {
-                  // setStartTime(val);
-                }}
-              />
-              <DatePickerInput
-                inputKey="item.date"
-                label="تاریخ روز استثنا "
-                inputClassName=" w-[48%]"
-                // value={formData?.endDate}
-                type="calender"
-                onChange={(val) => {
-                  // setFormData((prev) => ({ ...prev, endDate: val }));
-                }}
-              />
-            </View>
-            <View className=" flex flex-row justify-between mx-10 !h-24 mt-5">
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#ef4444",
-                  height: 40,
-                  width: "20%",
-                  textAlign: "right",
-                  direction: "rtl",
-                }}
-                onPress={() => handleDeleteExceptionDay(index)}
-                className="text-right bg-red-500 rounded-lg items-center shadow-md"
-              >
-                <AntDesign
-                  name="delete"
-                  size={24}
-                  color="white"
-                  className="mt-2"
+            <View className="h-24 flex flex-row justify-between mx-10 gap-4 flex-wrap">
+              <View style={{ flex: 1, minWidth: "45%" }}>
+                <DatePickerInput
+                  inputKey={`start_time_${index + 2}`}
+                  type="time"
+                  label="ساعت ورود"
+                  inputClassName="h-10 "
+                  value={""}
+                  onChange={(val) => {
+                    // setStartTime(val);
+                  }}
                 />
-              </TouchableOpacity>
-
-              <DatePickerInput
-                inputKey={`end_time_${index + 2}`}
-                type="time"
-                label="ساعت خروج"
-                inputClassName=" w-[48%]"
-                value={""}
-                onChange={(val) => {
-                  // setStartTime(val);
-                }}
-              />
-              {/* <DatePickerInput
-                inputKey={`end_time_${index + 2}`}
-                type="time"
-                label="ساعت خروج"
-                inputClassName=" w-[48%]"
-                value={""}
-                onChange={(val) => {
-                  // setStartTime(val);
-                }}
-              /> */}
+              </View>
+              <View style={{ flex: 1, minWidth: "45%" }}>
+                <DatePickerInput
+                  inputKey="item.date"
+                  label="تاریخ روز استثنا "
+                  // inputClassName=" w-[48%]"
+                  // value={formData?.endDate}
+                  type="calender"
+                  onChange={(val) => {
+                    // setFormData((prev) => ({ ...prev, endDate: val }));
+                  }}
+                />
+              </View>
             </View>
-            {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Checkbox status="checked" onPress={() => {}} />
-              <Text>Subscribe</Text>
-            </View> */}
+
+            <View className=" flex flex-row justify-between mx-10 !h-24 mt-5">
+              <View style={{ flex: 1, width: "45%" }}>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#ef4444",
+                    height: 40,
+                    width: "60%",
+                    marginTop: 18,
+                    textAlign: "right",
+                    direction: "rtl",
+                  }}
+                  onPress={() => handleDeleteExceptionDay(index)}
+                  className="text-right bg-red-500 rounded-lg items-center shadow-md"
+                >
+                  <AntDesign
+                    name="delete"
+                    size={24}
+                    color="white"
+                    className="mt-2"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={{ flex: 1, width: "45%" }}>
+                <DatePickerInput
+                  inputKey={`end_time_${index + 2}`}
+                  type="time"
+                  label="ساعت خروج"
+                  // inputClassName=" w-[48%]"
+                  value={""}
+                  onChange={(val) => {
+                    // setStartTime(val);
+                  }}
+                />
+              </View>
+            </View>
           </>
         ))}
         {formData.shiftDays?.length > 0 && (

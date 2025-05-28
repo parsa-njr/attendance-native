@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, SafeAreaView, ScrollView, Dimensions } from "react-native";
 import { ProgressChart } from "react-native-chart-kit";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -20,14 +21,14 @@ const AIDashboard = () => {
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header */}
         <View className="px-5 pt-5 mt-9">
-          <View className="bg-white rounded-2xl p-5 shadow-sm">
+          <CardComponent className="bg-white rounded-2xl p-5 shadow-sm">
             <Text className="text-base text-gray-800 font-sans text-right">
               داشبورد هوش مصنوعی 🧠
             </Text>
             <Text className="text-sm text-gray-500 mt-1 font-sans text-right">
               پیش‌بینی حضور کارمندان برای هفته جاری
             </Text>
-          </View>
+          </CardComponent>
         </View>
 
         {/* Weekly Predictions */}
@@ -37,7 +38,7 @@ const AIDashboard = () => {
               {day}
             </Text>
 
-            <View className="bg-white rounded-2xl p-5 shadow-sm mb-4">
+            <CardComponent className=" p-5  mb-4">
               <ProgressChart
                 data={{
                   labels: ["حضور", "تاخیر", "غیبت"],
@@ -54,7 +55,7 @@ const AIDashboard = () => {
                 chartConfig={chartConfig}
                 hideLegend={false}
               />
-            </View>
+            </CardComponent>
 
             <PredictionCard
               label="احتمال حضور به موقع"
@@ -79,14 +80,14 @@ const AIDashboard = () => {
 };
 
 const PredictionCard = ({ label, value, color }) => (
-  <View className="bg-white p-4 rounded-2xl mb-3 shadow-sm">
+  <CardComponent className=" p-4 mb-3">
     <Text className={`text-2xl font-bold ${color} font-sans text-right`}>
       {(value * 100).toFixed(0)}٪
     </Text>
     <Text className="text-gray-600 text-sm mt-1 font-sans text-right">
       {label}
     </Text>
-  </View>
+  </CardComponent>
 );
 
 const chartConfig = {

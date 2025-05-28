@@ -11,6 +11,7 @@ import {
 // import AddUser from "../../../../components/admin/users/AddUser";
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import ShiftForm from "../../../../components/admin/shift/ShiftForm";
+import CardComponent from "../../../../components/shared/CardComponent";
 
 const Index = () => {
   const data = [
@@ -28,7 +29,6 @@ const Index = () => {
       startDate: "1/1/1403",
       endDate: "1/11404",
     },
-    
   ];
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -91,7 +91,28 @@ const Index = () => {
       </View>
 
       {/* User List */}
-      <FlatList
+      {data?.map((item) => (
+        <>
+          <CardComponent
+            key={item.id}
+            className="bg-white p-4 rounded-2xl shadow-sm flex-row-reverse justify-between items-center 
+             mx-1 mt-3"
+          >
+            <View>
+              <Text className="text-lg text-right font-sans text-gray-800">
+                {item.name}
+              </Text>
+              <Text className="text-sm text-right text-gray-500 font-sans">
+                {item.date}
+              </Text>
+            </View>
+            <Text className={`text-sm font-sans ${getStatusColor(item.status)}`}>
+              {translateStatus(item.status)}
+            </Text>
+          </CardComponent>
+        </>
+      ))}
+      {/* <FlatList
         contentContainerStyle={{ paddingBottom: 100 }}
         data={users}
         keyExtractor={(item) => item.id.toString()}
@@ -100,16 +121,6 @@ const Index = () => {
         )}
         renderItem={({ item }) => (
           <View className="flex-row-reverse items-center px-4 py-3 bg-white">
-            {/* <TouchableOpacity
-              onPress={() => {}}
-              className="w-14 h-14 rounded-full border-2 border-blue-500 overflow-hidden"
-            > */}
-            {/* <Image
-                source={{ uri: item.image }}
-                className="w-full h-full rounded-full"
-              /> */}
-            {/* </TouchableOpacity> */}
-
             <View className="flex-1 mr-4 border-b border-gray-100 pb-3">
               <View className="flex-row justify-between items-center">
                 <Text className="text-xs text-gray-400 text-left">9:58 AM</Text>
@@ -127,13 +138,16 @@ const Index = () => {
             </View>
           </View>
         )}
-      />
+      /> */}
 
       {/* Floating Add Button */}
       <AddButton onPress={() => setModalVisible(true)} />
 
       {/* BottomSheet Modal */}
-      <ShiftForm visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <ShiftForm
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };

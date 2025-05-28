@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import CardComponent from "../../../../components/shared/CardComponent";
+// import CardComponent from "../../../../components/Card/Card";
 
 const EmployeeDashboard = () => {
   const [checkOutModal, setCheckOutModal] = useState(false);
@@ -150,28 +152,30 @@ const EmployeeDashboard = () => {
   return (
     <Loading onRefresh={onRefresh}>
       {() => (
-        <SafeAreaView c style={styles.container}>
-          <ScrollView >
+        <SafeAreaView style={styles.container}>
+          <ScrollView>
             {/* Profile & Greeting */}
-            <View  style={styles.profileContainer}>
-              <View style={styles.profileCard}>
+            <View style={styles.profileContainer}>
+              <CardComponent style={styles.profileCard}>
                 <View style={styles.avatarContainer}>
                   <Image
-                    source={{ uri: "https://i.pravatar.cc/300?img=5" }}
+                    source={{ uri: "https://i.pravatar.cc/300?img38" }}
                     style={styles.avatar}
                   />
                 </View>
 
                 <View style={styles.profileTextContainer}>
-                  <Text className="!font-sans" style={styles.greetingText}>صبح بخیر سارا</Text>
+                  <Text className="!font-sans" style={styles.greetingText}>
+                    صبح بخیر رضا
+                  </Text>
                   <Text style={styles.dateText}>{todayDate}</Text>
                 </View>
-              </View>
+              </CardComponent>
             </View>
 
             {/* Status & Actions */}
             <View style={styles.statusContainer}>
-              <View style={styles.statusCard}>
+              <CardComponent style={styles.statusCard}>
                 {/* Status Card */}
                 <Animated.View
                   style={[
@@ -284,36 +288,68 @@ const EmployeeDashboard = () => {
                   >
                     <View style={styles.timeContent}>
                       <Ionicons name="time" size={20} color="#4F46E5" />
-                      <Text  className="!font-sans" style={styles.timeText}>
+                      <Text className="!font-sans" style={styles.timeText}>
                         زمان ورود:{" "}
-                        <Text  className="font-sans" style={styles.timeValue}>{checkInTime}</Text>
+                        <Text className="font-sans" style={styles.timeValue}>
+                          {checkInTime}
+                        </Text>
                       </Text>
                     </View>
                   </Animated.View>
                 )}
-              </View>
+              </CardComponent>
             </View>
 
             {/* Motivational Quote */}
             <View style={styles.quoteContainer}>
-              <View style={styles.quoteCard}>
-                <Text  className="!font-sans" style={styles.quoteTitle}>انگیزه روزانه 💬</Text>
-                <Text  className="!font-sans" style={styles.quoteText}>
+              <CardComponent style={styles.quoteCard}>
+                <Text className="!font-sans" style={styles.quoteTitle}>
+                  انگیزه روزانه 💬
+                </Text>
+                <Text className="!font-sans" style={styles.quoteText}>
                   موفقیت مجموع تلاش‌های کوچک است که هر روز تکرار می‌شود.
                 </Text>
-              </View>
+              </CardComponent>
             </View>
 
             {/* Attendance Summary */}
             <View style={styles.summaryContainer}>
               <View style={styles.summaryRow}>
-                <SummaryCard label="روز های حاضر" value={20} color="#10B981" />
-                <SummaryCard label="روز های غایب" value={2} color="#EF4444" />
-                <SummaryCard
-                  label="روز های با تاخیر"
-                  value={1}
-                  color="#F59E0B"
-                />
+                <CardComponent style={styles.summaryCard}>
+                  <Text
+                    className="!font-sans"
+                    style={[styles.summaryValue, { color: "#10B981" }]}
+                  >
+                    20
+                  </Text>
+                  <Text className="!font-sans" style={styles.summaryLabel}>
+                    روز های حاضر
+                  </Text>
+                </CardComponent>
+
+                <CardComponent style={styles.summaryCard}>
+                  <Text
+                    className="!font-sans"
+                    style={[styles.summaryValue, { color: "#EF4444" }]}
+                  >
+                    2
+                  </Text>
+                  <Text className="!font-sans" style={styles.summaryLabel}>
+                    روز های غایب
+                  </Text>
+                </CardComponent>
+
+                <CardComponent style={styles.summaryCard}>
+                  <Text
+                    className="!font-sans"
+                    style={[styles.summaryValue, { color: "#F59E0B" }]}
+                  >
+                    1
+                  </Text>
+                  <Text className="!font-sans" style={styles.summaryLabel}>
+                    روز های با تاخیر
+                  </Text>
+                </CardComponent>
               </View>
             </View>
           </ScrollView>
@@ -323,36 +359,19 @@ const EmployeeDashboard = () => {
   );
 };
 
-const SummaryCard = ({ label, value, color }) => {
-  return (
-    <View style={styles.summaryCard}>
-      <Text className="!font-sans" style={[styles.summaryValue, { color }]}>{value}</Text>
-      <Text  className="!font-sans" style={styles.summaryLabel}>{label}</Text>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9fafb",
-   
   },
   profileContainer: {
     paddingHorizontal: 20,
     paddingTop: 20,
   },
   profileCard: {
-    backgroundColor: "white",
-    borderRadius: 16,
     padding: 20,
     flexDirection: "row-reverse",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
     marginTop: 36,
   },
   avatarContainer: {
@@ -389,16 +408,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statusCard: {
-    backgroundColor: "white",
-    borderRadius: 24,
     padding: 24,
     width: "100%",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
     borderWidth: 1,
     borderColor: "#e0e7ff",
   },
@@ -446,8 +458,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     overflow: "hidden",
     position: "relative",
-    transform: [{ rotate: "45deg" }],
-
+    transform: [{ rotate: "-45deg" }],
   },
   checkInButton: {
     backgroundColor: "#10B981",
@@ -464,7 +475,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "50%",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    
   },
   buttonInnerCircle: {
     width: 128,
@@ -501,8 +511,6 @@ const styles = StyleSheet.create({
   confetti: {
     width: 300,
     height: 300,
-    // transform: [{ rotate: "45deg" }],
-
   },
   timeDisplay: {
     marginTop: 24,
@@ -516,8 +524,7 @@ const styles = StyleSheet.create({
   },
   timeContent: {
     flexDirection: "row-reverse",
-    gap:'4',
-    // justifyContent: "space-between",
+    gap: "4",
     alignItems: "center",
   },
   timeText: {
@@ -534,14 +541,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   quoteCard: {
-    backgroundColor: "white",
     padding: 20,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
   },
   quoteTitle: {
     fontSize: 18,
@@ -568,15 +568,8 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     width: "30%",
-    backgroundColor: "white",
     padding: 16,
-    borderRadius: 16,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
   },
   summaryValue: {
     fontSize: 24,
