@@ -15,5 +15,5 @@
     "expo-env.d.ts",
     "app/Auth/_layout.jsx",
     "nativewind-env.d.ts"
-, "app/(tabs)/admin/profile/index.jsx", "app/(tabs)/admin/dashboard/index.jsx", "app/(tabs)/admin/users/index.tsx"  ]
+, "app/(tabs)/admin/profile/index.jsx", "app/(tabs)/admin/dashboard/index.jsx", "app/(tabs)/admin/users/index.jsx"  ]
 }

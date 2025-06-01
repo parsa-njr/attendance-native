@@ -44,12 +44,14 @@ const Login = () => {
   const router = useRouter();
 
   const handleLogin = async (values, { setSubmitting }) => {
-    const fd = new FormData();
-    fd.append("phone", values.phone);
-    fd.append("password", values.password);
+   const data = {
+    phone : values.phone ,
+    password : values.password
+   }
+   console.log("data" , data)
 
     try {
-      const resp = await ApiServiece.post(`auth/login`, fd);
+      const resp = await ApiServiece.post(`auth/login`, data);
       const { token, user } = resp?.data || {};
 
       if (token && user) {

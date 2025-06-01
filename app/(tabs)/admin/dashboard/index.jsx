@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,40 +9,45 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import CardComponent from "../../../../components/shared/CardComponent"
+import { useFocusEffect } from "@react-navigation/native";
+import CardComponent from "../../../../components/shared/CardComponent";
+import Loading from "../../../../components/loading/Loading";
 import { router } from "expo-router";
-import { PieChart, LineChart } from "react-native-chart-kit";
+import { PieChart } from "react-native-chart-kit";
+import DashboardSkeleton from "../../../../components/loading/Skeleton/Admin/Dashboard/DashboardSkeleton";
 
 const screenWidth = Dimensions.get("window").width;
 
 const Dashboard = () => {
   const [isReady, setIsReady] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const isAuthenticated = true;
 
-  const dashboardData = {
-    activeEmployees: 42,
-    absentEmployees: 5,
-    lateCheckIns: 3,
-    pendingApprovals: 2,
-    latestActivity: [
-      { id: 1, text: "جان دو در ساعت ۹:۰۳ صبح ورود زد" },
-      { id: 2, text: "سارا اسمیت درخواست مرخصی داد" },
-      { id: 3, text: "مایک جانسون در ساعت ۴:۵۷ بعدازظهر خروج زد" },
-    ],
-  };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
+  useFocusEffect(
+    useCallback(() => {
+      setRefreshing(true);
+      const timeout = setTimeout(() => {
+        setRefreshing(false);
+      }, 1500);
       setIsReady(true);
-    }, 0);
-    return () => clearTimeout(timeout);
-  }, []);
+      return () => clearTimeout(timeout);
+    }, [])
+  );
 
   useEffect(() => {
     if (isReady && !isAuthenticated) {
       router.replace("/Auth/login");
     }
   }, [isReady, isAuthenticated]);
+
+  const onRefresh = () =>
+    new Promise((resolve) => {
+      setRefreshing(true);
+      setTimeout(() => {
+        setRefreshing(false);
+        resolve();
+      }, 1500);
+    });
 
   if (!isAuthenticated) {
     return (
@@ -52,118 +57,170 @@ const Dashboard = () => {
     );
   }
 
+  if (refreshing) {
+    return <DashboardSkeleton />;
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50 relative">
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Manager Profile Section */}
-        {/* Profile & Greeting Section */}
-        <View className="px-5 pt-5 mt-9">
-          <CardComponent className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
-            <View className="flex-1">
-              <Text className="text-base  text-gray-800 text-right font-sans">
-                سلام مدیر عزیز 👋
-              </Text>
-              <Text className="text-sm text-gray-500 mt-1 text-right font-sans">
-                داشبورد امروز شما اینجاست.
-              </Text>
+    <Loading onRefresh={onRefresh}>
+      {() => (
+        <SafeAreaView className="flex-1 bg-gray-50 relative">
+          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            {/* Profile Section */}
+            <View className="px-5 pt-5 mt-9">
+              <CardComponent className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
+                <View className="flex-1">
+                  <Text className="text-base  text-gray-800 text-right font-sans">
+                    سلام مدیر عزیز 👋
+                  </Text>
+                  <Text className="text-sm text-gray-500 mt-1 text-right font-sans">
+                    داشبورد امروز شما اینجاست.
+                  </Text>
+                </View>
+                <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden ml-4">
+                  <Image
+                    source={{
+                      uri: "https://randomuser.me/api/portraits/men/32.jpg",
+                    }}
+                    className="w-full h-full"
+                    resizeMode="cover"
+                  />
+                </View>
+              </CardComponent>
             </View>
-            <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden ml-4">
-              <Image
-                source={{
-                  uri: "https://randomuser.me/api/portraits/men/32.jpg",
-                }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
+
+            {/* Stats Section */}
+            <View className="px-5 mt-5">
+              <View className="flex-row flex-wrap justify-between mt-9">
+                <StatCard
+                  label="کارمندان حاضر"
+                  value={42}
+                  color="text-green-500"
+                />
+                <StatCard
+                  label="کارمندان غایب"
+                  value={5}
+                  color="text-red-500"
+                />
+                <StatCard
+                  label="ورود های با تاخیر"
+                  value={3}
+                  color="text-amber-500"
+                />
+                <StatCard
+                  label="کارمندان معلق"
+                  value={2}
+                  color="text-blue-500"
+                />
+              </View>
             </View>
-          </CardComponent>
-        </View>
 
-        {/* Stats Section */}
-        <View className="px-5 mt-5">
-          <View className="flex-row flex-wrap justify-between mt-9">
-            <StatCard
-              label="کارمندان حاضر"
-              value={dashboardData.activeEmployees}
-              color="text-green-500"
-            />
-            <StatCard
-              label="کارمندان غایب"
-              value={dashboardData.absentEmployees}
-              color="text-red-500"
-            />
-            <StatCard
-              label="ورود های با تاخیر"
-              value={dashboardData.lateCheckIns}
-              color="text-amber-500"
-            />
-            <StatCard
-              label="کارمندان معلق"
-              value={dashboardData.lateCheckIns}
-              color="text-blue-500"
-            />
-          </View>
-        </View>
-
-        {/* Charts Section */}
-        <View className="px-5 mt-8">
-          <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
-            وضعیت کارمندان
-          </Text>
-          <CardComponent className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
-            <PieChart
-              data={[
-                {
-                  name: "حاضر",
-                  population: dashboardData.activeEmployees,
-                  color: "#34D399",
-                  legendFontColor: "#4B5563",
-                  legendFontSize: 14,
-                },
-                {
-                  name: "غایب",
-                  population: dashboardData.absentEmployees,
-                  color: "#F87171",
-                  legendFontColor: "#4B5563",
-                  legendFontSize: 14,
-                },
-                {
-                  name: "ورود دیرهنگام",
-                  population: dashboardData.lateCheckIns,
-                  color: "#FBBF24",
-                  legendFontColor: "#4B5563",
-                  legendFontSize: 14,
-                },
-              ]}
-              width={screenWidth - 40}
-              height={220}
-              chartConfig={chartConfig}
-              accessor="population"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              absolute
-            />
-          </CardComponent>
-        </View>
-
-        {/* Latest Activity */}
-        <View className="px-5 mt-8">
-          <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
-            آخرین فعالیت‌ها
-          </Text>
-          {dashboardData.latestActivity.map((activity) => (
-            <CardComponent
-              key={activity.id}
-              className="bg-white p-4 mb-4"
-            >
-              <Text className="text-sm text-gray-700 text-right font-sans">
-                {activity.text}
+            {/* Charts Section */}
+            <View className="px-5 mt-8">
+              <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+                وضعیت کارمندان
               </Text>
-            </CardComponent>
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+              <CardComponent className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {/* Pie Chart */}
+                  <PieChart
+                    data={[
+                      { name: "حاضر", population: 42, color: "#34D399" },
+                      { name: "غایب", population: 5, color: "#F87171" },
+                      {
+                        name: "ورود دیرهنگام",
+                        population: 3,
+                        color: "#FBBF24",
+                      },
+                    ]}
+                    width={screenWidth * 0.53} // about half width for chart
+                    height={200}
+                    chartConfig={chartConfig}
+                    accessor="population"
+                    backgroundColor="transparent"
+                    paddingLeft="25"
+                    absolute
+                    hasLegend={false}
+                  />
+
+                  {/* Legend next to chart */}
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      
+                      // For RTL
+                      writingDirection: "rtl",
+                      
+                      height: 220,
+                    }}
+                  >
+                    {[
+                      { label: "حاضر", color: "#34D399" },
+                      { label: "غایب", color: "#F87171" },
+                      { label: "ورود دیرهنگام", color: "#FBBF24" },
+                    ].map((item) => (
+                      <View
+                        key={item.label}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          marginVertical: 10,
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            backgroundColor: item.color,
+                            borderRadius: 4,
+                            marginLeft: 8,
+                          }}
+                        />
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "#4B5563",
+                            fontFamily: "sans-serif",
+                            writingDirection: "rtl",
+                          }}
+                        >
+                          {item.label}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              </CardComponent>
+            </View>
+
+            {/* Latest Activity */}
+            <View className="px-5 mt-8">
+              <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+                آخرین فعالیت‌ها
+              </Text>
+              {[
+                { id: 1, text: "جان دو در ساعت ۹:۰۳ صبح ورود زد" },
+                { id: 2, text: "سارا اسمیت درخواست مرخصی داد" },
+                { id: 3, text: "مایک جانسون در ساعت ۴:۵۷ بعدازظهر خروج زد" },
+              ].map((activity) => (
+                <CardComponent key={activity.id} className="bg-white p-4 mb-4">
+                  <Text className="text-sm text-gray-700 text-right font-sans">
+                    {activity.text}
+                  </Text>
+                </CardComponent>
+              ))}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      )}
+    </Loading>
   );
 };
 
@@ -178,13 +235,13 @@ const StatCard = ({ label, value, color }) => {
       </Text>
     </CardComponent>
   );
-}
+};
 
 const chartConfig = {
   backgroundGradientFrom: "#ffffff",
   backgroundGradientTo: "#ffffff",
   color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
-  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // pure black for better readability
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   strokeWidth: 2,
   barPercentage: 0.5,
   useShadowColorFromDataset: false,
