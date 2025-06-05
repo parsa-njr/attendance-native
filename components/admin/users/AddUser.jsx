@@ -1,5 +1,4 @@
 import React from "react";
-import Toast from "react-native-toast-message";
 import { View, StyleSheet } from "react-native";
 import { Formik } from "formik";
 import BottomSheet from "../../shared/BottomSheet";
@@ -10,7 +9,7 @@ import ErrorMessage from "../../validations/FormError";
 import TextFeild from "../../shared/inputs/TextFeild";
 import Container from "../../shared/Container";
 import ApiService from "@/services/apiService";
-import LottieView from "lottie-react-native";
+import { showMessage } from "react-native-flash-message";
 
 const AddUser = ({ visible, onClose, onSuccess }) => {
   const initialValues = {
@@ -29,21 +28,28 @@ const AddUser = ({ visible, onClose, onSuccess }) => {
       const response = await ApiService.post("/admin/create-user", data);
       const message = response.data.message;
 
-      Toast.show({
+      showMessage({
+        message: "موفقیت آمیز بود",
+        description: `${message}`,
         type: "success",
-        text2: `${message}`,
+        icon: "success",
       });
 
-      // emit
       if (onSuccess) onSuccess();
-      
+
+      return true; // ✅ indicate success
     } catch (error) {
-      const message = error?.response?.data?.errorDetails;
-      Toast.show({
-        type: "error",
-        text1: "مشکلی پیش آمد",
-        text2: `${message}`,
+      const message =
+        error?.response?.data?.errorDetails || "خطایی رخ داده است";
+
+      showMessage({
+        message: "مشکلی پیش آمد",
+        description: message,
+        type: "danger",
+        icon: "danger",
       });
+
+      return false; // ❌ indicate failure
     } finally {
       setSubmitting(false);
     }
@@ -57,9 +63,11 @@ const AddUser = ({ visible, onClose, onSuccess }) => {
           initialValues={initialValues}
           validationSchema={AddUserSchema}
           onSubmit={async (values, { resetForm, setSubmitting }) => {
-            await handleAddUser(values, { setSubmitting });
-            resetForm();
-            
+            const success = await handleAddUser(values, { setSubmitting });
+            if (success) {
+              resetForm();
+              onClose();
+            }
           }}
         >
           {({

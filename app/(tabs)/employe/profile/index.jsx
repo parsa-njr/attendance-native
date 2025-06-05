@@ -62,7 +62,6 @@ const Index = () => {
         resolve();
       }, 1500);
     });
-
   useFocusEffect(
     useCallback(() => {
       setRefreshing(true);

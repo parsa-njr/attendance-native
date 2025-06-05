@@ -19,7 +19,7 @@ import { BlurView } from "expo-blur";
 import LottieView from "lottie-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiServiece from "../../services/apiService";
-import loginSchema from "../../components/validations/schemas/LoginSchema";
+import SignUpSchema from "../../components/validations/schemas/SignUpValidation";
 import ErrorMessage from "../../components/validations/FormError"; // separate error message component
 
 const Login = () => {
@@ -44,15 +44,16 @@ const Login = () => {
   // Inside your component:
   const router = useRouter();
 
-  const handleLogin = async (values, { setSubmitting }) => {
+  const handleSignUp = async (values, { setSubmitting }) => {
     const data = {
+      name: values.name,
       phone: values.phone,
       password: values.password,
     };
     console.log("data", data);
 
     try {
-      const resp = await ApiServiece.post(`auth/login`, data);
+      const resp = await ApiServiece.post(`auth/sign-up`, data);
       const { token, user } = resp?.data || {};
 
       if (token && user) {
@@ -60,21 +61,13 @@ const Login = () => {
         await AsyncStorage.setItem("authData", JSON.stringify(authData));
 
         showMessage({
-          message: `خوش آمدید، ${user.name}`,
-          description: "ورود موفقیت‌آمیز بود",
+          message: "خوش آمدید",
+          description: "ثبت نام با موفقیت انجام شد",
           type: "success",
           icon: "success",
         });
 
-        console.log("Auth data saved:", authData.user);
-
-        if (user.role === "customer") {
-          router.push("/admin/dashboard");
-        } else if (user.role === "user") {
-          router.push("/employe/dashboard");
-        } else {
-          router.push("/Auth/login");
-        }
+        router.push("/admin/dashboard");
       }
     } catch (err) {
       console.error("Login error:", err?.response?.data?.errorDetails);
@@ -126,13 +119,13 @@ const Login = () => {
             }}
           >
             <Text className=" text-center text-white mb-8 font-sans">
-              خوش آمدید
+              ثبت نام
             </Text>
 
             <Formik
-              initialValues={{ phone: "", password: "" }}
-              validationSchema={loginSchema}
-              onSubmit={handleLogin}
+              initialValues={{ name: "", phone: "", password: "" }}
+              validationSchema={SignUpSchema}
+              onSubmit={handleSignUp}
             >
               {({
                 handleChange,
@@ -144,6 +137,23 @@ const Login = () => {
                 isSubmitting,
               }) => (
                 <View className="space-y-6">
+                  <View>
+                    <TextInput
+                      className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg font-sans"
+                      placeholder="نام"
+                      placeholderTextColor="#ccc"
+                      keyboardType="default"
+                      onChangeText={handleChange("name")}
+                      onBlur={handleBlur("name")}
+                      value={values.name}
+                      style={{
+                        borderBottomColor: "#fff",
+                        borderBottomWidth: 2,
+                        marginBottom: 8,
+                      }}
+                    />
+                    <ErrorMessage error={errors.name} visible={touched.name} />
+                  </View>
                   <View>
                     <TextInput
                       className="bg-white/20 text-white rounded-2xl py-4 px-6 text-lg font-sans"
@@ -212,7 +222,7 @@ const Login = () => {
                         <ActivityIndicator size="small" color="#fff" />
                       ) : (
                         <Text className="text-white font-sans text-lg">
-                          ورود
+                          ثبت نام
                         </Text>
                       )}
                     </TouchableOpacity>
@@ -222,11 +232,11 @@ const Login = () => {
             </Formik>
 
             <View className="flex-row justify-center mt-6">
-              <Pressable onPress={() => router.push("/Auth/signUp")}>
-                <Text className="text-sm text-blue-400 font-sans">ثبت نام</Text>
+              <Pressable onPress={() => router.push("/Auth/login")}>
+                <Text className="text-sm text-blue-400 font-sans">ورود</Text>
               </Pressable>
               <Text className="text-sm text-gray-200 font-sans">
-                حساب کاربری ندارید؟{" "}
+                از قبل حساب دارید ؟{" "}
               </Text>
             </View>
           </BlurView>

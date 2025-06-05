@@ -19,7 +19,7 @@ ApiService.interceptors.request.use(
       const authDataString = await AsyncStorage.getItem("authData");
 
       if (authDataString) {
-        const authData = JSON.parse(authDataString); 
+        const authData = JSON.parse(authDataString);
         const token = authData?.token;
 
         if (token) {

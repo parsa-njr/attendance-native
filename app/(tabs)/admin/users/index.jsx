@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import Toast from "react-native-toast-message";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
 import LottieView from "lottie-react-native";
+import { showMessage } from "react-native-flash-message";
 import {
   Menu,
   Divider,
@@ -83,19 +83,22 @@ const Index = () => {
     ApiService.delete(`/admin/delete-user/${id}`)
       .then((response) => {
         const message = response.data.message;
-        Toast.show({
+        showMessage({
+          message: "موفقیت آمیز بود",
+          description: `${message}`,
           type: "success",
-          text2: `${message}`,
+          icon: "success",
         });
 
         setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
       })
       .catch((error) => {
         const message = error?.response?.data?.errorDetails;
-        Toast.show({
-          type: "error",
-          text1: "مشکلی پیش آمد",
-          text2: `${message}`,
+        showMessage({
+          message: "مشکلی پیش آمد",
+          description: message,
+          type: "danger",
+          icon: "danger",
         });
       });
   };
@@ -232,15 +235,29 @@ const Index = () => {
               />
             </View>
 
-            <FlatList
-              contentContainerStyle={{ paddingBottom: 100 }}
-              data={users}
-              keyExtractor={(item) => item._id.toString()}
-              ItemSeparatorComponent={() => (
-                <View className="h-px bg-gray-200 mx-5" />
-              )}
-              renderItem={renderUserItem}
-            />
+            {Array.isArray(users) && users.length === 0 ? (
+              <View className="flex-1 justify-center items-center mt-10">
+                <LottieView
+                  source={require("../../../../assets/animations/Animation - 1745703881904 (1).json")} // Replace with your actual Lottie file
+                  autoPlay
+                  loop
+                  style={{ width: 200, height: 200 }}
+                />
+                <Text className="text-gray-500 mt-4 text-lg font-sans">
+                  هیچ کاربری یافت نشد
+                </Text>
+              </View>
+            ) : (
+              <FlatList
+                contentContainerStyle={{ paddingBottom: 100 }}
+                data={users}
+                keyExtractor={(item) => item._id.toString()}
+                ItemSeparatorComponent={() => (
+                  <View className="h-px bg-gray-200 mx-5" />
+                )}
+                renderItem={renderUserItem}
+              />
+            )}
 
             <AddButton onPress={() => setModalVisible(true)} />
 

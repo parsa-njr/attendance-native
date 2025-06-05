@@ -28,6 +28,14 @@ const ProfileSkeleton = () => {
             colorMode="light"
           />
         </View>
+        <View className="mt-3">
+          <Skeleton
+            height={90}
+            width="100%"
+            borderRadius={20}
+            colorMode="light"
+          />
+        </View>
         <View className="mt-8">
           <Skeleton
             height={50}
