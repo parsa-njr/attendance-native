@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -15,9 +15,11 @@ const { height } = Dimensions.get("window");
 
 const BottomSheet = ({ visible, onClose, children, extraHeight = 0 }) => {
   const slideAnim = useRef(new Animated.Value(height)).current;
+  const [modalVisible, setModalVisible] = useState(visible);
 
   useEffect(() => {
     if (visible) {
+      setModalVisible(true);
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
@@ -28,18 +30,17 @@ const BottomSheet = ({ visible, onClose, children, extraHeight = 0 }) => {
         toValue: height,
         duration: 300,
         useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        // ⬅️ Wait for animation to finish before hiding modal
+        setModalVisible(false);
+      });
     }
   }, [visible]);
 
+  if (!modalVisible) return null;
+
   return (
-    <Modal
-      transparent
-      animationType="none"
-      visible={visible}
-      // className={`${className}`}
-      // style={{height:}}
-    >
+    <Modal transparent animationType="none" visible={modalVisible}>
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)" }} />
       </TouchableWithoutFeedback>
@@ -63,13 +64,13 @@ const BottomSheet = ({ visible, onClose, children, extraHeight = 0 }) => {
               backgroundColor: "white",
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              paddingHorizontal: 16, // Padding for left and right
-              paddingTop: 20, // Padding at the top
+              paddingHorizontal: 16,
+              paddingTop: 20,
             }}
           >
             <ScrollView
               contentContainerStyle={{
-                paddingBottom: 20, // Added bottom padding to the scrollable content
+                paddingBottom: 20,
               }}
               keyboardShouldPersistTaps="handled"
             >

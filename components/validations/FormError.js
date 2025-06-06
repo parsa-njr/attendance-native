@@ -44,7 +44,7 @@ const FormError = ({ error, visible }) => {
       style={{
         flexDirection: "row-reverse", // Flip for RTL
         alignItems: "center",
-        marginTop: 4,
+        marginTop: -7,
         transform: [{ translateY }],
         opacity,
       }}
@@ -53,7 +53,7 @@ const FormError = ({ error, visible }) => {
         name="exclamation-circle"
         size={16}
         color="#FF6B6B"
-        style={{ marginLeft: 6 }} 
+        style={{ marginLeft: 6 }}
       />
       <Text
         className="font-sans text-right"

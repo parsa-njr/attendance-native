@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // You can either hardcode the URL or use an .env file with react-native-dotenv
-const baseURL = "http://192.168.1.107:8080/api/v1/"; // Fallback if env is missing
+const baseURL = "http://192.168.217.156:8080/api/v1/"; // Fallback if env is missing
 
 const ApiService = axios.create({
   baseURL,
@@ -16,13 +16,20 @@ const ApiService = axios.create({
 ApiService.interceptors.request.use(
   async (config) => {
     try {
-      const token = await AsyncStorage.getItem("token");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
+      const authDataString = await AsyncStorage.getItem("authData");
+
+      if (authDataString) {
+        const authData = JSON.parse(authDataString);
+        const token = authData?.token;
+
+        if (token) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
       }
     } catch (e) {
       console.warn("Token retrieval failed", e);
     }
+
     return config;
   },
   (error) => Promise.reject(error)
