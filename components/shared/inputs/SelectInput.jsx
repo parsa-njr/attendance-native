@@ -1,16 +1,14 @@
-// components/SelectInput.js
 import React, { useState } from "react";
 import { TouchableOpacity, Text, View, FlatList } from "react-native";
 import BottomSheet from "../BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
-
-// import BottomSheet from './BottomSheet';
 
 const SelectInput = ({
   options = [],
   value,
   onChange,
   placeholder = "",
+  label,
   className = "",
   inputKey,
 }) => {
@@ -19,37 +17,45 @@ const SelectInput = ({
   const selectedLabel = options.find((opt) => opt.value === value)?.label;
 
   const handleSelect = (item) => {
-    onChange(item.value); // Only return value
+    onChange(item.value);
     setVisible(false);
   };
 
   return (
-    <>
+    <View className={`mb-6 ${className}`}>
+      {label && (
+        <Text className="mb-2 text-sm text-right text-gray-500 font-sans px-4">
+          {label}
+        </Text>
+      )}
+
       <TouchableOpacity
-        className={`border border-gray-200 bg-gray-50 rounded-xl px-4 py-3   flex-row items-center justify-between font-sans ${className}`}
+        className="rounded-xl px-4 py-3 flex-row-reverse items-center justify-between bg-white border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 transition-all duration-200"
         onPress={() => setVisible(true)}
       >
-        <Ionicons name="chevron-down-outline" size={20} color="gray" />
-
-        <Text className="text-lg text-gray-500 font-sans">
+        <Text
+          className={`text-base ${
+            selectedLabel ? "text-gray-800 " : "text-gray-400"
+          } font-sans text-right flex-1`}
+        >
           {selectedLabel || placeholder}
         </Text>
+
+        <Ionicons
+          name="chevron-down-outline"
+          size={20}
+          color="#a3a3a3"
+          style={{ marginLeft: 8 }}
+        />
       </TouchableOpacity>
 
       <BottomSheet
         key={inputKey}
         visible={visible}
         onClose={() => setVisible(false)}
+       
       >
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "bold",
-            textAlign: "center",
-            marginBottom: 12,
-          }}
-          className="font-sans"
-        >
+        <Text className="text-lg text-center mb-4 font-sans text-gray-700">
           {placeholder}
         </Text>
 
@@ -59,19 +65,16 @@ const SelectInput = ({
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleSelect(item)}
-              style={{
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderBottomWidth: 1,
-                borderColor: "#eee",
-              }}
+              className="py-4 px-6 border-b border-gray-100"
             >
-              <Text className="text-center font-sans">{item.label}</Text>
+              <Text className="text-center text-base font-sans text-gray-700">
+                {item.label}
+              </Text>
             </TouchableOpacity>
           )}
         />
       </BottomSheet>
-    </>
+    </View>
   );
 };
 

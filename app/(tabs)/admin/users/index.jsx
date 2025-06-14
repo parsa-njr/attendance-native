@@ -23,17 +23,22 @@ import {
 } from "react-native";
 import Loading from "../../../../components/loading/Loading";
 import AddUser from "../../../../components/admin/users/AddUser";
+import EditUser from "../../../../components/admin/users/EditUser";
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import ApiService from "@/services/apiService";
 
 const Index = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [addModalVisible, setaddModalVisible] = useState(false);
+  const [editModalVisible, seteditModalVisible] = useState(false);
   const [users, setUsers] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [openMenuUserId, setOpenMenuUserId] = useState(null);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [shifts, setShifts] = useState();
+  const [locations, setLocations] = useState();
+  const [userData, setUserData] = useState({});
 
   const handleSearch = (text) => {
     setSearch(text);
@@ -43,64 +48,89 @@ const Index = () => {
       );
       setUsers(filtered);
     } else {
-      fetchUsers();
+      getUsers();
     }
   };
 
   const onRefresh = () =>
-    new Promise((resolve) => {
+    new Promise(() => {
       setRefreshing(true);
-      setTimeout(() => {
-        fetchUsers();
-        setRefreshing(false);
-        resolve();
-      }, 150);
+      getUsers();
     });
 
   useFocusEffect(
     useCallback(() => {
-      setRefreshing(true);
-      const timeout = setTimeout(() => {
-        fetchUsers();
-        setRefreshing(false);
-      }, 150);
-
-      return () => clearTimeout(timeout);
+      getUsers();
+      getShifts();
+      getLocations();
     }, [])
   );
 
-  const fetchUsers = () => {
-    ApiService.get("/admin/get-users")
-      .then((resp) => {
-        setUsers(resp.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const getUsers = async () => {
+    try {
+      setRefreshing(true);
+      const response = await ApiService.get("/customer/users");
+      setUsers(response.data.data);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
+    }
   };
 
-  const handleDelete = (id) => {
-    ApiService.delete(`/admin/delete-user/${id}`)
-      .then((response) => {
-        const message = response.data.message;
-        showMessage({
-          message: "موفقیت آمیز بود",
-          description: `${message}`,
-          type: "success",
-          icon: "success",
-        });
+  const getShifts = async () => {
+    try {
+      const response = await ApiService.get("/customer/shifts");
+      setShifts(response.data.data);
+     
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-        setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
-      })
-      .catch((error) => {
-        const message = error?.response?.data?.errorDetails;
-        showMessage({
-          message: "مشکلی پیش آمد",
-          description: message,
-          type: "danger",
-          icon: "danger",
-        });
+  const getLocations = async () => {
+    try {
+      const response = await ApiService.get("/customer/locations");
+
+      setLocations(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await ApiService.delete(`/customer/users/${id}`);
+      const message = response.data.message;
+
+      showMessage({
+        message: "موفقیت آمیز بود",
+        description: `${message}`,
+        type: "success",
+        icon: "success",
       });
+
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+    } catch (error) {
+      const message =
+        error?.response?.data?.errorDetails || "خطای ناشناخته‌ای رخ داده است.";
+      showMessage({
+        message: "مشکلی پیش آمد",
+        description: message,
+        type: "danger",
+        icon: "danger",
+      });
+    }
+  };
+
+  const readyEditModal = (id, name, phone, location, shift) => {
+    setUserData({
+      id,
+      name,
+      phone,
+      location,
+      shift,
+    });
   };
 
   const renderUserItem = ({ item }) => {
@@ -181,7 +211,17 @@ const Index = () => {
             )}
           />
           <Menu.Item
-            onPress={() => {}}
+            onPress={() => {
+              seteditModalVisible(true);
+              closeMenu();
+              readyEditModal(
+                item?._id,
+                item?.name,
+                item?.phone,
+                item?.location._id,
+                item?.shift._id
+              );
+            }}
             title="ویرایش"
             titleStyle={{
               fontWeight: "600",
@@ -193,11 +233,13 @@ const Index = () => {
               <Ionicons name="pencil-outline" size={size} color={color} />
             )}
           />
+
           <Divider />
           <Menu.Item
             onPress={() => {
               setDeleteUserId(item._id);
               setOpenMenuUserId(null);
+              closeMenu();
               setShowDialog(true);
             }}
             title="حذف"
@@ -259,14 +301,27 @@ const Index = () => {
               />
             )}
 
-            <AddButton onPress={() => setModalVisible(true)} />
+            <AddButton onPress={() => setaddModalVisible(true)} />
 
             <AddUser
               onSuccess={() => {
-                fetchUsers();
+                getUsers();
               }}
-              visible={modalVisible}
-              onClose={() => setModalVisible(false)}
+              visible={addModalVisible}
+              locations={locations}
+              shifts={shifts}
+              onClose={() => setaddModalVisible(false)}
+            />
+
+            <EditUser
+              onSuccess={() => {
+                getUsers();
+              }}
+              visible={editModalVisible}
+              locations={locations}
+              shifts={shifts}
+              userData={userData}
+              onClose={() => seteditModalVisible(false)}
             />
 
             {/* Delete Confirmation Dialog */}

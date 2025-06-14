@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProfileValidationSchema from "../../../../components/validations/schemas/ProfileValidationSchema";
 import Loading from "../../../../components/loading/Loading";
 import ErrorMessage from "../../../../components/validations/FormError";
-import ProfileSkeleton from "../../../../components/loading/Skeleton/Employee/Profile/ProfileSkeleton";
+import ProfileSkeleton from "../../../../components/loading/Skeleton/Admin/Profile/ProfileSkeleton";
 import Toast from "react-native-toast-message";
 import {
   View,
@@ -64,9 +64,10 @@ const Index = () => {
     });
 
   const getProfile = async () => {
+    
     setRefreshing(true);
     try {
-      const response = await ApiServiece.get("/admin/get-profile");
+      const response = await ApiServiece.get("/customer/profile");
 
       const data = response.data.customer;
       console.log("api response", data);
@@ -76,11 +77,9 @@ const Index = () => {
         profileImage: data.profileImage,
       });
 
-      console.log(profileData);
-
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      console.log("error", error);
       setRefreshing(false);
     }
   };
@@ -197,10 +196,11 @@ const Index = () => {
                   isValid,
                   errors,
                   touched,
+                  handleBlur,
                 }) => (
                   <>
                     {/* Profile Header */}
-                    <View className="px-5 pt-8 items-center">
+                    <View className="px-5 pt-12 items-center">
                       <View className="relative">
                         <TouchableOpacity
                           onPress={() => pickImage(setFieldValue)}
@@ -259,6 +259,7 @@ const Index = () => {
                         <TextInput
                           value={values.name}
                           onChangeText={handleChange("name")}
+                          onBlur={handleBlur("name")}
                           className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
                           placeholder="نام خود را وارد کنید"
                           placeholderTextColor="#aaa"
@@ -278,6 +279,7 @@ const Index = () => {
                           value={values.phone}
                           keyboardType="phone-pad"
                           onChangeText={handleChange("phone")}
+                          onBlur={handleBlur("phone")}
                           className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
                           placeholder="شماره تماس خود را وارد کنید"
                           placeholderTextColor="#aaa"
@@ -300,6 +302,7 @@ const Index = () => {
                           onChangeText={(text) =>
                             setFieldValue("password", text.slice(0, 10))
                           }
+                          onBlur={handleBlur("password")}
                           className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
                           placeholder="رمز عبور جدید خود را وارد کنید"
                           placeholderTextColor="#aaa"

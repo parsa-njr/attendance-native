@@ -1,17 +1,15 @@
 import React from "react";
 import { TextInput, Text, View } from "react-native";
 
-const TextFeild = ({
+const TextArea = ({
   value,
   onChangeText,
   placeholder,
   label,
   className = "",
-  type = "text",
+  numberOfLines = 6,
   ...props
 }) => {
-  const isPassword = type === "password";
-
   return (
     <View className={`mb-6 ${className}`}>
       {label && (
@@ -20,16 +18,18 @@ const TextFeild = ({
         </Text>
       )}
       <TextInput
-        className="rounded-xl px-4 py-3 text-base text-right font-sans text-gray-800 bg-white border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 transition-all duration-200"
+        className="rounded-xl px-4 py-3 text-base text-right font-sans text-gray-800 bg-white border border-gray-200 focus:border-gray-400 focus:ring-2 focus:ring-gray-200 transition-all duration-200 h-32"
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor="#a1a1aa"
-        secureTextEntry={isPassword}
+        multiline={true}
+        numberOfLines={numberOfLines}
+        textAlignVertical="top"
         {...props}
       />
     </View>
   );
 };
 
-export default TextFeild;
+export default TextArea;

@@ -19,43 +19,20 @@ import DashboardSkeleton from "../../../../components/loading/Skeleton/Admin/Das
 const screenWidth = Dimensions.get("window").width;
 
 const Dashboard = () => {
-  const [isReady, setIsReady] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const isAuthenticated = true;
 
   useFocusEffect(
     useCallback(() => {
-      setRefreshing(true);
-      const timeout = setTimeout(() => {
-        setRefreshing(false);
-      }, 1500);
-      setIsReady(true);
-      return () => clearTimeout(timeout);
+      console.log("asd")
+       setRefreshing(false);
     }, [])
   );
 
-  useEffect(() => {
-    if (isReady && !isAuthenticated) {
-      router.replace("/Auth/login");
-    }
-  }, [isReady, isAuthenticated]);
-
   const onRefresh = () =>
-    new Promise((resolve) => {
-      setRefreshing(true);
-      setTimeout(() => {
-        setRefreshing(false);
-        resolve();
-      }, 1500);
+    new Promise(() => {
+      setRefreshing(false);
+      console.log("hi")
     });
-
-  if (!isAuthenticated) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
 
   if (refreshing) {
     return <DashboardSkeleton />;
@@ -154,10 +131,10 @@ const Dashboard = () => {
                     style={{
                       flexDirection: "column",
                       justifyContent: "center",
-                      
+
                       // For RTL
                       writingDirection: "rtl",
-                      
+
                       height: 220,
                     }}
                   >

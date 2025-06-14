@@ -189,7 +189,10 @@ const EmployeeDashboard = () => {
                   <View style={styles.statusContent}>
                     {isCheckedIn ? (
                       <>
-                        <Text className="!font-sans" style={styles.checkedInText}>
+                        <Text
+                          className="!font-sans"
+                          style={styles.checkedInText}
+                        >
                           حضور شما ثبت شده است
                         </Text>
                         <Ionicons
@@ -200,7 +203,10 @@ const EmployeeDashboard = () => {
                       </>
                     ) : (
                       <>
-                        <Text className="!font-sans" style={styles.checkedOutText}>
+                        <Text
+                          className="!font-sans"
+                          style={styles.checkedOutText}
+                        >
                           در انتظار ثبت حضور
                         </Text>
                         <Ionicons name="time" size={28} color="#F59E0B" />

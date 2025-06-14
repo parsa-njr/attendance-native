@@ -1,46 +1,63 @@
 import React, { useState } from "react";
-import { Modal, View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import {
+  Modal,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from "react-native";
 import DatePicker, { getFormatedDate } from "react-native-modern-datepicker";
-import TextFeild from "./TextFeild";
+import moment from "moment-jalaali";
+
+moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
 
 const DatePickerInput = ({
   inputKey,
   label,
   placeholder,
-  inputClassName,
+  inputClassName = "",
   value,
   onChange,
-  type,
+  type = "calendar", // "calendar" or "time"
 }) => {
-  const [selectedDate, setSelectedDate] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [datePickerKey, setDatePickerKey] = useState(Date.now());
+  const [tempDate, setTempDate] = useState(value || "");
 
   const handleOpenModal = () => {
     setDatePickerKey(Date.now());
     setModalOpen(true);
+    setTempDate(value || "");
+  };
+
+  const confirmDate = () => {
+    onChange(tempDate);
+    setModalOpen(false);
+  };
+
+  const handleDateChange = (date) => {
+    if (type === "calendar") {
+      setTempDate(date); // Don't close yet
+    } else {
+      onChange(date);
+      setModalOpen(false);
+    }
   };
 
   return (
-    <>
+    <View className={`mb-6 ${inputClassName}`}>
       {label && (
-        <>
-          <Text className="font-sans text-sm text-gray-700 mb-1 text-center">
-            {label}{" "}
-          </Text>
-        </>
+        <Text className="mb-2 text-sm text-right text-gray-500 font-sans px-4">
+          {label}
+        </Text>
       )}
+
       <TouchableOpacity
-        key={`${inputKey}_handler_${datePickerKey}`}
         onPress={handleOpenModal}
-        className={`border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 text-right text-[#6b7280] font-sans  ${inputClassName}`}
+        className="rounded-xl px-4 py-3 text-base text-right font-sans bg-white border border-gray-200"
       >
-        <Text
-          style={{
-            color: "#6b7280",
-          }}
-          className="text-right text-[#6b7280]   font-sans"
-        >
+        <Text className="text-base text-gray-600 text-right font-sans">
           {value || placeholder}
         </Text>
       </TouchableOpacity>
@@ -50,28 +67,28 @@ const DatePickerInput = ({
         transparent={true}
         animationType="fade"
         onRequestClose={() => setModalOpen(false)}
-        // key={`${inputKey}_picker_${datePickerKey}`}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity
-              className=" w-5 h-5 p-10 my-10 mx-24 "
+              className="absolute top-2 left-3 z-10"
               onPress={() => setModalOpen(false)}
             >
-              <Text className="text-2xl text-gray-500">✕</Text>
+              <Text className="text-2xl text-gray-400">✕</Text>
             </TouchableOpacity>
+
             <DatePicker
               key={`${inputKey}_picker_${datePickerKey}`}
               isGregorian={false}
+              mode={type}
               minuteInterval={5}
-              minimumDate="1300/01/01" // Persian calendar support
               selectorStartingYear={1380}
-              mode={type || "calendar"}
+              minimumDate="1300/01/01"
               selected={getFormatedDate(new Date(), "jYYYY/jMM/jDD")}
-              onDateChange={(date) => {
-                onChange(date);
-                setModalOpen(false);
-              }}
+              onDateChange={handleDateChange}
+              onTimeChange={handleDateChange}
+              onSelectedChange={() => {}} // to avoid warning
+              onMonthYearChange={() => {}}
               options={{
                 textHeaderColor: "#000",
                 textDefaultColor: "#000",
@@ -81,21 +98,30 @@ const DatePickerInput = ({
                 borderColor: "rgba(0,0,0,0.1)",
               }}
               style={{ borderRadius: 10 }}
-              onMonthYearChange={(date) => {
-                onChange(date);
-              }}
-              onSelectedChange={(date) => {
-                onChange(date);
-              }}
-              onTimeChange={(date) => {
-                onChange(date);
-                setModalOpen(false);
-              }}
             />
+
+            {/* ✅ Show انتخاب button ONLY for date mode */}
+            {type === "calendar" && (
+              <TouchableOpacity
+                onPress={confirmDate}
+                style={{
+                  marginTop: 20,
+                  backgroundColor: "#467FD0",
+                  padding: 10,
+                  borderRadius: 8,
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 16, textAlign: "center" }}
+                >
+                  انتخاب
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Modal>
-    </>
+    </View>
   );
 };
 
@@ -104,17 +130,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
     width: "90%",
-    height: "50%",
-    minHeight: 400,
     maxWidth: 400,
-
+    height: Platform.OS === "ios" ? "50%" : 450,
     shadowColor: "#000",
     shadowOpacity: 0.25,
     shadowRadius: 4,
