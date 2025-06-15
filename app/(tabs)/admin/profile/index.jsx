@@ -64,7 +64,6 @@ const Index = () => {
     });
 
   const getProfile = async () => {
-    
     setRefreshing(true);
     try {
       const response = await ApiServiece.get("/customer/profile");

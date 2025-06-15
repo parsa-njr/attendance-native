@@ -5,11 +5,11 @@ buildscript {
     google()
     mavenCentral()
   }
-  dependencies {
-    classpath('com.android.tools.build:gradle')
-    classpath('com.facebook.react:react-native-gradle-plugin')
-    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
-  }
+ dependencies {
+  classpath('com.android.tools.build:gradle:8.3.0') // ✅ نسخه پایدار و موجود
+  classpath('com.facebook.react:react-native-gradle-plugin')
+  classpath(classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10') // یا نسخه‌ای که با پروژه‌ت سازگاره
+}
 }
 
 def reactNativeAndroidDir = new File(

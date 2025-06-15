@@ -291,7 +291,7 @@ const Index = () => {
               </View>
             ) : (
               <FlatList
-                contentContainerStyle={{ paddingBottom: 100 }}
+                  contentContainerStyle={{ paddingBottom: 100 }}
                 data={users}
                 keyExtractor={(item) => item._id.toString()}
                 ItemSeparatorComponent={() => (

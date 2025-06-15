@@ -13,11 +13,11 @@ import TextFeild from "../../shared/inputs/TextFeild";
 import Container from "../../shared/Container";
 import ApiService from "@/services/apiService";
 
-const AddLocation = ({ visible, onClose, onSuccess }) => {
+const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
   const [location, setLocation] = useState(null);
   const [initialRegion, setInitialRegion] = useState({
-    latitude: 35.6892,
-    longitude: 51.389,
+    latitude: locationData?.lat,
+    longitude: locationData?.long,
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   });
@@ -40,8 +40,8 @@ const AddLocation = ({ visible, onClose, onSuccess }) => {
   }, []);
 
   const initialValues = {
-    name: "",
-    range: "",
+    name: locationData?.name,
+    range: String(locationData?.range),
     latitude: location?.latitude,
     longitude: location?.longitude,
   };
@@ -92,7 +92,7 @@ const AddLocation = ({ visible, onClose, onSuccess }) => {
   return (
     <BottomSheet visible={visible} onClose={onClose} extraHeight={350}>
       <Container>
-        <Header classname="mb-4" title="افزودن مکان جدید" />
+        <Header classname="mb-4" title="ویرایش مکان" />
 
         <Formik
           initialValues={initialValues}
@@ -210,11 +210,12 @@ const AddLocation = ({ visible, onClose, onSuccess }) => {
               )}
 
               <SubmitButton
-                title="ذخیره موقعیت"
+                title="ویرایش موقعیت"
                 className="mt-4"
                 onPress={handleSubmit}
                 loading={isSubmitting && isValid}
                 disabled={isSubmitting || !isValid}
+        
               />
             </>
           )}
@@ -224,4 +225,4 @@ const AddLocation = ({ visible, onClose, onSuccess }) => {
   );
 };
 
-export default AddLocation;
+export default EditLocation;
