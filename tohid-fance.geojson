@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Tohid Sepahanshahr"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [51.558312, 32.543472],
+            [51.558312, 32.544472],
+            [51.559812, 32.544472],
+            [51.559812, 32.543472],
+            [51.558312, 32.543472]
+          ]
+        ]
+      }
+    }
+  ]
+}

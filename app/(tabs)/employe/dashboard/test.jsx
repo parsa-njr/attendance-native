@@ -1,6 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,33 +8,28 @@ import {
   Image,
   Animated,
   Easing,
+  StyleSheet,
 } from "react-native";
-
+import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import MapViewDirections from "react-native-maps-directions";
+import * as Location from "expo-location";
+import MapView, { Marker } from "react-native-maps";
 import LottieView from "lottie-react-native";
-import MapView, { Marker, Polyline } from "react-native-maps"; // import MapView and Marker
-import polyline from "@mapbox/polyline";
-import * as Location from "expo-location"; // import expo-location
-import CardComponent from "../../../../components/shared/CardComponent";
 import Loading from "../../../../components/loading/Loading";
 import EmployeeDashboardSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
+import CardComponent from "../../../../components/shared/CardComponent";
+import ApiService from "@/services/apiService";
 
 const EmployeeDashboard = () => {
-  // Existing states...
   const [checkOutModal, setCheckOutModal] = useState(false);
-  const [insideFence, setInsideFence] = useState(false);
-  const [routeCoords, setRouteCoords] = useState([]);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [distance, setDistance] = useState(null);
-  const [duration, setDuration] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
-
-  // New state for user location
+  const [registeredLocation, setRegisteredLocation] = useState(null);
+  const [initialRegion, setInitialRegion] = useState({});
   const [location, setLocation] = useState(null);
+  const [distance, setDistance] = useState(null);
   const [locationErrorMsg, setLocationErrorMsg] = useState(null);
 
   // Animation refs and values
@@ -45,52 +38,43 @@ const EmployeeDashboard = () => {
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
   const confettiRef = useRef(null);
 
-  const customMapStyle = [
-    {
-      elementType: "geometry",
-      stylers: [{ color: "#fef8e8" }],
-    },
-    {
-      elementType: "labels.icon",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#5e5c5c" }],
-    },
-    {
-      elementType: "labels.text.stroke",
-      stylers: [{ color: "#fef8e8" }],
-    },
-    {
-      featureType: "poi",
-      stylers: [{ visibility: "simplified" }, { color: "#fde68a" }],
-    },
-    {
-      featureType: "poi.park",
-      stylers: [{ color: "#c8f7c5" }, { visibility: "simplified" }],
-    },
-    {
-      featureType: "road",
-      stylers: [{ color: "#ffffff" }, { lightness: 100 }],
-    },
-    {
-      featureType: "road.arterial",
-      stylers: [{ color: "#ffd3b6" }],
-    },
-    {
-      featureType: "road.highway",
-      stylers: [{ color: "#ffaaa7" }],
-    },
-    {
-      featureType: "transit",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "water",
-      stylers: [{ color: "#a2e3ff" }],
-    },
-  ];
+  // Request permission and watch position to get live updates
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+
+      const userLocation = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = userLocation?.coords;
+      setInitialRegion({
+        latitude,
+        longitude,
+        
+      });
+      setLocation({ latitude, longitude });
+    })();
+  }, []);
+
+  // Recalculate distance when both locations are available
+  useEffect(() => {
+    const calculateDistance = async () => {
+      if (location && registeredLocation) {
+        const dist = await Location.getDistanceAsync(
+          {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+          {
+            latitude: registeredLocation.latitude,
+            longitude: registeredLocation.longitude,
+          }
+        );
+        setDistance(dist);
+      }
+    };
+
+    calculateDistance();
+  }, [location, registeredLocation]);
 
   // Confetti effect
   useEffect(() => {
@@ -152,70 +136,38 @@ const EmployeeDashboard = () => {
     ]).start();
   };
 
-  const onRefresh = () =>
-    new Promise((resolve) => {
-      setRefreshing(true);
-      setTimeout(() => {
-        setRefreshing(false);
-        resolve();
-      }, 1500);
-    });
-
-  const destination = useRef({
-    latitude: 32.513324,
-    longitude: 51.791245,
-  }).current;
-
-  const getUserLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("دسترسی به موقعیت داده نشد.");
-      return;
-    }
-    const loc = await Location.getCurrentPositionAsync({});
-    setLocation({
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
-    });
-  };
-
-  const getRouteFromMapIr = async (origin, dest) => {
-    const url = `https://map.ir/routes/route/v1/driving/${origin.longitude},${origin.latitude};${dest.longitude},${dest.latitude}`;
+  const getDashboardData = async () => {
     try {
-      const res = await axios.get(url, {
-        params: { overview: "full", geometries: "polyline" },
-        headers: {
-          "x-api-key":
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImQ5N2E0NzE3NDNhM2M1OTQ3Y2YzNGUwZTIwYWRlZGUyNmRmMTFkYjY5OTc5NWY4YmYwYTg0ZDcyODk1Y2M3NjYwZmI2NWI0N2Q0Y2U1ODlmIn0.eyJhdWQiOiIzMjk2NSIsImp0aSI6ImQ5N2E0NzE3NDNhM2M1OTQ3Y2YzNGUwZTIwYWRlZGUyNmRmMTFkYjY5OTc5NWY4YmYwYTg0ZDcyODk1Y2M3NjYwZmI2NWI0N2Q0Y2U1ODlmIiwiaWF0IjoxNzUwMDY3NjA3LCJuYmYiOjE3NTAwNjc2MDcsImV4cCI6MTc1MjY1OTYwNywic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.VNG637QjvVNbb-noYr5_92-cLU2UXwy-GkXxFKhyuYEb4S3xSLb1OR8n8PUoGUCz-VMPEKqX6-RqWZfH3gECAgodKUD5MFNA9c9qn8HbGH4mLDu61txCJHy-jLFOAw2BXcWslUM7uMFbhwPIYTVV3RN2vWvaNJ9eZ1uPgiUz0EP2OFylR4tI6Co21oW91DV2qsjwR5bPzgvlUBDkxFYNjq5k8XiJ7SbVO-qiB1c-A8hgzp8GCXGTpp2PLlyWVHHiNXOS436wxiU1J8dQZyDd4yGcBrZx0e1_NC9gDiVY4GiTQuLpbcQc6Agxt_sZIXRNSj0IWAti3Z3EW0mawuqoew",
-        },
-      });
+      setRefreshing(true);
+      const response = await ApiService.get("/user/dashboard");
+      const location = response?.data?.user?.location;
 
-      const route = res.data.routes[0];
+      if (location?.latitude && location?.longitude) {
+        setRegisteredLocation({
+          latitude: location.latitude,
+          longitude: location.longitude,
+          range: location.range,
+        });
+      } else {
+        setRegisteredLocation(null);
+      }
 
-      setDistance((route.distance / 1000).toFixed(1));
-      setDuration(Math.ceil(route.duration / 60));
-
-      const coords = polyline
-        .decode(route.geometry)
-        .map(([lat, lng]) => ({ latitude: lat, longitude: lng }));
-      setRouteCoords(coords);
-    } catch (err) {
-      console.error("خطا در مسیر‌یابی Map.ir:", err);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRegisteredLocation(null);
+      setRefreshing(false);
     }
   };
+  const onRefresh = () =>
+    new Promise(() => {
+      setRefreshing(true);
+      getDashboardData();
+    });
 
-  React.useEffect(() => {
-    if (location) getRouteFromMapIr(location, destination);
-  }, [location]);
-
-  // Use focus effect calls getUserLocation and refreshes UI
   useFocusEffect(
     useCallback(() => {
-      setRouteCoords([]);
-      setErrorMsg(null);
-      (async () => {
-        await getUserLocation();
-      })();
+      getDashboardData();
     }, [])
   );
 
@@ -265,7 +217,7 @@ const EmployeeDashboard = () => {
           <ScrollView>
             {/* Profile & Greeting */}
             <View className="px-5 pt-5">
-              <CardComponent className="flex-row-reverse items-center mt-9 p-5">
+              <CardComponent className="p-5 flex-row-reverse items-center mt-9">
                 <View className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden ml-4">
                   <Image
                     source={{ uri: "https://i.pravatar.cc/300?img38" }}
@@ -274,68 +226,77 @@ const EmployeeDashboard = () => {
                 </View>
 
                 <View className="flex-1">
-                  <Text className="font-sans text-right text-gray-800 text-lg">
+                  <Text className="font-sans text-lg text-gray-800 text-right">
                     صبح بخیر رضا
                   </Text>
-                  <Text className="text-right mt-1 text-gray-500 text-sm">
+                  <Text className="font-sans text-sm text-gray-500 mt-1 text-right">
                     {todayDate}
                   </Text>
                 </View>
               </CardComponent>
             </View>
 
-            {/* Location Map */}
-            <View className="px-5 mt-8">
-              <View className="h-80 rounded-3xl overflow-hidden shadow-2xl bg-[#FDE68A] border-4 border-yellow-400/70 relative">
+            {/* Display User Location with Map */}
+            <View className="px-5 mt-5">
+              <CardComponent className="p-4" style={{ height: 300 }}>
                 {location ? (
                   <>
+                    <Text className="text-right font-sans text-gray-700 mb-2">
+                      موقعیت شما: {location.latitude.toFixed(5)} ،{" "}
+                      {location.longitude.toFixed(5)}
+                    </Text>
                     <MapView
-                      style={{ flex: 1 }}
-                      customMapStyle={customMapStyle}
-                      initialRegion={{
-                        ...location,
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
+                      style={styles.map}
+                      region={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.005,
                       }}
-                      showsUserLocation
-                      loadingEnabled
-                      showsMyLocationButton={false}
+                      showsUserLocation={true}
+                      followsUserLocation={true}
                     >
+                      {/* User location marker */}
                       <Marker
-                        coordinate={destination}
-                        title="📍 مقصد"
-                        pinColor="green"
+                        coordinate={{
+                          latitude: location.latitude,
+                          longitude: location.longitude,
+                        }}
+                        title="موقعیت شما"
+                        pinColor="blue"
                       />
-                      {routeCoords.length > 0 && (
-                        <Polyline
-                          coordinates={routeCoords}
-                          strokeWidth={4}
-                          strokeColor="#FF5733"
+
+                      {/* Registered location marker (if available) */}
+                      {registeredLocation && (
+                        <Marker
+                          coordinate={{
+                            latitude: registeredLocation?.latitude,
+                            longitude: registeredLocation?.longitude,
+                          }}
+                          title="موقعیت ثبت‌شده"
+                          pinColor="red"
                         />
                       )}
                     </MapView>
-                    <View className="absolute bottom-2 left-0 right-0 items-center">
-                      <Text className="bg-white/80 px-4 py-2 rounded-full text-gray-800">
-                        فاصله: {distance} km • زمان: {duration} min
-                      </Text>
-                    </View>
                   </>
+                ) : locationErrorMsg ? (
+                  <Text className="text-red-500 text-right font-sans">
+                    {locationErrorMsg}
+                  </Text>
                 ) : (
-                  <View className="flex-1 items-center justify-center bg-yellow-100">
-                    <Text className="text-yellow-700">
-                      {errorMsg || "در حال دریافت موقعیت..."}
-                    </Text>
-                  </View>
+                  <Text className="text-right font-sans text-gray-500">
+                    در حال دریافت موقعیت...
+                  </Text>
                 )}
-              </View>
+              </CardComponent>
             </View>
 
             {/* Status & Actions */}
             <View className="px-5 mt-8 items-center">
-              <CardComponent className="p-6 w-full border border-indigo-100 items-center">
+              <CardComponent className="p-6 w-full items-center border border-indigo-100">
                 {/* Status Card */}
                 <Animated.View
-                  style={{ transform: [{ scale: pulseAnim }] }}
+                  style={[{ transform: [{ scale: pulseAnim }] }]}
                   className={`flex-row items-center justify-end w-full mb-6 p-4 rounded-lg ${
                     isCheckedIn ? "bg-green-500/10" : "bg-yellow-400/10"
                   }`}
@@ -354,7 +315,7 @@ const EmployeeDashboard = () => {
                       </>
                     ) : (
                       <>
-                        <Text className="text-[18px] text-yellow-800 mr-3 font-sans">
+                        <Text className="text-[18px] text-amber-700 mr-3 font-sans">
                           در انتظار ثبت حضور
                         </Text>
                         <Ionicons name="time" size={28} color="#F59E0B" />
@@ -373,7 +334,7 @@ const EmployeeDashboard = () => {
                     <TouchableOpacity
                       onPress={handlePress}
                       activeOpacity={0.7}
-                      className={`w-44 h-44 rounded-full justify-center items-center relative overflow-hidden ${
+                      className={`w-[176px] h-[176px] rounded-full justify-center items-center relative overflow-hidden ${
                         isCheckedIn ? "bg-red-500" : "bg-emerald-500"
                       }`}
                       style={{
@@ -394,7 +355,7 @@ const EmployeeDashboard = () => {
                           isCheckedIn ? "bg-red-500/20" : "bg-emerald-500/20"
                         }`}
                       >
-                        <Text className="text-white text-2xl  font-sans">
+                        <Text className="font-sans text-white text-2xl font-extrabold">
                           {isCheckedIn ? "خروج" : "ورود"}
                         </Text>
                       </View>
@@ -419,7 +380,7 @@ const EmployeeDashboard = () => {
                       source={require("../../../../assets/animations/check.json")}
                       speed={1.5}
                       loop={false}
-                      className="w-72 h-72"
+                      className="w-[300px] h-[300px]"
                     />
                   </View>
                 )}
@@ -427,24 +388,26 @@ const EmployeeDashboard = () => {
                 {/* Time display */}
                 {isCheckedIn && (
                   <Animated.View
-                    style={{
-                      opacity: rotateAnim,
-                      transform: [
-                        {
-                          translateY: rotateAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [20, 0],
-                          }),
-                        },
-                      ],
-                    }}
-                    className="mt-6 bg-blue-50 px-5 py-4 rounded-lg w-full border border-blue-200"
+                    style={[
+                      {
+                        opacity: rotateAnim,
+                        transform: [
+                          {
+                            translateY: rotateAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [20, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                    className="mt-6 bg-blue-100 px-5 py-4 rounded-xl w-full border border-blue-300"
                   >
-                    <View className="flex-row-reverse items-center space-x-2 space-x-reverse">
+                    <View className="flex-row-reverse gap-1 items-center">
                       <Ionicons name="time" size={20} color="#4F46E5" />
-                      <Text className="text-blue-900 text-base font-medium font-IRANSansMobile">
+                      <Text className="font-sans text-blue-900 text-base">
                         زمان ورود:{" "}
-                        <Text className="font-bold text-blue-800">
+                        <Text className="font-sans font-bold text-blue-800">
                           {checkInTime}
                         </Text>
                       </Text>
@@ -457,7 +420,7 @@ const EmployeeDashboard = () => {
             {/* Motivational Quote */}
             <View className="px-5 mt-8">
               <CardComponent className="p-5">
-                <Text className="text-lg font-sans text-gray-800 mb-2 text-right">
+                <Text className="text-lg text-gray-800 mb-2 text-right font-sans">
                   انگیزه روزانه 💬
                 </Text>
                 <Text className="text-gray-600 text-right leading-6 font-sans">
@@ -469,8 +432,8 @@ const EmployeeDashboard = () => {
             {/* Attendance Summary */}
             <View className="px-5 mt-8 mb-10">
               <View className="flex-row-reverse justify-between">
-                <CardComponent className="w-1/3 p-4 items-center">
-                  <Text className="text-3xl font-bold text-yellow-500 font-sans">
+                <CardComponent className="w-[30%] p-4 items-center">
+                  <Text className="text-2xl font-bold text-yellow-400 font-sans">
                     20
                   </Text>
                   <Text className="text-xs text-gray-500 mt-2 text-center font-sans">
@@ -478,8 +441,8 @@ const EmployeeDashboard = () => {
                   </Text>
                 </CardComponent>
 
-                <CardComponent className="w-1/3 p-4 items-center">
-                  <Text className="text-3xl font-bold text-yellow-500 font-sans">
+                <CardComponent className="w-[30%] p-4 items-center">
+                  <Text className="text-2xl font-bold text-yellow-400 font-sans">
                     2
                   </Text>
                   <Text className="text-xs text-gray-500 mt-2 text-center font-sans">
@@ -487,8 +450,8 @@ const EmployeeDashboard = () => {
                   </Text>
                 </CardComponent>
 
-                <CardComponent className="w-1/3 p-4 items-center">
-                  <Text className="text-3xl font-bold text-yellow-500 font-sans">
+                <CardComponent className="w-[30%] p-4 items-center">
+                  <Text className="text-2xl font-bold text-yellow-400 font-sans">
                     1
                   </Text>
                   <Text className="text-xs text-gray-500 mt-2 text-center font-sans">
@@ -503,5 +466,12 @@ const EmployeeDashboard = () => {
     </Loading>
   );
 };
+
+const styles = StyleSheet.create({
+  map: {
+    flex: 1,
+    borderRadius: 8,
+  },
+});
 
 export default EmployeeDashboard;

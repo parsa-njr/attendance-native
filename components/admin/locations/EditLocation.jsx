@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
 import { Formik } from "formik";
@@ -14,34 +20,24 @@ import Container from "../../shared/Container";
 import ApiService from "@/services/apiService";
 
 const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(
+    locationData?.lat && locationData?.long
+      ? { latitude: locationData.lat, longitude: locationData.long }
+      : null
+  );
+
   const [initialRegion, setInitialRegion] = useState({
-    latitude: locationData?.lat,
-    longitude: locationData?.long,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
+    latitude: locationData?.lat || 35.6892,
+    longitude: locationData?.long || 51.389,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
   });
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
-
-      const userLocation = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = userLocation.coords;
-      setInitialRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-      setLocation({ latitude, longitude });
-    })();
-  }, []);
+  const [loadingLocation, setLoadingLocation] = useState(false);
 
   const initialValues = {
-    name: locationData?.name,
-    range: String(locationData?.range),
+    name: locationData?.name || "",
+    range: String(locationData?.range || ""),
     latitude: location?.latitude,
     longitude: location?.longitude,
   };
@@ -56,8 +52,8 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
       const data = {
         name: values.name,
         range: values.range,
-        latitude: values.latitude,
-        longitude: values.longitude,
+        latitude: location.latitude,
+        longitude: location.longitude,
       };
 
       const response = await ApiService.post("/customer/locations", data);
@@ -95,6 +91,7 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
         <Header classname="mb-4" title="ویرایش مکان" />
 
         <Formik
+          enableReinitialize
           initialValues={initialValues}
           validationSchema={locationSchema}
           onSubmit={async (values, { resetForm, setSubmitting }) => {
@@ -107,12 +104,10 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
         >
           {({
             handleChange,
-            handleBlur,
             handleSubmit,
             values,
             errors,
             touched,
-            setFieldValue,
             isSubmitting,
             isValid,
           }) => (
@@ -123,7 +118,6 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                 placeholder="نام مکان"
                 className="mb-4"
               />
-
               <ErrorMessage error={errors.name} visible={touched.name} />
 
               <TextFeild
@@ -135,7 +129,6 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                 className="mb-4"
                 keyboardType="numeric"
               />
-
               <ErrorMessage error={errors.range} visible={touched.range} />
 
               <Text className="text-sm text-gray-600 mb-2 mt-4 font-sans text-right">
@@ -160,7 +153,7 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                 }}
               >
                 <MapView
-                  style={{ flex: 1, borderRadius: 16 }}
+                  style={{ flex: 1 }}
                   initialRegion={initialRegion}
                   region={
                     location
@@ -174,9 +167,6 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                   onPress={handleSelectLocation}
                   showsUserLocation
                   showsMyLocationButton
-                  showsScale={false}
-                  showsBuildings
-                  showsCompass={false}
                 >
                   {location && (
                     <>
@@ -193,15 +183,13 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                   )}
                 </MapView>
               </View>
-              <ErrorMessage
-                error={errors.latitude}
-                visible={touched.longitude}
-              />
+
               {location && (
                 <View className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4">
                   <Text className="text-sm text-gray-600 font-sans text-right">
-                    📍 مختصات انتخاب‌شده:{" "}
-                    <Text className="text-xs text-gray-500 font-sans">
+                    مختصات انتخاب‌شده:
+                    <Text className="text-xs text-gray-500">
+                      {" "}
                       {location.latitude.toFixed(6)} /{" "}
                       {location.longitude.toFixed(6)}
                     </Text>
@@ -215,7 +203,6 @@ const EditLocation = ({ visible, onClose, onSuccess, locationData }) => {
                 onPress={handleSubmit}
                 loading={isSubmitting && isValid}
                 disabled={isSubmitting || !isValid}
-        
               />
             </>
           )}

@@ -350,7 +350,7 @@ const Index = () => {
                 setShowDialog(false);
                 handleLogout();
               }}
-              mode="logout" // animation for logout confirmation
+              mode="warning" // animation for logout confirmation
               title="می‌خواهید از حساب کاربری خارج شوید؟"
               cancelText="خیر"
               confirmText="بله، خارج شو"
