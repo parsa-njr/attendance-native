@@ -1,19 +1,29 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, SafeAreaView, TextInput } from "react-native";
-import RequestForm from "../../../../components/employee/requests/RequestForm";
+import React, { useState, useCallback } from "react";
+import moment from "moment-jalaali";
+
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import AddRequest from "../../../../components/employee/requests/AddRequest";
+import ShowRequest from "../../../../components/employee/requests/ShowRequest";
+import Loading from "../../../../components/loading/Loading";
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import CardComponent from "../../../../components/shared/CardComponent";
-
-const mockRequests = [
-  { id: 1, type: "مرخصی", date: "1404/02/15", status: "pending" },
-  { id: 2, type: "دورکاری", date: "1404/02/12", status: "accepted" },
-  { id: 3, type: "دورکاری", date: "1404/02/12", status: "accepted" },
-  { id: 4, type: "دورکاری", date: "1404/02/12", status: "pending" },
-];
+import ApiServiece from "../../../../services/apiService";
+import RequestsSkeleton from "../../../../components/loading/Skeleton/Employee/Requests/RequestsSkeleton";
 
 const Index = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [requestList, setRequestList] = useState(mockRequests);
+  const [addmodalVisible, setAddModalVisible] = useState(false);
+  const [showModalVisible, setShowModalVisible] = useState(false);
+  const [requests, setRequests] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [requestData, setRequestData] = useState();
   const [search, setSearch] = useState("");
 
   const handleSearch = (text) => {
@@ -22,9 +32,30 @@ const Index = () => {
       const filtered = requestList.filter((item) =>
         item.type.toLowerCase().includes(text.toLowerCase())
       );
-      setRequestList(filtered);
+      setRequests(filtered);
     } else {
-      setRequestList(mockRequests);
+      setRequests(mockRequests);
+    }
+  };
+
+  const toJalaliDate = (isoDate) => {
+    if (!isoDate) return "";
+    return moment(isoDate).format("jYYYY/jMM/jDD");
+  };
+
+  const getRequests = async () => {
+    setRefreshing(true);
+    try {
+      const response = await ApiServiece.get("/user/requests");
+
+      const data = response.data.data;
+
+      setRequests(data);
+
+      setRefreshing(false);
+    } catch (error) {
+      console.log("error", error);
+      setRefreshing(false);
     }
   };
 
@@ -54,44 +85,116 @@ const Index = () => {
         return "تعیین وظعیت نشده";
     }
   };
+
+  const onRefresh = () =>
+    new Promise(() => {
+      setRefreshing(true);
+      getRequests();
+    });
+
+  const prepareModal = (type, date, status, note) => {
+    setRequestData({
+      type,
+      date,
+      status,
+      note,
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getRequests();
+    }, [])
+  );
+
+  if (refreshing) {
+    return <RequestsSkeleton />;
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50 px-5 pt-10">
-      {/* Search Bar */}
-      <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6 ">
-        <TextInput
-          className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans"
-          placeholder="جستجو..."
-          placeholderTextColor="#888"
-          value={search}
-          onChangeText={handleSearch}
-        />
-      </View>
+    <Loading onRefresh={onRefresh}>
+      {() => (
+        <SafeAreaView className="flex-1 bg-gray-50 px-5 pt-10">
+          {/* Search Bar */}
+          <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6 ">
+            <TextInput
+              className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans"
+              placeholder="جستجو..."
+              placeholderTextColor="#888"
+              value={search}
+              onChangeText={handleSearch}
+            />
+          </View>
 
-      <ScrollView >
-        {requestList.map((req) => (
-          <CardComponent
-            key={req.id}
-            className="bg-white p-4 rounded-2xl shadow-sm flex-row-reverse justify-between items-center 
-             mx-1 mt-3"
-          >
-            <View>
-              <Text className="text-lg text-right font-sans text-gray-800">
-                {req.type}
-              </Text>
-              <Text className="text-sm text-right text-gray-500 font-sans">
-                {req.date}
-              </Text>
-            </View>
-            <Text className={`text-sm font-sans ${getStatusColor(req.status)}`}>
-              {translateStatus(req.status)}
-            </Text>
-          </CardComponent>
-        ))}
-      </ScrollView>
+          <ScrollView>
+            {requests.map((req) => (
+              <TouchableOpacity
+                key={req.id}
+                onPress={() => {
+                  setShowModalVisible(true);
+                  prepareModal(
+                    req?.requestType,
+                    req?.createdAt,
+                    req?.status,
+                    req?.customer_note
+                  );
+                }}
+                activeOpacity={0.8} // Adjusts the click opacity feedback
+                className="mx-2 mt-3"
+              >
+                <CardComponent className="bg-white p-5 rounded-2xl shadow-md flex-row-reverse justify-between items-center border border-gray-100">
+                  <View className="flex-1 pr-4">
+                    <Text className="text-lg font-semibold text-right text-gray-900 font-sans">
+                      {req?.requestType === "overtime"
+                        ? "اضافه کاری"
+                        : req?.requestType === "leave"
+                        ? "مرخصی"
+                        : "نامشخص"}
+                    </Text>
+                    <Text className="text-xs mt-1 text-right text-gray-400 font-sans">
+                      تاریخ درخواست: {toJalaliDate(req.createdAt)}
+                    </Text>
+                  </View>
 
-      <AddButton onPress={() => setModalVisible(true)} />
-      <RequestForm open={modalVisible} onClose={() => setModalVisible(false)} />
-    </SafeAreaView>
+                  <View
+                    className={`px-3 py-1 rounded-full ${
+                      req.status === "accepted"
+                        ? "bg-green-100"
+                        : req.status === "pending"
+                        ? "bg-yellow-100"
+                        : "bg-red-100"
+                    }`}
+                  >
+                    <Text
+                      className={`text-xs font-medium font-sans ${getStatusColor(
+                        req.status
+                      )}`}
+                    >
+                      {translateStatus(req.status)}
+                    </Text>
+                  </View>
+                </CardComponent>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <AddButton onPress={() => setAddModalVisible(true)} />
+          <AddRequest
+            visible={addmodalVisible}
+            onClose={() => setAddModalVisible(false)}
+            onSuccess={() => {
+              getRequests();
+            }}
+          />
+
+          <ShowRequest
+            visible={showModalVisible}
+            onClose={() => setShowModalVisible(false)}
+            requestData={requestData}
+          />
+        </SafeAreaView>
+      )}
+    </Loading>
   );
 };
 

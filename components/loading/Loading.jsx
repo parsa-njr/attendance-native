@@ -26,8 +26,6 @@ const Loading = ({ children, onRefresh }) => {
       >
         {typeof children === "function" ? children({ refreshing }) : children}
       </ScrollView>
-
-      
     </View>
   );
 };
@@ -35,11 +33,10 @@ const Loading = ({ children, onRefresh }) => {
 const styles = StyleSheet.create({
   fullScreenContainer: {
     flex: 1,
-    justifyContent: "center",
   },
   container: {
     flexGrow: 1,
- 
+    paddingBottom: 100, // to ensure space for floating button
   },
 });
 

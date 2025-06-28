@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,182 +7,304 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
+
+import LocationSkeleton from "../../../../components/loading/Skeleton/Admin/Location/LocationSkeleton";
+import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
-import { Menu, Provider } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native";
+import CardComponent from "@/components/shared/CardComponent";
+import { Menu, Provider, Divider } from "react-native-paper";
 import AddLocation from "../../../../components/admin/locations/AddLocation";
+import EditLocation from "../../../../components/admin/locations/EditLocation";
 import AddButton from "../../../../components/shared/buttons/AddButton";
-
+import ApiService from "@/services/apiService";
+import Loading from "../../../../components/loading/Loading";
+import Alert from "../../../../components/shared/alert/Alert";
+import { showMessage } from "react-native-flash-message";
 const Index = () => {
-  const data = [
-    {
-      id: 1,
-      name: "دفتر مرکزی",
-      status: "Active",
-      latitude: 35.6892,
-      longitude: 51.389,
-    },
-    {
-      id: 2,
-      name: "انبار شمالی",
-      status: "Inactive",
-      latitude: 35.73,
-      longitude: 51.45,
-    },
-    {
-      id: 3,
-      name: "کارگاه صنعتی",
-      status: "Restricted",
-      latitude: 35.7,
-      longitude: 51.3,
-    },
-  ];
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [locations, setLocations] = useState(data);
+  const [showDialog, setShowDialog] = useState(false);
+  const [deleteLocationId, setDeleteLocationId] = useState(null);
+  const [addModalVisible, setaddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [locations, setLocations] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
-  const [menuVisibleId, setMenuVisibleId] = useState(null);
+  const [openMenuUserId, setOpenMenuUserId] = useState(null);
+  const [locationData, setLocationData] = useState();
 
   const handleSearch = (text) => {
     setSearch(text);
     if (text) {
-      const filtered = data.filter((location) =>
-        location.name.toLowerCase().includes(text.toLowerCase())
+      const filtered = locations?.filter((location) =>
+        location?.name.toLowerCase().includes(text.toLowerCase())
       );
       setLocations(filtered);
     } else {
-      setLocations(data);
+      getLocations();
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "text-green-500";
-      case "inactive":
-        return "text-gray-400";
-      case "restricted":
-        return "text-red-400";
-      default:
-        return "text-black";
+  const getLocations = async () => {
+    try {
+      setRefreshing(true);
+      const response = await ApiService.get("/customer/locations");
+      setLocations(response.data.data);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
     }
   };
 
-  const handleDelete = (id) => {
-    setLocations(locations.filter((item) => item.id !== id));
-    setMenuVisibleId(null);
+  const handleDelete = async (id) => {
+    try {
+      const response = await ApiService.delete(`/customer/locations/${id}`);
+      const message = response.data.message;
+
+      showMessage({
+        message: "موفقیت آمیز بود",
+        description: `${message}`,
+        type: "success",
+        icon: "success",
+      });
+
+      setLocations((prevLocations) =>
+        prevLocations.filter((location) => location._id !== id)
+      );
+    } catch (error) {
+      const message =
+        error?.response?.data?.errorDetails || "خطای ناشناخته‌ای رخ داده است.";
+      showMessage({
+        message: "مشکلی پیش آمد",
+        description: message,
+        type: "danger",
+        icon: "danger",
+      });
+    }
   };
 
-  const handleEdit = (id) => {
-    // Trigger edit logic here
-    console.log("Edit location", id);
-    setMenuVisibleId(null);
+  const readyEditModal = (id, name, range, long, lat) => {
+    setLocationData({
+      id,
+      name,
+      range,
+      long,
+      lat,
+    });
+   
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getLocations();
+    }, [])
+  );
+
+  const onRefresh = () =>
+    new Promise(() => {
+      setRefreshing(true);
+      getLocations();
+    });
+
+  const LocationCard = ({ item }) => {
+    const isMenuVisible = openMenuUserId === item._id;
+    const openMenu = () => setOpenMenuUserId(item._id);
+    const closeMenu = () => setOpenMenuUserId(null);
+
+    return (
+      <View className="flex-row-reverse items-center px-4 py-4 bg-white rounded-2xl mx-4 my-2 shadow-md">
+        {/* Map Thumbnail with slight press effect */}
+        <View
+          className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-blue-500 shadow-sm ml-4"
+          android_ripple={{ color: "#e0f2fe", borderless: false }}
+          style={{
+            borderRadius: 18,
+          }}
+        >
+          <MapView
+            style={{ flex: 1 }}
+            mapType="standard"
+            initialRegion={{
+              latitude: item.latitude,
+              longitude: item.longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            pitchEnabled={false}
+            rotateEnabled={false}
+            liteMode={true}
+          >
+            <Marker
+              coordinate={{
+                latitude: item.latitude,
+                longitude: item.longitude,
+              }}
+            />
+          </MapView>
+        </View>
+
+        {/* Info */}
+        <View className="flex-1 mr-2">
+          <Text className="text-base font-sans text-gray-800 text-right mb-1">
+            {item.name}
+          </Text>
+
+          <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
+            <Ionicons name="location-outline" size={14} color="#6B7280" />
+            <Text className="text-xs text-gray-500 text-right font-sans">
+              {item.latitude.toFixed(4)} / {item.longitude.toFixed(4)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Menu Icon */}
+        <Menu
+          visible={isMenuVisible}
+          onDismiss={closeMenu}
+          anchor={
+            <TouchableOpacity onPress={openMenu} className="ml-1 p-2">
+              <Ionicons name="ellipsis-vertical" size={20} color="#9CA3AF" />
+            </TouchableOpacity>
+          }
+          contentStyle={{
+            borderRadius: 14,
+            backgroundColor: "#fff",
+            elevation: 10,
+          }}
+        >
+          <Menu.Item
+            onPress={() => {}}
+            title="مشاهده پروفایل"
+            titleStyle={{
+              fontWeight: "600",
+              fontFamily: "sans",
+              color: "#1F2937",
+              textAlign: "right",
+            }}
+            leadingIcon={({ size, color }) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            )}
+          />
+
+          <Menu.Item
+            onPress={() => {
+              setEditModalVisible(true);
+              closeMenu();
+              readyEditModal(
+                item?._id,
+                item?.name,
+                item?.range,
+                item?.longitude,
+                item?.latitude
+              );
+            }}
+            title="ویرایش"
+            titleStyle={{
+              fontWeight: "600",
+              color: "#1F2937",
+              fontFamily: "sans",
+              textAlign: "right",
+            }}
+            leadingIcon={({ size, color }) => (
+              <Ionicons name="pencil-outline" size={size} color={color} />
+            )}
+          />
+
+          <Divider />
+
+          <Menu.Item
+            onPress={() => {
+              setDeleteLocationId(item._id);
+              closeMenu();
+              setShowDialog(true);
+              setOpenMenuUserId(null);
+            }}
+            title="حذف"
+            titleStyle={{
+              fontWeight: "600",
+              fontFamily: "sans",
+              color: "#DC2626",
+              textAlign: "right",
+            }}
+            leadingIcon={({ size }) => (
+              <Ionicons name="trash-outline" size={size} color="#DC2626" />
+            )}
+          />
+        </Menu>
+      </View>
+    );
+  };
+
+  if (refreshing) {
+    return <LocationSkeleton />;
+  }
 
   return (
     <Provider>
-      <SafeAreaView className="flex-1 bg-gray-50 relative">
-        {/* Search Bar */}
-        <View className="px-5 pt-8 pb-4 bg-white shadow-sm mt-6">
-          <TextInput
-            className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans"
-            placeholder="جستجو مکان‌ها..."
-            placeholderTextColor="#888"
-            value={search}
-            onChangeText={handleSearch}
-          />
-        </View>
 
-        {/* Location List */}
-        <FlatList
-          contentContainerStyle={{ paddingBottom: 100 }}
-          data={locations}
-          keyExtractor={(item) => item.id.toString()}
-          ItemSeparatorComponent={() => (
-            <View className="h-px bg-gray-200 mx-5" />
-          )}
-          renderItem={({ item }) => (
-            <View className="flex-row-reverse items-center px-4 py-3 bg-white">
-              {/* Map Thumbnail */}
-              <View
-                className="w-16 h-16 rounded-lg overflow-hidden border border-blue-400"
-                style={{ marginLeft: 16 }}
-              >
-                <MapView
-                  style={{ flex: 1 }}
-                  initialRegion={{
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                    latitudeDelta: 0.01,
-                    longitudeDelta: 0.01,
-                  }}
-                  scrollEnabled={false}
-                  zoomEnabled={false}
-                  pitchEnabled={false}
-                  rotateEnabled={false}
-                ></MapView>
-              </View>
+        <SafeAreaView className="flex-1 bg-gray-50 relative">
+          <Loading onRefresh={onRefresh}>
+            {() => (
+              <>
+                {/* Search Bar */}
 
-              <View className="flex-1 mr-2 border-b border-gray-100 pb-3">
-                <View className="flex-row justify-between items-center">
-                  <Menu
-                    visible={menuVisibleId === item.id}
-                    onDismiss={() => setMenuVisibleId(null)}
-                    anchor={
-                      <TouchableOpacity
-                        onPress={() => setMenuVisibleId(item.id)}
-                      >
-                        <Text className="text-2xl text-gray-500">⋯</Text>
-                      </TouchableOpacity>
-                    }
-                  >
-                    <Menu.Item
-                      onPress={() => handleEdit(item.id)}
-                      title="ویرایش"
-                    />
-                    <Menu.Item
-                      onPress={() => handleDelete(item.id)}
-                      title="حذف"
-                    />
-                  </Menu>
-                  <Text className="text-base font-semibold text-gray-800 font-sans text-right">
-                    {item.name}
-                  </Text>
-
-                  {/* Action Menu */}
+                <View className="px-5 pt-8 pb-4 mb-4 bg-white shadow-sm">
+                  <TextInput
+                    className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans mt-6"
+                    placeholder="جستجو..."
+                    placeholderTextColor="#888"
+                    value={search}
+                    onChangeText={handleSearch}
+                  />
                 </View>
-                <Text
-                  className={`text-sm mt-1 ${getStatusColor(
-                    item.status
-                  )} text-right`}
-                >
-                  {item.status}
-                </Text>
-              </View>
-            </View>
-          )}
-        />
 
-        {/* Floating Add Button */}
-        <AddButton  onPress={() => setModalVisible(true)}/>
+                {/* Location List */}
+                <FlatList
+                  contentContainerStyle={{ paddingBottom: 100 }}
+                  data={locations}
+                  keyExtractor={(item) => item._id.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View className="h-px bg-gray-200 mx-5" />
+                  )}
+                  renderItem={({ item }) => <LocationCard item={item} />}
+                />
+              </>
+            )}
+          </Loading>
 
-        {/* <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          className="absolute bottom-6 right-6 w-16 h-16 bg-blue-500 rounded-full justify-center items-center shadow-lg"
-          style={{
-            elevation: 10,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 6,
-          }}
-        >
-          <Text className="text-white text-4xl">+</Text>
-        </TouchableOpacity> */}
-        <AddLocation
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-        />
-      </SafeAreaView>
+          {/* Floating Add Button - outside of scroll */}
+          <AddButton onPress={() => setaddModalVisible(true)} />
+
+          {/* Add Modal */}
+          <AddLocation
+            visible={addModalVisible}
+            onSuccess={getLocations}
+            onClose={() => setaddModalVisible(false)}
+          />
+
+          <EditLocation
+            visible={editModalVisible}
+            onSuccess={getLocations}
+            onClose={() => setEditModalVisible(false)}
+            locationData={locationData}
+          />
+
+          <Alert
+            visible={showDialog}
+            onDismiss={() => setShowDialog(false)}
+            onConfirm={() => {
+              setShowDialog(false);
+              handleDelete(deleteLocationId);
+            }}
+            mode="warning" // animation for logout confirmation
+            title="می خواهید این موقعیت را حذف کنید؟"
+            cancelText="خیر"
+            confirmText="بله، حذف کن"
+          />
+        </SafeAreaView>
+   
     </Provider>
   );
 };

@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import BottomSheet from "../../shared/BottomSheet";
 import Header from "../../shared/Header";
 import SubmitButton from "../../shared/buttons/SubmitButton";
-import { AddUserSchema } from "../../validations/schemas/userSchema";
+import { EditUserSchema } from "../../validations/schemas/userSchema";
 import ErrorMessage from "../../validations/FormError";
 import TextFeild from "../../shared/inputs/TextFeild";
 import Container from "../../shared/Container";
@@ -12,12 +12,13 @@ import ApiService from "@/services/apiService";
 import SelectInput from "../../shared/inputs/SelectInput";
 import { showMessage } from "react-native-flash-message";
 
-const AddUser = ({
+const EditUser = ({
   visible,
   onClose,
   onSuccess,
   locations = [],
   shifts = [],
+  userData,
 }) => {
   // Format options from location props
   const locationOptions = useMemo(() => {
@@ -35,24 +36,30 @@ const AddUser = ({
   }, [shifts]);
 
   const initialValues = {
-    name: "",
-    phone: "",
+    name: userData?.name,
+    phone: userData?.phone,
     password: "",
-    location: "",
-    shift: "", // Formik will manage this now
+    location: userData?.location,
+    shift: userData?.shift, // Formik will manage this now
   };
 
-  const handleAddUser = async (values, { setSubmitting }) => {
+  const handleEditUser = async (values, { setSubmitting }) => {
     try {
       const data = {
         name: values.name,
         phone: values.phone,
-        password: values.password,
         location: values.location,
         shift: values.shift,
       };
 
-      const response = await ApiService.post("/customer/users", data);
+      if (values.password) {
+        data.password = values.password;
+      }
+
+      const response = await ApiService.post(
+        `/customer/users/${userData?.id}`,
+        data
+      );
 
       showMessage({
         message: "موفقیت آمیز بود",
@@ -83,13 +90,13 @@ const AddUser = ({
   return (
     <BottomSheet visible={visible} onClose={onClose}>
       <Container>
-        <Header classname="mb-4" title="افزودن کارمند جدید" />
+        <Header classname="mb-4" title="ویرایش کارمند" />
 
         <Formik
           initialValues={initialValues}
-          validationSchema={AddUserSchema}
+          validationSchema={EditUserSchema}
           onSubmit={async (values, { resetForm, setSubmitting }) => {
-            const success = await handleAddUser(values, { setSubmitting });
+            const success = await handleEditUser(values, { setSubmitting });
             if (success) {
               resetForm();
               onClose();
@@ -110,6 +117,7 @@ const AddUser = ({
             <>
               <TextFeild
                 placeholder="نام"
+                label="نام "
                 value={values.name}
                 onChangeText={handleChange("name")}
                 onBlur={handleBlur("name")}
@@ -119,6 +127,7 @@ const AddUser = ({
 
               <TextFeild
                 placeholder="شماره تماس"
+                label="شماره تماس"
                 keyboardType="phone-pad"
                 value={values.phone}
                 onChangeText={handleChange("phone")}
@@ -129,6 +138,7 @@ const AddUser = ({
 
               <TextFeild
                 placeholder="رمز عبور"
+                label="رمز عبور"
                 value={values.password}
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
@@ -142,6 +152,7 @@ const AddUser = ({
 
               <SelectInput
                 placeholder="انتخاب موقعیت"
+                label="انتخاب موقعیت"
                 value={values.location}
                 onChange={(val) => setFieldValue("location", val)}
                 options={locationOptions}
@@ -154,6 +165,7 @@ const AddUser = ({
 
               <SelectInput
                 placeholder="انتخاب شیفت"
+                label="انتخاب شیفت"
                 value={values.shift}
                 onChange={(val) => setFieldValue("shift", val)}
                 options={shiftOptions}
@@ -162,7 +174,7 @@ const AddUser = ({
               <ErrorMessage error={errors.shift} visible={touched.shift} />
 
               <SubmitButton
-                title="افزودن"
+                title="ویرایش"
                 className="mt-4"
                 loading={isSubmitting && isValid}
                 disabled={isSubmitting || !isValid}
@@ -184,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddUser;
+export default EditUser;

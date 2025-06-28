@@ -71,24 +71,28 @@ const EmployeeDashboardSkeleton = () => {
         </View>
 
         {/* Summary Cards */}
-        <View className="flex-row-reverse justify-between space-x-reverse space-x-3 mt-8">
+        <View className="flex-row-reverse mt-8">
           {[...Array(3)].map((_, index) => (
             <View
               key={index}
-              className="w-[30%] bg-white p-4 rounded-2xl shadow-lg elevation-6 items-center space-y-2"
+              className="flex-1 bg-white p-4 rounded-2xl shadow-lg elevation-6 items-center space-y-2 mx-3"
             >
-              <Skeleton
-                height={28}
-                width={30}
-                radius="round"
-                colorMode="light"
-              />
-              <Skeleton
-                height={12}
-                width={"80%"}
-                radius="round"
-                colorMode="light"
-              />
+              <View className="mb-2">
+                <Skeleton
+                  height={28}
+                  width={30}
+                  radius="round"
+                  colorMode="light"
+                />
+              </View>
+              <View>
+                <Skeleton
+                  height={12}
+                  width={50}
+                  radius="round"
+                  colorMode="light"
+                />
+              </View>
             </View>
           ))}
         </View>
