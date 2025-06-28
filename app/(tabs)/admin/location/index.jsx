@@ -289,6 +289,7 @@ const Index = () => {
             onSuccess={getLocations}
             onClose={() => setEditModalVisible(false)}
             locationData={locationData}
+            
           />
 
           <Alert
