@@ -25,12 +25,17 @@ export default function TabLayout() {
           },
           default: {},
         }),
+
+        tabBarLabelStyle: {
+          fontFamily: "sans", // <-- replace with actual font name
+          fontSize: 11,
+        },
       }}
     >
       <Tabs.Screen
         name="dashboard/index"
         options={{
-          title: "home",
+          title: "خانه",
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={28} color={color} />
           ),
@@ -39,7 +44,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports/index"
         options={{
-          title: "reports",
+          title: "گزارش",
           tabBarIcon: ({ color }) => (
             <Ionicons name="document-text-outline" size={28} color={color} />
           ),
@@ -48,7 +53,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: "profile",
+          title: "پروفایل",
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" size={28} color={color} />
           ),
@@ -57,7 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="requests/index"
         options={{
-          title: "requests",
+          title: "درخواست",
           tabBarIcon: ({ color }) => (
             <Ionicons name="clipboard-outline" size={28} color={color} />
           ),

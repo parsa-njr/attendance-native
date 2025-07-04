@@ -3,15 +3,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
 import LottieView from "lottie-react-native";
+import Alert from "../../../../components/shared/alert/Alert";
 import { showMessage } from "react-native-flash-message";
-import {
-  Menu,
-  Divider,
-  Provider,
-  Dialog,
-  Portal,
-  Button,
-} from "react-native-paper";
+import { Menu, Divider } from "react-native-paper";
 import {
   View,
   Text,
@@ -26,7 +20,7 @@ import AddUser from "../../../../components/admin/users/AddUser";
 import EditUser from "../../../../components/admin/users/EditUser";
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import ApiService from "@/services/apiService";
-
+import Wraper from "../../../../components/shared/Wraper";
 const Index = () => {
   const [addModalVisible, setaddModalVisible] = useState(false);
   const [editModalVisible, seteditModalVisible] = useState(false);
@@ -82,7 +76,6 @@ const Index = () => {
     try {
       const response = await ApiService.get("/customer/shifts");
       setShifts(response.data.data);
-     
     } catch (error) {
       console.log(error);
     }
@@ -263,7 +256,7 @@ const Index = () => {
   }
 
   return (
-    <Provider>
+    <Wraper className="flex-1 bg-gray-50 relative">
       <Loading onRefresh={onRefresh}>
         {() => (
           <SafeAreaView className="flex-1 bg-gray-50 relative">
@@ -291,7 +284,7 @@ const Index = () => {
               </View>
             ) : (
               <FlatList
-                  contentContainerStyle={{ paddingBottom: 100 }}
+                contentContainerStyle={{ paddingBottom: 100 }}
                 data={users}
                 keyExtractor={(item) => item._id.toString()}
                 ItemSeparatorComponent={() => (
@@ -300,119 +293,46 @@ const Index = () => {
                 renderItem={renderUserItem}
               />
             )}
-
-            <AddButton onPress={() => setaddModalVisible(true)} />
-
-            <AddUser
-              onSuccess={() => {
-                getUsers();
-              }}
-              visible={addModalVisible}
-              locations={locations}
-              shifts={shifts}
-              onClose={() => setaddModalVisible(false)}
-            />
-
-            <EditUser
-              onSuccess={() => {
-                getUsers();
-              }}
-              visible={editModalVisible}
-              locations={locations}
-              shifts={shifts}
-              userData={userData}
-              onClose={() => seteditModalVisible(false)}
-            />
-
-            {/* Delete Confirmation Dialog */}
-            <Portal>
-              <Dialog
-                visible={showDialog}
-                onDismiss={() => {
-                  setShowDialog(false);
-                  setDeleteUserId(null);
-                }}
-                style={{
-                  borderRadius: 20,
-                  backgroundColor: "#fff",
-                  marginHorizontal: 20,
-                  elevation: 4, // For Android shadow
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 6,
-                }}
-              >
-                <Dialog.Content
-                  style={{ alignItems: "center", paddingBottom: 0 }}
-                >
-                  <LottieView
-                    source={require("../../../../assets/animations/Animation - 1748713787150.json")}
-                    autoPlay
-                    loop
-                    style={{ width: 150, height: 150, marginBottom: -12 }}
-                  />
-                  <Text
-                    style={{
-                      fontFamily: "sans",
-                      fontSize: 17,
-                      color: "#1F2937", // Tailwind gray-800
-                      textAlign: "center",
-                      marginTop: 8,
-                      marginBottom: 20,
-                    }}
-                  >
-                    آیا از حذف این کاربر مطمئن هستید؟
-                  </Text>
-                </Dialog.Content>
-
-                <Dialog.Actions
-                  style={{
-                    justifyContent: "space-around",
-                    paddingBottom: 20,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  <Button
-                    textColor="#6b7280"
-                    onPress={() => {
-                      setShowDialog(false);
-                      setDeleteUserId(null);
-                    }}
-                    mode="outlined"
-                    labelStyle={{
-                      fontFamily: "sans",
-
-                      fontSize: 15,
-                    }}
-                  >
-                    لغو
-                  </Button>
-
-                  <Button
-                    onPress={() => {
-                      setShowDialog(false);
-                      if (deleteUserId) {
-                        handleDelete(deleteUserId);
-                        setDeleteUserId(null);
-                      }
-                    }}
-                    mode="contained"
-                    labelStyle={{
-                      fontFamily: "sans",
-
-                      fontSize: 15,
-                    }}
-                  >
-                    بله، حذف کن
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
           </SafeAreaView>
         )}
       </Loading>
-    </Provider>
+      <AddButton onPress={() => setaddModalVisible(true)} />
+
+      <AddUser
+        onSuccess={() => {
+          getUsers();
+        }}
+        visible={addModalVisible}
+        locations={locations}
+        shifts={shifts}
+        onClose={() => setaddModalVisible(false)}
+      />
+
+      <EditUser
+        onSuccess={() => {
+          getUsers();
+        }}
+        visible={editModalVisible}
+        locations={locations}
+        shifts={shifts}
+        userData={userData}
+        onClose={() => seteditModalVisible(false)}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Alert
+        visible={showDialog}
+        onDismiss={() => setShowDialog(false)}
+        onConfirm={() => {
+          setShowDialog(false);
+          handleDelete(deleteUserId);
+        }}
+        mode="warning"
+        title="می‌خواهید این کاربر را حذف کنید؟"
+        cancelText="خیر"
+        confirmText="بله، حذف کن"
+      />
+    </Wraper>
   );
 };
 

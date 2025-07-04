@@ -25,12 +25,16 @@ export default function TabLayout() {
           },
           default: {},
         }),
+        tabBarLabelStyle: {
+          fontFamily: "sans", // <-- replace with actual font name
+          fontSize: 11,
+        },
       }}
     >
       <Tabs.Screen
         name="dashboard/index"
         options={{
-          title: "Home",
+          title: "خانه",
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={28} color={color} />
           ),
@@ -40,7 +44,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: "Profile",
+          title: "پرفایل",
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" size={28} color={color} />
           ),
@@ -50,7 +54,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="users/index"
         options={{
-          title: "Users",
+          title: "کاربران",
           tabBarIcon: ({ color }) => (
             <Ionicons name="people-outline" size={28} color={color} />
           ),
@@ -58,24 +62,9 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="chat/index"
-        options={{
-          title: "chat",
-          tabBarStyle: { display: "none" },
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="chatbubble-ellipses-outline"
-              size={28}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
         name="location/index"
         options={{
-          title: "location",
+          title: "موقعیت",
           tabBarIcon: ({ color }) => (
             <Ionicons name="location-outline" size={28} color={color} />
           ),
@@ -84,9 +73,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports/index"
         options={{
-          title: "reports",
+          title: "گزارش",
           tabBarIcon: ({ color }) => (
             <Ionicons name="document-text-outline" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="shift/index"
+        options={{
+          title: "شیفت",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="time-outline" size={28} color={color} />
           ),
         }}
       />

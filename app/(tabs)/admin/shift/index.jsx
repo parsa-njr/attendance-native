@@ -12,7 +12,7 @@ import {
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import ShiftForm from "../../../../components/admin/shift/ShiftForm";
 import CardComponent from "../../../../components/shared/CardComponent";
-
+import Wraper from "../../../../components/shared/Wraper";
 const Index = () => {
   const data = [
     {
@@ -106,7 +106,9 @@ const Index = () => {
                 {item.date}
               </Text>
             </View>
-            <Text className={`text-sm font-sans ${getStatusColor(item.status)}`}>
+            <Text
+              className={`text-sm font-sans ${getStatusColor(item.status)}`}
+            >
               {translateStatus(item.status)}
             </Text>
           </CardComponent>

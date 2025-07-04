@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import SelectInput from "../../../../components/shared/inputs/SelectInput";
 import CardComponent from "../../../../components/shared/CardComponent";
-
+import Wraper from "../../../../components/shared/Wraper";
 const Index = () => {
   const currentYear = 2000;
 
@@ -100,9 +100,9 @@ const Index = () => {
     return <ReportsSkeleton />;
   }
   return (
-    <Loading onRefresh={onRefresh}>
-      {() => (
-        <SafeAreaView className="flex-1 bg-gray-50">
+    <Wraper className="flex-1 bg-gray-50 relative">
+      <Loading onRefresh={onRefresh}>
+        {() => (
           <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
             <>
               <Text className="text-lg mt-20 mx-6 text-gray-700 font-sans text-center">
@@ -138,10 +138,7 @@ const Index = () => {
 
               <View className="px-5 mt-10 space-y-4">
                 {attendanceData.map((day, index) => (
-                  <CardComponent
-                    key={index}
-                    className="mb-3"
-                  >
+                  <CardComponent key={index} className="mb-3">
                     <TouchableOpacity
                       className="flex-row justify-between items-center p-4"
                       onPress={() => toggleExpand(index)}
@@ -178,9 +175,9 @@ const Index = () => {
               </View>
             </>
           </ScrollView>
-        </SafeAreaView>
-      )}
-    </Loading>
+        )}
+      </Loading>
+    </Wraper>
   );
 };
 
