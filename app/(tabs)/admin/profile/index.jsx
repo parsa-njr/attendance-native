@@ -12,6 +12,8 @@ import ProfileValidationSchema from "../../../../components/validations/schemas/
 import Loading from "../../../../components/loading/Loading";
 import ErrorMessage from "../../../../components/validations/FormError";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Admin/Profile/ProfileSkeleton";
+import Alert from "../../../../components/shared/alert/Alert";
+import Wraper from "../../../../components/shared/Wraper";
 import Toast from "react-native-toast-message";
 import {
   View,
@@ -105,7 +107,7 @@ const Index = () => {
         });
       }
 
-      const response = await ApiServiece.post("/admin/edit-profile", formData, {
+      const response = await ApiServiece.put("/customer/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -172,293 +174,215 @@ const Index = () => {
   }
 
   return (
-    <Loading onRefresh={onRefresh}>
-      {() => (
-        <PaperProvider>
-          <SafeAreaView className="flex-1 bg-gray-50">
-            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-              <Formik
-                initialValues={profileData}
-                validationSchema={ProfileValidationSchema}
-                onSubmit={(values, helpers) => {
-                  setPendingSubmitValues(values);
-                  setPendingSubmitHelpers(helpers);
-                  setShowSubmitDialog(true);
-                }}
-              >
-                {({
-                  handleChange,
-                  handleSubmit,
-                  values,
-                  setFieldValue,
-                  isSubmitting,
-                  isValid,
-                  errors,
-                  touched,
-                  handleBlur,
-                }) => (
-                  <>
-                    {/* Profile Header */}
-                    <View className="px-5 pt-12 items-center">
-                      <View className="relative">
-                        <TouchableOpacity
-                          onPress={() => pickImage(setFieldValue)}
-                          activeOpacity={0.7}
-                          className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 bg-gray-200 shadow-md"
-                        >
-                          {values?.profileImage ? (
-                            <Image
-                              source={{
-                                uri: values.profileImage.startsWith("file://")
-                                  ? values.profileImage
-                                  : `http://192.168.217.156:8080${values.profileImage}`,
-                              }}
-                              className="w-full h-full"
-                              resizeMode="cover"
+    <Wraper className="flex-1 bg-gray-50 relative">
+      <Loading onRefresh={onRefresh}>
+        {() => (
+          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <Formik
+              initialValues={profileData}
+              validationSchema={ProfileValidationSchema}
+              onSubmit={(values, helpers) => {
+                setPendingSubmitValues(values);
+                setPendingSubmitHelpers(helpers);
+                setShowSubmitDialog(true);
+              }}
+            >
+              {({
+                handleChange,
+                handleSubmit,
+                values,
+                setFieldValue,
+                isSubmitting,
+                isValid,
+                errors,
+                touched,
+                handleBlur,
+              }) => (
+                <>
+                  {/* Profile Header */}
+                  <View className="px-5 pt-12 items-center">
+                    <View className="relative">
+                      <TouchableOpacity
+                        onPress={() => pickImage(setFieldValue)}
+                        activeOpacity={0.7}
+                        className="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 bg-gray-200 shadow-md"
+                      >
+                        {values?.profileImage ? (
+                          <Image
+                            source={{
+                              uri: values.profileImage.startsWith("file://")
+                                ? values.profileImage
+                                : `http://192.168.191.156:8080${values.profileImage}`,
+                            }}
+                            className="w-full h-full"
+                            resizeMode="cover"
+                          />
+                        ) : (
+                          <View
+                            className="w-full h-full rounded-full bg-white justify-center items-center shadow-md"
+                            style={{
+                              backgroundColor: "#F3F4F6",
+                              shadowColor: "#E5E7EB",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.15,
+                              shadowRadius: 6,
+                              elevation: 3,
+                            }}
+                          >
+                            <Ionicons
+                              name="person-outline"
+                              size={32}
+                              color="#9CA3AF"
                             />
-                          ) : (
-                            <View
-                              className="w-full h-full rounded-full bg-white justify-center items-center shadow-md"
-                              style={{
-                                backgroundColor: "#F3F4F6",
-                                shadowColor: "#E5E7EB",
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.15,
-                                shadowRadius: 6,
-                                elevation: 3,
-                              }}
-                            >
-                              <Ionicons
-                                name="person-outline"
-                                size={32}
-                                color="#9CA3AF"
-                              />
-                            </View>
-                          )}
-                        </TouchableOpacity>
+                          </View>
+                        )}
+                      </TouchableOpacity>
 
-                        <View className="absolute bottom-0 left-0 bg-blue-500 w-8 h-8 rounded-full justify-center items-center border-2 border-white">
-                          <Text className="text-white text-lg font-bold">
-                            +
-                          </Text>
-                        </View>
+                      <View className="absolute bottom-0 left-0 bg-blue-500 w-8 h-8 rounded-full justify-center items-center border-2 border-white">
+                        <Text className="text-white text-lg font-bold">+</Text>
                       </View>
+                    </View>
 
-                      <Text className="text-sm text-gray-400 mt-2 font-sans">
-                        "روی عکس کلیک کنید تا تغییر دهید"
+                    <Text className="text-sm text-gray-400 mt-2 font-sans">
+                      "روی عکس کلیک کنید تا تغییر دهید"
+                    </Text>
+                  </View>
+
+                  {/* Form Section */}
+                  <View className="px-5 mt-8 space-y-5 flex">
+                    <CardComponent className="p-5 mb-3">
+                      <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+                        نام
                       </Text>
-                    </View>
-
-                    {/* Form Section */}
-                    <View className="px-5 mt-8 space-y-5 flex">
-                      <CardComponent className="p-5 mb-3">
-                        <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
-                          نام
-                        </Text>
-                        <TextInput
-                          value={values.name}
-                          onChangeText={handleChange("name")}
-                          onBlur={handleBlur("name")}
-                          className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
-                          placeholder="نام خود را وارد کنید"
-                          placeholderTextColor="#aaa"
-                          style={{ writingDirection: "rtl" }}
-                        />
-                        <ErrorMessage
-                          error={errors.name}
-                          visible={touched.name}
-                        />
-                      </CardComponent>
-
-                      <CardComponent className="p-5 mb-3">
-                        <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
-                          شماره تماس
-                        </Text>
-                        <TextInput
-                          value={values.phone}
-                          keyboardType="phone-pad"
-                          onChangeText={handleChange("phone")}
-                          onBlur={handleBlur("phone")}
-                          className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
-                          placeholder="شماره تماس خود را وارد کنید"
-                          placeholderTextColor="#aaa"
-                          style={{ writingDirection: "rtl" }}
-                        />
-                        <ErrorMessage
-                          error={errors.phone}
-                          visible={touched.phone}
-                        />
-                      </CardComponent>
-
-                      <CardComponent className="p-5 mb-3">
-                        <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
-                          رمز عبور
-                        </Text>
-                        <TextInput
-                          value={(values.password || "").slice(0, 10)}
-                          secureTextEntry={true}
-                          maxLength={10}
-                          onChangeText={(text) =>
-                            setFieldValue("password", text.slice(0, 10))
-                          }
-                          onBlur={handleBlur("password")}
-                          className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
-                          placeholder="رمز عبور جدید خود را وارد کنید"
-                          placeholderTextColor="#aaa"
-                          style={{ writingDirection: "rtl" }}
-                        />
-                        <ErrorMessage
-                          error={errors.password}
-                          visible={touched.password}
-                        />
-                      </CardComponent>
-
-                      {/* Save Button */}
-                      <SubmitButton
-                        title="ویرایش"
-                        className="mt-4"
-                        loading={isSubmitting && isValid}
-                        disabled={isSubmitting || !isValid}
-                        onPress={handleSubmit}
+                      <TextInput
+                        value={values.name}
+                        onChangeText={handleChange("name")}
+                        onBlur={handleBlur("name")}
+                        className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
+                        placeholder="نام خود را وارد کنید"
+                        placeholderTextColor="#aaa"
+                        style={{ writingDirection: "rtl" }}
                       />
+                      <ErrorMessage
+                        error={errors.name}
+                        visible={touched.name}
+                      />
+                    </CardComponent>
 
-                      {/* Logout Button */}
-                      <View className="px-5 mt-10">
-                        <TouchableOpacity
-                          onPress={() => setShowDialog(true)}
-                          activeOpacity={0.7}
-                          className="flex-row items-center justify-center bg-red-100 py-4 rounded-xl shadow-md"
-                        >
-                          <Feather name="log-out" size={20} color="#dc2626" />
-                          <Text className="text-red-600 text-base font-semibold font-sans ml-2">
-                            خروج از حساب کاربری
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
+                    <CardComponent className="p-5 mb-3">
+                      <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+                        شماره تماس
+                      </Text>
+                      <TextInput
+                        value={values.phone}
+                        keyboardType="phone-pad"
+                        onChangeText={handleChange("phone")}
+                        onBlur={handleBlur("phone")}
+                        className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
+                        placeholder="شماره تماس خود را وارد کنید"
+                        placeholderTextColor="#aaa"
+                        style={{ writingDirection: "rtl" }}
+                      />
+                      <ErrorMessage
+                        error={errors.phone}
+                        visible={touched.phone}
+                      />
+                    </CardComponent>
+
+                    <CardComponent className="p-5 mb-3">
+                      <Text className="text-gray-500 text-sm mb-2 text-right font-sans">
+                        رمز عبور
+                      </Text>
+                      <TextInput
+                        value={(values.password || "").slice(0, 10)}
+                        secureTextEntry={true}
+                        maxLength={10}
+                        onChangeText={(text) =>
+                          setFieldValue("password", text.slice(0, 10))
+                        }
+                        onBlur={handleBlur("password")}
+                        className="border-b border-gray-200 pb-2 mb-2 text-base text-gray-800 text-right font-sans"
+                        placeholder="رمز عبور جدید خود را وارد کنید"
+                        placeholderTextColor="#aaa"
+                        style={{ writingDirection: "rtl" }}
+                      />
+                      <ErrorMessage
+                        error={errors.password}
+                        visible={touched.password}
+                      />
+                    </CardComponent>
+
+                    {/* Save Button */}
+                    <SubmitButton
+                      title="ویرایش"
+                      className="mt-4"
+                      loading={isSubmitting && isValid}
+                      disabled={isSubmitting || !isValid}
+                      onPress={handleSubmit}
+                    />
+
+                    {/* Logout Button */}
+                    <View className="px-5 mt-10">
+                      <TouchableOpacity
+                        onPress={() => setShowDialog(true)}
+                        activeOpacity={0.7}
+                        className="flex-row items-center justify-center bg-red-100 py-4 rounded-xl shadow-md"
+                      >
+                        <Feather name="log-out" size={20} color="#dc2626" />
+                        <Text className="text-red-600 text-base font-semibold font-sans ml-2">
+                          خروج از حساب کاربری
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                  </>
-                )}
-              </Formik>
-            </ScrollView>
+                  </View>
+                </>
+              )}
+            </Formik>
+          </ScrollView>
+        )}
+      </Loading>
 
-            {/* Dialog Confirmation */}
-            <Portal>
-              <Dialog
-                visible={showDialog}
-                onDismiss={() => setShowDialog(false)}
-                style={{
-                  backgroundColor: "#fff",
-                  borderRadius: 20,
-                  paddingVertical: 10,
-                  paddingHorizontal: 5,
-                }}
-              >
-                <View style={{ alignItems: "center" }}>
-                  <LottieView
-                    source={require("../../../../assets/animations/Animation - 1748604940792 (1).json")}
-                    autoPlay
-                    loop
-                    style={{ width: 180, height: 180, marginBottom: -20 }}
-                  />
-                </View>
-                <Dialog.Content>
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      fontSize: 16,
-                      fontFamily: "sans",
-                      color: "#111827",
-                      marginBottom: 10,
-                    }}
-                  >
-                    می‌خواهید از حساب کاربری خارج شوید؟
-                  </Text>
-                </Dialog.Content>
-                <Dialog.Actions style={{ justifyContent: "space-between" }}>
-                  <Button
-                    textColor="#6b7280"
-                    onPress={() => setShowDialog(false)}
-                    mode="outlined"
-                    labelStyle={{ fontFamily: "sans", fontSize: 15 }}
-                  >
-                    خیر
-                  </Button>
-                  <Button
-                    onPress={() => {
-                      setShowDialog(false);
-                      handleLogout();
-                    }}
-                    mode="contained"
-                    labelStyle={{ fontFamily: "sans", fontSize: 15 }}
-                  >
-                    بله، خارج شو
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
+      <Alert
+        visible={showDialog}
+        onDismiss={() => setShowDialog(false)}
+        onConfirm={() => {
+          setShowDialog(false);
+          handleLogout();
+        }}
+        mode="warning"
+        title="می خواهید از حساب خود خارج شوید ؟"
+        cancelText="خیر"
+        confirmText="بله، خارج شو"
+      />
 
-            <Portal>
-              <Dialog
-                visible={showSubmitDialog}
-                onDismiss={() => setShowSubmitDialog(false)}
-                style={{
-                  backgroundColor: "#fff",
-                  borderRadius: 20,
-                  paddingVertical: 10,
-                  paddingHorizontal: 5,
-                }}
-              >
-                <Dialog.Content>
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      fontSize: 16,
-                      fontFamily: "sans",
-                      color: "#111827",
-                      marginBottom: 10,
-                    }}
-                  >
-                    آیا مطمئن هستید که می‌خواهید اطلاعات را ویرایش کنید؟
-                  </Text>
-                </Dialog.Content>
-                <Dialog.Actions style={{ justifyContent: "space-between" }}>
-                  <Button
-                    textColor="#6b7280"
-                    onPress={() => {
-                      setShowSubmitDialog(false);
-
-                      pendingSubmitHelpers.setSubmitting(false);
-                    }}
-                    mode="outlined"
-                    labelStyle={{ fontFamily: "sans", fontSize: 15 }}
-                  >
-                    خیر
-                  </Button>
-                  <Button
-                    onPress={async () => {
-                      setShowSubmitDialog(false);
-                      if (pendingSubmitValues && pendingSubmitHelpers) {
-                        await handleProfileChange(
-                          pendingSubmitValues,
-                          pendingSubmitHelpers
-                        );
-                        pendingSubmitHelpers.setSubmitting(false);
-                        setPendingSubmitValues(null);
-                        setPendingSubmitHelpers(null);
-                      }
-                    }}
-                    mode="contained"
-                    labelStyle={{ fontFamily: "sans", fontSize: 15 }}
-                  >
-                    بله، تایید می‌کنم
-                  </Button>
-                </Dialog.Actions>
-              </Dialog>
-            </Portal>
-          </SafeAreaView>
-        </PaperProvider>
-      )}
-    </Loading>
+      <Alert
+        visible={showSubmitDialog}
+        onDismiss={() => {
+          setShowSubmitDialog(false);
+          if (pendingSubmitHelpers) pendingSubmitHelpers.setSubmitting(false);
+        }}
+        mode="warning" // or whatever mode you use to show different animations
+        title="آیا مطمئن هستید که می‌خواهید اطلاعات را ویرایش کنید؟"
+        cancelText="خیر"
+        confirmText="بله، تایید می‌کنم"
+        onCancel={() => {
+          setShowSubmitDialog(false);
+          if (pendingSubmitHelpers) pendingSubmitHelpers.setSubmitting(false);
+        }}
+        onConfirm={async () => {
+          setShowSubmitDialog(false);
+          if (pendingSubmitValues && pendingSubmitHelpers) {
+            await handleProfileChange(
+              pendingSubmitValues,
+              pendingSubmitHelpers
+            );
+            pendingSubmitHelpers.setSubmitting(false);
+            setPendingSubmitValues(null);
+            setPendingSubmitHelpers(null);
+          }
+        }}
+      />
+    </Wraper>
   );
 };
 

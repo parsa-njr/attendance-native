@@ -4,7 +4,7 @@ import { Animated, Easing, Image } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import DayReport from "../../../../components/admin/reports/DayReport";
 import EmployeeReport from "../../../../components/admin/reports/EmployeeReport";
-
+import Wraper from "../../../../components/shared/Wraper";
 import {
   View,
   Text,
@@ -346,9 +346,9 @@ const Index = () => {
   };
 
   return (
-    <Loading onRefresh={onRefresh}>
-      {() => (
-        <SafeAreaView className="flex-1 bg-white">
+    <Wraper className="flex-1 bg-gray-50 relative">
+      <Loading onRefresh={onRefresh}>
+        {() => (
           <ScrollView
             contentContainerStyle={{ paddingBottom: 80 }}
             showsVerticalScrollIndicator={false}
@@ -388,7 +388,7 @@ const Index = () => {
                     <View className="flex-row-reverse flex-wrap justify-between gap-6">
                       <View style={{ flex: 1, minWidth: "45%" }}>
                         {/* Start Date Picker */}
-                        
+
                         <DatePickerInput
                           label="تاریخ شروع"
                           placeholder="تاریخ شروع"
@@ -399,7 +399,7 @@ const Index = () => {
 
                       <View style={{ flex: 1, minWidth: "45%" }}>
                         {/* End Date Picker */}
-                    
+
                         <DatePickerInput
                           label="تاریخ پایان"
                           placeholder="تاریخ پایان"
@@ -505,9 +505,9 @@ const Index = () => {
               }}
             />
           </ScrollView>
-        </SafeAreaView>
-      )}
-    </Loading>
+        )}
+      </Loading>
+    </Wraper>
   );
 };
 

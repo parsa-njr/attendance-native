@@ -17,7 +17,7 @@ const Index = () => {
           const authData = JSON.parse(authDataStr);
           if (authData.token && authData.user) {
             setIsAuthenticated(true);
-            setUserRole(authData.user.role || null); // adjust this if your user role key is different
+            setUserRole("customer"); // adjust this if your user role key is different
           } else {
             setIsAuthenticated(false);
             setUserRole(null);

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,15 +12,17 @@ import LocationSkeleton from "../../../../components/loading/Skeleton/Admin/Loca
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import { useFocusEffect } from "@react-navigation/native";
-import CardComponent from "@/components/shared/CardComponent";
-import { Menu, Provider, Divider } from "react-native-paper";
+import { Menu, Divider } from "react-native-paper";
 import AddLocation from "../../../../components/admin/locations/AddLocation";
 import EditLocation from "../../../../components/admin/locations/EditLocation";
 import AddButton from "../../../../components/shared/buttons/AddButton";
 import ApiService from "@/services/apiService";
 import Loading from "../../../../components/loading/Loading";
+import Wraper from "../../../../components/shared/Wraper"; // Corrected name
 import Alert from "../../../../components/shared/alert/Alert";
 import { showMessage } from "react-native-flash-message";
+import SearchInput from "../../../../components/shared/inputs/SearchInput";
+
 const Index = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [deleteLocationId, setDeleteLocationId] = useState(null);
@@ -31,27 +33,28 @@ const Index = () => {
   const [search, setSearch] = useState("");
   const [openMenuUserId, setOpenMenuUserId] = useState(null);
   const [locationData, setLocationData] = useState();
-
   const handleSearch = (text) => {
     setSearch(text);
-    if (text) {
-      const filtered = locations?.filter((location) =>
-        location?.name.toLowerCase().includes(text.toLowerCase())
-      );
-      setLocations(filtered);
-    } else {
-      getLocations();
-    }
   };
 
-  const getLocations = async () => {
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      getLocations(search);
+    }, 400); // debounce for user typing
+
+    return () => clearTimeout(delayDebounce);
+  }, [search]);
+
+  const getLocations = async (search = "") => {
     try {
       setRefreshing(true);
-      const response = await ApiService.get("/customer/locations");
-      setLocations(response.data.data);
-      setRefreshing(false);
+      const response = await ApiService.get("/customer/locations", {
+        params: { search }, // ✅ Pass as query param
+      });
+      setLocations(response.data.data?.data || response.data.data || []);
     } catch (error) {
       console.log(error);
+    } finally {
       setRefreshing(false);
     }
   };
@@ -84,14 +87,7 @@ const Index = () => {
   };
 
   const readyEditModal = (id, name, range, long, lat) => {
-    setLocationData({
-      id,
-      name,
-      range,
-      long,
-      lat,
-    });
-   
+    setLocationData({ id, name, range, long, lat });
   };
 
   useFocusEffect(
@@ -113,13 +109,9 @@ const Index = () => {
 
     return (
       <View className="flex-row-reverse items-center px-4 py-4 bg-white rounded-2xl mx-4 my-2 shadow-md">
-        {/* Map Thumbnail with slight press effect */}
         <View
           className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-blue-500 shadow-sm ml-4"
-          android_ripple={{ color: "#e0f2fe", borderless: false }}
-          style={{
-            borderRadius: 18,
-          }}
+          style={{ borderRadius: 18 }}
         >
           <MapView
             style={{ flex: 1 }}
@@ -145,12 +137,10 @@ const Index = () => {
           </MapView>
         </View>
 
-        {/* Info */}
         <View className="flex-1 mr-2">
           <Text className="text-base font-sans text-gray-800 text-right mb-1">
             {item.name}
           </Text>
-
           <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
             <Ionicons name="location-outline" size={14} color="#6B7280" />
             <Text className="text-xs text-gray-500 text-right font-sans">
@@ -159,7 +149,6 @@ const Index = () => {
           </View>
         </View>
 
-        {/* Menu Icon */}
         <Menu
           visible={isMenuVisible}
           onDismiss={closeMenu}
@@ -187,7 +176,6 @@ const Index = () => {
               <Ionicons name="person-outline" size={size} color={color} />
             )}
           />
-
           <Menu.Item
             onPress={() => {
               setEditModalVisible(true);
@@ -211,9 +199,7 @@ const Index = () => {
               <Ionicons name="pencil-outline" size={size} color={color} />
             )}
           />
-
           <Divider />
-
           <Menu.Item
             onPress={() => {
               setDeleteLocationId(item._id);
@@ -242,70 +228,53 @@ const Index = () => {
   }
 
   return (
-    <Provider>
+    <Wraper className="flex-1 bg-gray-50 relative">
+      <Loading onRefresh={onRefresh}>
+        {() => (
+          <>
+            <SearchInput value={search} onChangeText={handleSearch} />
 
-        <SafeAreaView className="flex-1 bg-gray-50 relative">
-          <Loading onRefresh={onRefresh}>
-            {() => (
-              <>
-                {/* Search Bar */}
+            <FlatList
+              contentContainerStyle={{ paddingBottom: 100 }}
+              data={locations}
+              keyExtractor={(item) => item._id.toString()}
+              ItemSeparatorComponent={() => (
+                <View className="h-px bg-gray-200 mx-5" />
+              )}
+              renderItem={({ item }) => <LocationCard item={item} />}
+            />
+          </>
+        )}
+      </Loading>
 
-                <View className="px-5 pt-8 pb-4 mb-4 bg-white shadow-sm">
-                  <TextInput
-                    className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans mt-6"
-                    placeholder="جستجو..."
-                    placeholderTextColor="#888"
-                    value={search}
-                    onChangeText={handleSearch}
-                  />
-                </View>
+      <AddButton onPress={() => setaddModalVisible(true)} />
 
-                {/* Location List */}
-                <FlatList
-                  contentContainerStyle={{ paddingBottom: 100 }}
-                  data={locations}
-                  keyExtractor={(item) => item._id.toString()}
-                  ItemSeparatorComponent={() => (
-                    <View className="h-px bg-gray-200 mx-5" />
-                  )}
-                  renderItem={({ item }) => <LocationCard item={item} />}
-                />
-              </>
-            )}
-          </Loading>
+      <AddLocation
+        visible={addModalVisible}
+        onSuccess={getLocations}
+        onClose={() => setaddModalVisible(false)}
+      />
 
-          {/* Floating Add Button - outside of scroll */}
-          <AddButton onPress={() => setaddModalVisible(true)} />
+      <EditLocation
+        visible={editModalVisible}
+        onSuccess={getLocations}
+        onClose={() => setEditModalVisible(false)}
+        locationData={locationData}
+      />
 
-          {/* Add Modal */}
-          <AddLocation
-            visible={addModalVisible}
-            onSuccess={getLocations}
-            onClose={() => setaddModalVisible(false)}
-          />
-
-          <EditLocation
-            visible={editModalVisible}
-            onSuccess={getLocations}
-            onClose={() => setEditModalVisible(false)}
-            locationData={locationData}
-          />
-
-          <Alert
-            visible={showDialog}
-            onDismiss={() => setShowDialog(false)}
-            onConfirm={() => {
-              setShowDialog(false);
-              handleDelete(deleteLocationId);
-            }}
-            mode="warning" // animation for logout confirmation
-            title="می خواهید این موقعیت را حذف کنید؟"
-            cancelText="خیر"
-            confirmText="بله، حذف کن"
-          />
-        </SafeAreaView>
-   
-    </Provider>
+      <Alert
+        visible={showDialog}
+        onDismiss={() => setShowDialog(false)}
+        onConfirm={() => {
+          setShowDialog(false);
+          handleDelete(deleteLocationId);
+        }}
+        mode="warning"
+        title="می‌خواهید این موقعیت را حذف کنید؟"
+        cancelText="خیر"
+        confirmText="بله، حذف کن"
+      />
+    </Wraper>
   );
 };
 
