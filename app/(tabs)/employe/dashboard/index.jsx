@@ -13,10 +13,10 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import MapViewDirections from "react-native-maps-directions";
+// import MapViewDirections from "react-native-maps-directions";
 import LottieView from "lottie-react-native";
-import MapView, { Marker, Polyline } from "react-native-maps"; // import MapView and Marker
-import polyline from "@mapbox/polyline";
+// import MapView, { Marker, Polyline } from "react-native-maps"; // import MapView and Marker
+// import polyline from "@mapbox/polyline";
 import * as Location from "expo-location"; // import expo-location
 import CardComponent from "../../../../components/shared/CardComponent";
 import Loading from "../../../../components/loading/Loading";
