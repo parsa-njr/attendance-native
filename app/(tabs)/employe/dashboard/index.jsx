@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import axios from "axios";
+import * as Location from "expo-location";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
@@ -11,86 +11,30 @@ import {
   Animated,
   Easing,
 } from "react-native";
-
+import ApiService from "@/services/apiService";
+import { showMessage } from "react-native-flash-message";
+import Alert from "../../../../components/shared/modal/Alert";
 import { Ionicons } from "@expo/vector-icons";
-import MapViewDirections from "react-native-maps-directions";
 import LottieView from "lottie-react-native";
-import MapView, { Marker, Polyline } from "react-native-maps"; // import MapView and Marker
-import polyline from "@mapbox/polyline";
-import * as Location from "expo-location"; // import expo-location
 import CardComponent from "../../../../components/shared/CardComponent";
 import Loading from "../../../../components/loading/Loading";
 import EmployeeDashboardSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
 import Wraper from "../../../../components/shared/Wraper";
 const EmployeeDashboard = () => {
-  // Existing states...
-  const [checkOutModal, setCheckOutModal] = useState(false);
-  const [insideFence, setInsideFence] = useState(false);
-  const [routeCoords, setRouteCoords] = useState([]);
+  const [showChechkinDialog, setCheckinShowDialog] = useState(false);
+  const [showChechkoutDialog, setCheckoutShowDialog] = useState(false);
+
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [distance, setDistance] = useState(null);
-  const [duration, setDuration] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  // New state for user location
   const [location, setLocation] = useState(null);
-  const [locationErrorMsg, setLocationErrorMsg] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // Animation refs and values
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
   const confettiRef = useRef(null);
-
-  const customMapStyle = [
-    {
-      elementType: "geometry",
-      stylers: [{ color: "#fef8e8" }],
-    },
-    {
-      elementType: "labels.icon",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      elementType: "labels.text.fill",
-      stylers: [{ color: "#5e5c5c" }],
-    },
-    {
-      elementType: "labels.text.stroke",
-      stylers: [{ color: "#fef8e8" }],
-    },
-    {
-      featureType: "poi",
-      stylers: [{ visibility: "simplified" }, { color: "#fde68a" }],
-    },
-    {
-      featureType: "poi.park",
-      stylers: [{ color: "#c8f7c5" }, { visibility: "simplified" }],
-    },
-    {
-      featureType: "road",
-      stylers: [{ color: "#ffffff" }, { lightness: 100 }],
-    },
-    {
-      featureType: "road.arterial",
-      stylers: [{ color: "#ffd3b6" }],
-    },
-    {
-      featureType: "road.highway",
-      stylers: [{ color: "#ffaaa7" }],
-    },
-    {
-      featureType: "transit",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "water",
-      stylers: [{ color: "#a2e3ff" }],
-    },
-  ];
 
   // Confetti effect
   useEffect(() => {
@@ -134,6 +78,33 @@ const EmployeeDashboard = () => {
       useNativeDriver: true,
     }).start();
   }, []);
+  // get user location
+  const getLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.warn("Location permission not granted");
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+
+      setLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      setRefreshing(false);
+    } catch (err) {
+      console.error("Error getting location:", err);
+      setRefreshing(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getLocation();
+    }, [])
+  );
 
   // Button press animation
   const animateButtonPress = () => {
@@ -153,84 +124,79 @@ const EmployeeDashboard = () => {
   };
 
   const onRefresh = () =>
-    new Promise((resolve) => {
+    new Promise(() => {
       setRefreshing(true);
-      setTimeout(() => {
-        setRefreshing(false);
-        resolve();
-      }, 1500);
+      getLocation();
     });
 
-  const destination = useRef({
-    latitude: 32.513324,
-    longitude: 51.791245,
-  }).current;
-
-  const getUserLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("دسترسی به موقعیت داده نشد.");
-      return;
-    }
-    const loc = await Location.getCurrentPositionAsync({});
-    setLocation({
-      latitude: loc.coords.latitude,
-      longitude: loc.coords.longitude,
-    });
-  };
-
-  const getRouteFromMapIr = async (origin, dest) => {
-    const url = `https://map.ir/routes/route/v1/driving/${origin.longitude},${origin.latitude};${dest.longitude},${dest.latitude}`;
+  const handleCheckIn = async () => {
     try {
-      const res = await axios.get(url, {
-        params: { overview: "full", geometries: "polyline" },
-        headers: {
-          "x-api-key":
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImQ5N2E0NzE3NDNhM2M1OTQ3Y2YzNGUwZTIwYWRlZGUyNmRmMTFkYjY5OTc5NWY4YmYwYTg0ZDcyODk1Y2M3NjYwZmI2NWI0N2Q0Y2U1ODlmIn0.eyJhdWQiOiIzMjk2NSIsImp0aSI6ImQ5N2E0NzE3NDNhM2M1OTQ3Y2YzNGUwZTIwYWRlZGUyNmRmMTFkYjY5OTc5NWY4YmYwYTg0ZDcyODk1Y2M3NjYwZmI2NWI0N2Q0Y2U1ODlmIiwiaWF0IjoxNzUwMDY3NjA3LCJuYmYiOjE3NTAwNjc2MDcsImV4cCI6MTc1MjY1OTYwNywic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.VNG637QjvVNbb-noYr5_92-cLU2UXwy-GkXxFKhyuYEb4S3xSLb1OR8n8PUoGUCz-VMPEKqX6-RqWZfH3gECAgodKUD5MFNA9c9qn8HbGH4mLDu61txCJHy-jLFOAw2BXcWslUM7uMFbhwPIYTVV3RN2vWvaNJ9eZ1uPgiUz0EP2OFylR4tI6Co21oW91DV2qsjwR5bPzgvlUBDkxFYNjq5k8XiJ7SbVO-qiB1c-A8hgzp8GCXGTpp2PLlyWVHHiNXOS436wxiU1J8dQZyDd4yGcBrZx0e1_NC9gDiVY4GiTQuLpbcQc6Agxt_sZIXRNSj0IWAti3Z3EW0mawuqoew",
-        },
+      const data = {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+      };
+      const response = await ApiService.post("/user/checkIn", data);
+
+      const message = response.data.message;
+
+      const now = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
       });
+      setIsCheckedIn(true);
+      setCheckInTime(now);
 
-      const route = res.data.routes[0];
-
-      setDistance((route.distance / 1000).toFixed(1));
-      setDuration(Math.ceil(route.duration / 60));
-
-      const coords = polyline
-        .decode(route.geometry)
-        .map(([lat, lng]) => ({ latitude: lat, longitude: lng }));
-      setRouteCoords(coords);
-    } catch (err) {
-      console.error("خطا در مسیر‌یابی Map.ir:", err);
+      showMessage({
+        message: "موفقیت آمیز بود",
+        description: `${message}`,
+        type: "success",
+        icon: "success",
+      });
+    } catch (error) {
+      const message =
+        error?.response?.data?.errorDetails || "خطای ناشناخته‌ای رخ داده است.";
+      showMessage({
+        message: "مشکلی پیش آمد",
+        description: message,
+        type: "danger",
+        icon: "danger",
+      });
     }
   };
 
-  React.useEffect(() => {
-    if (location) getRouteFromMapIr(location, destination);
-  }, [location]);
+  const handleCheckOut = async () => {
+    try {
+      const data = {
+        latitude: location?.latitude,
+        longitude: location?.longitude,
+      };
+      const response = await ApiService.post("/user/checkOut", data);
 
-  // Use focus effect calls getUserLocation and refreshes UI
-  useFocusEffect(
-    useCallback(() => {
-      setRouteCoords([]);
-      setErrorMsg(null);
-      (async () => {
-        await getUserLocation();
-      })();
-    }, [])
-  );
+      const message = response.data.message;
 
-  const handleCheckIn = () => {
-    const now = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    setIsCheckedIn(true);
-    setCheckInTime(now);
-  };
+      const now = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setIsCheckedIn(false);
+      setCheckInTime(null);
 
-  const handleCheckOut = () => {
-    setIsCheckedIn(false);
-    setCheckInTime(null);
+      showMessage({
+        message: "موفقیت آمیز بود",
+        description: `${message}`,
+        type: "success",
+        icon: "success",
+      });
+    } catch (error) {
+      const message =
+        error?.response?.data?.errorDetails || "خطای ناشناخته‌ای رخ داده است.";
+      showMessage({
+        message: "مشکلی پیش آمد",
+        description: message,
+        type: "danger",
+        icon: "danger",
+      });
+    }
   };
 
   const todayDate = new Date().toLocaleDateString([], {
@@ -247,9 +213,9 @@ const EmployeeDashboard = () => {
   const handlePress = () => {
     animateButtonPress();
     if (isCheckedIn) {
-      handleCheckOut();
+      setCheckoutShowDialog(true);
     } else {
-      handleCheckIn();
+      setCheckinShowDialog(true);
       setShowConfetti(true);
     }
   };
@@ -284,52 +250,6 @@ const EmployeeDashboard = () => {
                   </View>
                 </CardComponent>
               </View>
-
-              {/* Location Map */}
-              {/* <View className="px-5 mt-8">
-              <View className="h-80 rounded-3xl overflow-hidden shadow-2xl bg-[#FDE68A] border-4 border-yellow-400/70 relative">
-                {location ? (
-                  <>
-                    <MapView
-                      style={{ flex: 1 }}
-                      customMapStyle={customMapStyle}
-                      initialRegion={{
-                        ...location,
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05,
-                      }}
-                      showsUserLocation
-                      loadingEnabled
-                      showsMyLocationButton={false}
-                    >
-                      <Marker
-                        coordinate={destination}
-                        title="📍 مقصد"
-                        pinColor="green"
-                      />
-                      {routeCoords.length > 0 && (
-                        <Polyline
-                          coordinates={routeCoords}
-                          strokeWidth={4}
-                          strokeColor="#FF5733"
-                        />
-                      )}
-                    </MapView>
-                    <View className="absolute bottom-2 left-0 right-0 items-center">
-                      <Text className="bg-white/80 px-4 py-2 rounded-full text-gray-800">
-                        فاصله: {distance} km • زمان: {duration} min
-                      </Text>
-                    </View>
-                  </>
-                ) : (
-                  <View className="flex-1 items-center justify-center bg-yellow-100">
-                    <Text className="text-yellow-700">
-                      {errorMsg || "در حال دریافت موقعیت..."}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View> */}
 
               {/* Status & Actions */}
               <View className="px-5 mt-8 items-center">
@@ -445,9 +365,9 @@ const EmployeeDashboard = () => {
                     >
                       <View className="flex-row-reverse items-center space-x-2 space-x-reverse">
                         <Ionicons name="time" size={20} color="#4F46E5" />
-                        <Text className="text-blue-900 text-base font-medium font-IRANSansMobile">
+                        <Text className="text-blue-900 text-base font-medium font-sans">
                           زمان ورود:{" "}
-                          <Text className="font-bold text-blue-800">
+                          <Text className="font-sans text-blue-800">
                             {checkInTime}
                           </Text>
                         </Text>
@@ -504,6 +424,32 @@ const EmployeeDashboard = () => {
           </SafeAreaView>
         )}
       </Loading>
+
+      <Alert
+        visible={showChechkinDialog}
+        onDismiss={() => setCheckinShowDialog(false)}
+        onConfirm={() => {
+          setCheckinShowDialog(false);
+          handleCheckIn();
+        }}
+        mode="warning"
+        title="می خواهید ورودی خود را ثبت کنید؟"
+        cancelText="خیر"
+        confirmText="بله،  ثبت کن"
+      />
+
+      <Alert
+        visible={showChechkoutDialog}
+        onDismiss={() => setCheckoutShowDialog(false)}
+        onConfirm={() => {
+          setCheckoutShowDialog(false);
+          handleCheckOut();
+        }}
+        mode="warning"
+        title="می خواهید خروجی خود را ثبت کنید؟"
+        cancelText="خیر"
+        confirmText="بله،  ثبت کن"
+      />
     </Wraper>
   );
 };

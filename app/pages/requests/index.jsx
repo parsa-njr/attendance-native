@@ -8,14 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import AddRequest from "../../../../components/employee/requests/AddRequest";
-import ShowRequest from "../../../../components/employee/requests/ShowRequest";
-import Loading from "../../../../components/loading/Loading";
-import AddButton from "../../../../components/shared/buttons/AddButton";
-import CardComponent from "../../../../components/shared/CardComponent";
-import ApiServiece from "../../../../services/apiService";
-import RequestsSkeleton from "../../../../components/loading/Skeleton/Employee/Requests/RequestsSkeleton";
-import Wraper from "../../../../components/shared/Wraper";
+import EditRequest from "../../../components/admin/requests/EditRequest";
+import Loading from "../../../components/loading/Loading";
+import CardComponent from "../../../components/shared/CardComponent";
+import ApiServiece from "../../../services/apiService";
+import RequestsSkeleton from "../../../components/loading/Skeleton/Admin/Requests/RequestsSkeleton";
+import Wraper from "../../../components/shared/Wraper";
 
 const Index = () => {
   const [addmodalVisible, setAddModalVisible] = useState(false);
@@ -23,19 +21,6 @@ const Index = () => {
   const [requests, setRequests] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [requestData, setRequestData] = useState();
-  const [search, setSearch] = useState("");
-
-  const handleSearch = (text) => {
-    setSearch(text);
-    if (text) {
-      const filtered = requests.filter((item) =>
-        item.type.toLowerCase().includes(text.toLowerCase())
-      );
-      setRequests(filtered);
-    } else {
-      getRequests(); // fallback
-    }
-  };
 
   const toJalaliDate = (isoDate) => {
     if (!isoDate) return "";
@@ -45,7 +30,7 @@ const Index = () => {
   const getRequests = async () => {
     setRefreshing(true);
     try {
-      const response = await ApiServiece.get("/user/requests");
+      const response = await ApiServiece.get("/customer/requests");
       const data = response.data.data;
       setRequests(data);
     } catch (error) {
@@ -86,9 +71,25 @@ const Index = () => {
     getRequests();
   };
 
-  const prepareModal = (type, date, status, note) => {
-    setRequestData({ type, date, status, note });
-  };
+const prepareModal = (
+  id,
+  requestType,
+  startDate,
+  endDate,
+  status,
+  customerNote,
+  userNote
+) => {
+  setRequestData({
+    id,
+    requestType,
+    startDate,
+    endDate,
+    status,
+    customerNote,
+    userNote,
+  });
+};
 
   useFocusEffect(
     useCallback(() => {
@@ -103,17 +104,6 @@ const Index = () => {
       <Loading onRefresh={onRefresh}>
         {() => (
           <>
-            {/* Search Bar */}
-            <View className="px-5 pt-8 pb-4 bg-white shadow-sm ">
-              <TextInput
-                className="h-12 bg-gray-100 rounded-full px-5 text-base text-gray-800 shadow-inner text-right font-sans mt-6"
-                placeholder="جستجو..."
-                placeholderTextColor="#888"
-                value={search}
-                onChangeText={handleSearch}
-              />
-            </View>
-
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
               {requests.map((req) => (
                 <TouchableOpacity
@@ -121,10 +111,13 @@ const Index = () => {
                   onPress={() => {
                     setShowModalVisible(true);
                     prepareModal(
+                      req?._id,
                       req?.requestType,
-                      req?.createdAt,
+                      req?.startDate,
+                      req?.endDate,
                       req?.status,
-                      req?.customer_note
+                      req?.customerNote,
+                      req?.userNote
                     );
                   }}
                   activeOpacity={0.8}
@@ -139,6 +132,12 @@ const Index = () => {
                           ? "مرخصی"
                           : "نامشخص"}
                       </Text>
+
+                      {/* ✅ NEW: Creator name */}
+                      <Text className="text-xs mt-1 text-right text-gray-500 font-sans">
+                        درخواست توسط: {req?.user?.name || "نامشخص"}
+                      </Text>
+
                       <Text className="text-xs mt-1 text-right text-gray-400 font-sans">
                         تاریخ درخواست: {toJalaliDate(req.createdAt)}
                       </Text>
@@ -169,18 +168,11 @@ const Index = () => {
         )}
       </Loading>
 
-      <AddButton onPress={() => setAddModalVisible(true)} />
-
-      <AddRequest
-        visible={addmodalVisible}
-        onClose={() => setAddModalVisible(false)}
-        onSuccess={getRequests}
-      />
-
-      <ShowRequest
+      <EditRequest
         visible={showModalVisible}
         onClose={() => setShowModalVisible(false)}
         requestData={requestData}
+        onSuccess={getRequests}
       />
     </Wraper>
   );

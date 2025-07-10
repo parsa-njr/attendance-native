@@ -12,7 +12,7 @@ import ProfileValidationSchema from "../../../../components/validations/schemas/
 import Loading from "../../../../components/loading/Loading";
 import ErrorMessage from "../../../../components/validations/FormError";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Admin/Profile/ProfileSkeleton";
-import Alert from "../../../../components/shared/alert/Alert";
+import Alert from "../../../../components/shared/modal/Alert";
 import Wraper from "../../../../components/shared/Wraper";
 import Toast from "react-native-toast-message";
 import {

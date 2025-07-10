@@ -19,7 +19,7 @@ import AddButton from "../../../../components/shared/buttons/AddButton";
 import ApiService from "@/services/apiService";
 import Loading from "../../../../components/loading/Loading";
 import Wraper from "../../../../components/shared/Wraper"; // Corrected name
-import Alert from "../../../../components/shared/alert/Alert";
+import Alert from "../../../../components/shared/modal/Alert";
 import { showMessage } from "react-native-flash-message";
 import SearchInput from "../../../../components/shared/inputs/SearchInput";
 

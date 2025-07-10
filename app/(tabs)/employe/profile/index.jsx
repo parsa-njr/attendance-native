@@ -25,7 +25,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Feather from "@expo/vector-icons/Feather";
 import CardComponent from "@/components/shared/CardComponent";
-import Alert from "../../../../components/shared/alert/Alert";
+import Alert from "../../../../components/shared/modal/Alert";
 import {
   Dialog,
   Portal,
