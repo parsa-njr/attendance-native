@@ -212,7 +212,7 @@ const Index = () => {
                               source={{
                                 uri: values.profileImage.startsWith("file://")
                                   ? values.profileImage
-                                  : `http://192.168.112.156:8080${values.profileImage}`,
+                                  : `http://192.168.1.3:8080${values.profileImage}`,
                               }}
                               className="w-full h-full"
                               resizeMode="cover"
