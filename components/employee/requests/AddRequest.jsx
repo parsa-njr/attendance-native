@@ -47,14 +47,13 @@ const RequestForm = ({ visible, onClose, onSuccess }) => {
       );
       const endDateIso = convertToISODateTime(values.endDate, values.endTime);
 
-      console.log("startDateIso", startDateIso);
-      console.log("endDateIso", endDateIso);
+      
 
       const data = {
         requestType: values.requestType,
         startDate: startDateIso,
         endDate: endDateIso,
-        user_note: values.note,
+        userNote: values.note,
       };
 
       const response = await ApiService.post("/user/requests", data);

@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
 import LottieView from "lottie-react-native";
-import Alert from "../../../../components/shared/alert/Alert";
+import Alert from "../../../../components/shared/modal/Alert";
 import { showMessage } from "react-native-flash-message";
 import { Menu, Divider } from "react-native-paper";
 import {
