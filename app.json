@@ -1,19 +1,24 @@
 {
   "expo": {
-    "name": "attendance",
+    "name": "Pichidi",
     "slug": "attendance",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/InShot_۲۰۲۵۰۷۱۳_۱۶۱۲۱۶۶۴۲.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/InShot_۲۰۲۵۰۷۱۳_۱۶۱۲۱۶۶۴۲.jpg",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/InShot_۲۰۲۵۰۷۱۳_۱۶۱۲۱۶۶۴۲.jpg",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.attendance"
@@ -21,24 +26,22 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/InShot_۲۰۲۵۰۷۱۳_۱۶۱۲۱۶۶۴۲.jpg"
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
       "expo-font",
       "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1586c64d-7cc5-4670-9be0-f79d582038fb"
+      }
+    },
+    "owner": "aliaslani1234"
   }
 }
