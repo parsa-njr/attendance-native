@@ -10,14 +10,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import ApiService from "@/services/apiService";
 import SelectInput from "../../../../components/shared/inputs/SelectInput";
+import moment from "moment-jalaali";
 import CardComponent from "../../../../components/shared/CardComponent";
 import Wraper from "../../../../components/shared/Wraper";
-const Index = () => {
-  const currentYear = 2000;
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const Index = () => {
+  const currentJalaliYear = moment().jYear();
   const years = Array.from({ length: 20 }, (_, i) => {
-    const year = currentYear - i;
+    const year = currentJalaliYear - i;
     return { label: year.toString(), value: year.toString() };
   });
 
@@ -40,51 +43,55 @@ const Index = () => {
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [expandedDay, setExpandedDay] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [finalReport, setFinalReport] = useState([]);
 
-  const attendanceData = [
-    {
-      date: "2025-04-20",
-      workedHours: "8h 15m",
-      absentHours: "0h",
-      checkIn: "09:00 AM",
-      checkOut: "05:15 PM",
-    },
-    {
-      date: "2025-04-21",
-      workedHours: "7h 30m",
-      absentHours: "30m",
-      checkIn: "09:30 AM",
-      checkOut: "05:00 PM",
-    },
-    {
-      date: "2025-04-22",
-      workedHours: "8h",
-      absentHours: "0h",
-      checkIn: "09:00 AM",
-      checkOut: "05:00 PM",
-    },
-  ];
+  const toJalaliDate = (isoDate) => {
+    if (!isoDate) return "";
+    return moment(isoDate).format("jYYYY/jMM/jDD");
+  };
 
   const toggleExpand = (index) => {
     setExpandedDay(expandedDay === index ? null : index);
   };
 
-  const onRefresh = () =>
-    new Promise((resolve) => {
+  const getReport = async () => {
+    try {
       setRefreshing(true);
-      setTimeout(() => {
-        setRefreshing(false);
-        resolve();
-      }, 1500);
+      const response = await ApiService.get(
+        `/user/reports?month=${selectedMonth}&year=${selectedYear}`
+      );
+      setFinalReport(response?.data?.finalReport);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
+    }
+  };
+
+  const onRefresh = () =>
+    new Promise(() => {
+      setRefreshing(true);
+      getReport();
     });
 
   useFocusEffect(
     useCallback(() => {
+      const loadStoredFilters = async () => {
+        try {
+          const storedMonth = await AsyncStorage.getItem("selectedMonth");
+          const storedYear = await AsyncStorage.getItem("selectedYear");
+
+          if (storedMonth) setSelectedMonth(storedMonth);
+          if (storedYear) setSelectedYear(storedYear);
+        } catch (error) {
+          console.error("Error loading saved filters:", error);
+        }
+      };
+
       setRefreshing(true);
-      const timeout = setTimeout(() => {
-        setRefreshing(false);
-      }, 1500);
-      return () => clearTimeout(timeout);
+      loadStoredFilters().finally(() => {
+       getReport()
+      });
     }, [])
   );
 
@@ -96,9 +103,11 @@ const Index = () => {
       <Text className="text-sm text-gray-500 font-sans">{label}:</Text>
     </View>
   );
+
   if (refreshing) {
     return <ReportsSkeleton />;
   }
+
   return (
     <Wraper className="flex-1 bg-gray-50 relative">
       <Loading onRefresh={onRefresh}>
@@ -114,7 +123,10 @@ const Index = () => {
                   <SelectInput
                     options={months}
                     value={selectedMonth}
-                    onChange={setSelectedMonth}
+                    onChange={(val) => {
+                      setSelectedMonth(val);
+                      AsyncStorage.setItem("selectedMonth", val);
+                    }}
                     placeholder="ماه"
                   />
                 </View>
@@ -122,14 +134,20 @@ const Index = () => {
                   <SelectInput
                     options={years}
                     value={selectedYear}
-                    onChange={setSelectedYear}
+                    onChange={(val) => {
+                      setSelectedYear(val);
+                      AsyncStorage.setItem("selectedYear", val);
+                    }}
                     placeholder="سال"
                   />
                 </View>
               </View>
 
               <View className="mx-6 mt-6">
-                <TouchableOpacity className="bg-blue-600 rounded-xl py-3 items-center shadow-md">
+                <TouchableOpacity
+                  onPress={getReport}
+                  className="bg-blue-600 rounded-xl py-3 items-center shadow-md"
+                >
                   <Text className="text-white text-base font-semibold font-sans">
                     مشاهده
                   </Text>
@@ -137,7 +155,7 @@ const Index = () => {
               </View>
 
               <View className="px-5 mt-10 space-y-4">
-                {attendanceData.map((day, index) => (
+                {finalReport.map((day, index) => (
                   <CardComponent key={index} className="mb-3">
                     <TouchableOpacity
                       className="flex-row justify-between items-center p-4"
@@ -154,7 +172,7 @@ const Index = () => {
                       />
                       <View className="flex-col items-end">
                         <Text className="text-gray-800 font-semibold font-sans">
-                          1404/05/23
+                          {toJalaliDate(day?.date)}
                         </Text>
                         <Text className="text-gray-500 text-sm font-sans">
                           {day.workedHours} کار شده
@@ -164,10 +182,13 @@ const Index = () => {
 
                     {expandedDay === index && (
                       <View className="bg-gray-50 rounded-xl my-3 mx-4 px-4 py-3 shadow-sm">
-                        <DetailRow label="ورود" value={day.checkIn} />
-                        <DetailRow label="خروج" value={day.checkOut} />
-                        <DetailRow label="ساعات کاری" value={day.workedHours} />
-                        <DetailRow label="غیبت" value={day.absentHours} />
+                        <DetailRow label="ورود" value={day.actualCheckIn} />
+                        <DetailRow label="خروج" value={day.actualCheckOut} />
+                        <DetailRow
+                          label="ساعات کاری"
+                          value={day.actualMinutes}
+                        />
+                        <DetailRow label="غیبت" value={day.leaveMinutes} />
                       </View>
                     )}
                   </CardComponent>

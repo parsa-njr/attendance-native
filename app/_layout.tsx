@@ -40,6 +40,18 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)/admin" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)/employe" options={{ headerShown: false }} />
         <Stack.Screen name="Auth" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="pages/requests"
+          options={{
+            headerShown: true,
+            title: "داشبورد",
+            headerTitleStyle: {
+              fontFamily: "sans",
+              fontSize: 20,
+              color: "#000",
+            },
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
 

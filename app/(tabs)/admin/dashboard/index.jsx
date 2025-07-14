@@ -28,8 +28,12 @@ const Dashboard = () => {
   const getRequests = async () => {
     try {
       setRefreshing(true);
-      const response = await ApiService.get("/customer/requests");
-      setRequests(response?.data?.data);
+      const response = await ApiService.get(
+        "/customer/requests?page=1&per_page=3"
+      );
+      setRequests(response?.data?.data?.data);
+
+      console.log(response?.data?.data?.data);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
@@ -236,7 +240,7 @@ const Dashboard = () => {
                 })}
 
               <TouchableOpacity
-                onPress={() => router.push("/admin/requests")} // Change this to your actual requests page
+                onPress={() => router.push("/pages/requests")} // Change this to your actual requests page
                 className="bg-blue-500 py-3 rounded-xl mt-2"
               >
                 <Text className="text-white text-center font-sans text-base">
