@@ -243,10 +243,10 @@ const EmployeeDashboard = () => {
                   </View>
 
                   <View className="flex-1">
-                    <Text className="font-sans text-right text-gray-800 text-lg">
+                    <Text className="font-sans text-gray-800 text-lg">
                       صبح بخیر رضا
                     </Text>
-                    <Text className="text-right mt-1 text-gray-500 text-sm">
+                    <Text className=" mt-1 text-gray-500 text-sm">
                       {todayDate}
                     </Text>
                   </View>
@@ -382,10 +382,10 @@ const EmployeeDashboard = () => {
               {/* Motivational Quote */}
               <View className="px-5 mt-8">
                 <CardComponent className="p-5">
-                  <Text className="text-lg font-sans text-gray-800 mb-2 text-right">
+                  <Text className="text-lg font-sans text-gray-800 mb-2 ">
                     انگیزه روزانه 💬
                   </Text>
-                  <Text className="text-gray-600 text-right leading-6 font-sans">
+                  <Text className="text-gray-600  leading-6 font-sans">
                     موفقیت مجموع تلاش‌های کوچک است که هر روز تکرار می‌شود.
                   </Text>
                 </CardComponent>

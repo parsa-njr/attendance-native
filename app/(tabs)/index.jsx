@@ -15,9 +15,10 @@ const Index = () => {
         const authDataStr = await AsyncStorage.getItem("authData");
         if (authDataStr) {
           const authData = JSON.parse(authDataStr);
+        
           if (authData.token && authData.user) {
             setIsAuthenticated(true);
-            setUserRole("customer"); // adjust this if your user role key is different
+            setUserRole(authData.user.role); // adjust this if your user role key is different
           } else {
             setIsAuthenticated(false);
             setUserRole(null);
