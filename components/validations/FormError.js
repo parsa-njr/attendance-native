@@ -3,6 +3,7 @@ import { Text, Animated } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 const FormError = ({ error, visible }) => {
+
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-5)).current;
 
@@ -35,6 +36,8 @@ const FormError = ({ error, visible }) => {
       ]).start();
     }
   }, [visible, error]);
+
+
 
   if (!error || !visible) return null;
 

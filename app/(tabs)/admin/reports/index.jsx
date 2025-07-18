@@ -20,6 +20,9 @@ import SelectInput from "../../../../components/shared/inputs/SelectInput";
 import SubmitButton from "../../../../components/shared/buttons/SubmitButton";
 import Loading from "../../../../components/loading/Loading";
 import CardComponent from "../../../../components/shared/CardComponent";
+import ApiService from "../../../../services/apiService";
+import { convertToJalali } from "../../../../utils/dateFunctions";
+import { customToast } from "../../../../components/shared/toast/CustomeToast";
 
 const Index = () => {
   const locations = [
@@ -41,6 +44,8 @@ const Index = () => {
   const [dayModalVisible, setDayModalVisible] = useState(false);
   const [employeeModalVisible, setEmployeeModalVisible] = useState(false);
   const [users, setUsers] = useState(data);
+  const [singleUserData, setSingleUserData] = useState(null);
+
   const animatedHeight = useRef(new Animated.Value(1)).current;
 
   const toggleFilters = () => {
@@ -51,6 +56,74 @@ const Index = () => {
       easing: Easing.ease,
       useNativeDriver: false,
     }).start();
+  };
+
+  const [dailyReportData, setDailyReportData] = useState(null);
+  const [dailyLoading, setDailyLoading] = useState(null);
+  const [dayReportUserList, setDayReportUserList] = useState(null);
+
+  const getDateBaseReport = async () => {
+    setDailyLoading(true);
+    try {
+      const response = await ApiService.get(
+        "/customer/get-date-base-report?startDate=2025-05-22T00:00:00.000%2B00:00&endDate=2025-06-20T00:00:00.000%2B00:00&location=687514947b1fbc256cdd306a"
+      );
+      const data = response.data;
+
+      console.log("shiftData : ", data);
+      setDailyReportData(data);
+      setDailyLoading(false);
+    } catch (error) {
+      console.log("error", error);
+      setDailyLoading(false);
+    }
+  };
+
+  const [userList, setUserList] = useState(null);
+  const [usersLoading, setUsersLoading] = useState(null);
+  const getUserList = async () => {
+    setUsersLoading(true);
+    try {
+      const response = await ApiService.get(
+        "/customer/get-location-users/687514947b1fbc256cdd306a"
+      );
+      const data = response.data.data;
+
+      console.log("shiftData : ", data);
+      setUserList(data);
+      setUsersLoading(false);
+    } catch (error) {
+      console.log("error", error);
+      setUsersLoading(false);
+    }
+  };
+  const [userReportLoading, setUserReportLoading] = useState(false);
+  const [userReportData, setUserReportData] = useState(null);
+
+  const getReportBaseUser = async (id) => {
+    setUserReportLoading(true);
+    console.log("bbbbbbbbbbbbbbbbbbb");
+    try {
+      const response = await ApiService.get(
+        `/customer/get-user-base-report/?userId=${id}&startDate=2025-06-02T00:00:00.000%2B00:00&endDate=2025-06-02T00:00:00.000%2B00:00`
+      );
+      // console.log("response : ", response);
+      const data = response.data;
+
+      console.log("data : ", data);
+      setUserReportData(data);
+      setUserReportLoading(false);
+      setEmployeeModalVisible(true);
+    } catch (error) {
+      console.log("error", error);
+      setUserReportLoading(false);
+      customToast({
+        title: "مشکلی پیش آمد",
+        type: "danger",
+        description: message,
+        delay: 300, // ⏱️ delay in ms
+      });
+    }
   };
 
   const attendanceData = [
@@ -220,6 +293,11 @@ const Index = () => {
   }, []);
 
   const handleSubmit = () => {
+    if (activeTab === "daily") {
+      getDateBaseReport();
+    } else if (activeTab === "employee") {
+      getUserList();
+    }
     setFormSubmitted(true);
   };
 
@@ -263,24 +341,32 @@ const Index = () => {
 
     return activeTab === "daily" ? (
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {attendanceData.map((day, index) => (
-          <CardComponent className="mx-2 px-4 py-5  mb-3">
-            <TouchableOpacity
-              key={index}
-              // className="bg-white rounded-xl shadow-md px-4 py-5 border border-gray-100 mb-3"
-              activeOpacity={0.8}
-              onPress={() => {
-                setDayModalVisible(true);
-              }}
-            >
-              <View className="flex-row items-center justify-end border-b border-gray-200 pb-2 mb-3">
-                <Ionicons name="calendar-outline" size={18} color="#334155" />
-                <Text className="ml-3 font-sans text-sm text-gray-700">
-                  تاریخ: ۱۴۰۳/۰۲/۲۳
-                </Text>
-              </View>
+        {dailyReportData?.length > 0 && (
+          <>
+            {dailyReportData.map((item, index) => (
+              <CardComponent className="mb-3">
+                <TouchableOpacity
+                  key={index}
+                  className="   p-4"
+                  // className="bg-white rounded-xl shadow-md px-4 py-5 border border-gray-100 mb-3"
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setDayModalVisible(true);
+                    setDayReportUserList(item?.users);
+                  }}
+                >
+                  <View className="flex-row items-center justify-end ">
+                    <Ionicons
+                      name="calendar-outline"
+                      size={18}
+                      color="#334155"
+                    />
+                    <Text className="text-gray-800 font-semibold font-sans">
+                      {convertToJalali(item?.date)}
+                    </Text>
+                  </View>
 
-              <View className="flex-row justify-between mb-3">
+                  {/* <View className="flex-row justify-between mb-3">
                 <View className="flex-row items-center">
                   <Ionicons name="log-in-outline" size={18} color="#334155" />
                   <Text className="text-sm text-gray-600 font-sans text-right ml-2">
@@ -294,9 +380,9 @@ const Index = () => {
                     خروج: {day.checkOut}
                   </Text>
                 </View>
-              </View>
+              </View> */}
 
-              <View className="flex-row justify-between">
+                  {/* <View className="flex-row justify-between">
                 <View className="flex-row items-center">
                   <Ionicons name="timer-outline" size={18} color="#334155" />
                   <Text className="text-sm text-gray-600 font-sans text-right ml-2">
@@ -309,38 +395,73 @@ const Index = () => {
                     غیبت: {day.absentHours}
                   </Text>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </CardComponent>
-        ))}
+              </View> */}
+                </TouchableOpacity>
+              </CardComponent>
+            ))}
+          </>
+        )}
       </ScrollView>
     ) : (
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {data.map((item, index) => (
-          <TouchableOpacity
-            onPress={() => {
-              setEmployeeModalVisible(true);
-            }}
-            className="flex-row-reverse items-center px-4 py-3 bg-white"
-          >
-            <View className="w-14 h-14 rounded-full border-2 border-blue-500 overflow-hidden">
-              <Image
-                source={{ uri: item.image }}
-                className="w-full h-full rounded-full"
-              />
-            </View>
+        {userList?.length > 0 && (
+          <>
+            {userList.map((item, index) => (
+              <TouchableOpacity
+                onPress={() => {
+                  getReportBaseUser(item._id);
+                  setSingleUserData(item);
+                  console.log("helloooooo");
+                }}
+                className="flex-row-reverse items-center px-4 py-4 bg-white rounded-2xl mx-4 my-2 shadow-md"
+              >
+                <TouchableOpacity className="w-16 h-16 rounded-full border-2 border-blue-500 overflow-hidden shadow-sm">
+                  {item?.image ? (
+                    <Image
+                      source={{ uri: item.image }}
+                      className="w-full h-full rounded-full"
+                    />
+                  ) : (
+                    <View
+                      className="w-full h-full rounded-full bg-white justify-center items-center shadow-md"
+                      style={{
+                        backgroundColor: "#F3F4F6",
+                        shadowColor: "#E5E7EB",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 6,
+                        elevation: 3,
+                      }}
+                    >
+                      <Ionicons
+                        name="person-outline"
+                        size={32}
+                        color="#9CA3AF"
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
 
-            <View className="flex-1 mr-4 border-b border-gray-100 pb-3">
-              <View className="flex-row justify-between items-center">
-                <Text className="text-xs text-gray-400 text-left">9:58 AM</Text>
-                <Text className="text-base font-semibold text-gray-800 font-sans text-right">
-                  {item.name}
-                </Text>
-              </View>
-              <Text className={`text-sm mt-1 text-right`}>{item.status}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+                <View className="flex-1 mr-4 border-b border-gray-100 pb-3">
+                  <View className="flex-row justify-between items-center mb-1">
+                    <Text className="text-xs text-gray-400 text-left font-light">
+                      9:58 AM
+                    </Text>
+                    <Text className="text-lg font-semibold text-gray-900 font-sans text-right">
+                      {item.name}
+                    </Text>
+                  </View>
+                  <View className="flex-row justify-between items-center">
+                    <View />
+                    <Text className="text-sm text-gray-500 text-right">
+                      {item.phone}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
       </ScrollView>
     );
   };
@@ -456,7 +577,7 @@ const Index = () => {
                   {/* Submit Button */}
                   <SubmitButton
                     title="📊 مشاهده گزارش"
-                    onPress={!formSubmitted ? handleSubmit : null}
+                    onPress={handleSubmit}
                     disabled={formSubmitted}
                     className={`mt-2 rounded-xl px-4 py-3 font-semibold text-center ${
                       formSubmitted
@@ -475,27 +596,7 @@ const Index = () => {
               onClose={() => {
                 setDayModalVisible(false);
               }}
-              users={[
-                {
-                  id: 1,
-                  name: "علی رضایی",
-                  avatar: "https://i.pravatar.cc/150?img=3",
-                  status: "present", // or "late" or "absent"
-                  checkIn: "08:45",
-                  checkOut: "17:00",
-                  date: "۱۴۰۳/۰۲/۲۴",
-                  notes: "جلسه مهم داشت.",
-                },
-                {
-                  id: 2,
-                  name: "سارا محمدی",
-                  avatar: "https://i.pravatar.cc/150?img=4",
-                  status: "late",
-                  checkIn: "09:30",
-                  checkOut: "16:50",
-                  date: "۱۴۰۳/۰۲/۲۴",
-                },
-              ]}
+              users={dayReportUserList || []}
             />
 
             <EmployeeReport
@@ -503,6 +604,8 @@ const Index = () => {
               onClose={() => {
                 setEmployeeModalVisible(false);
               }}
+              data={userReportData}
+              userData={singleUserData}
             />
           </ScrollView>
         )}
