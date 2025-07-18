@@ -67,10 +67,10 @@ const Dashboard = () => {
             <View className="px-5 pt-5 mt-9">
               <CardComponent className="bg-white rounded-2xl p-5 flex-row items-center shadow-sm">
                 <View className="flex-1">
-                  <Text className="text-base  text-gray-800 text-right font-sans">
+                  <Text className="text-base  text-gray-800 font-sans">
                     سلام مدیر عزیز 👋
                   </Text>
-                  <Text className="text-sm text-gray-500 mt-1 text-right font-sans">
+                  <Text className="text-sm text-gray-500 mt-1  font-sans">
                     داشبورد امروز شما اینجاست.
                   </Text>
                 </View>
@@ -114,7 +114,7 @@ const Dashboard = () => {
 
             {/* Charts Section */}
             <View className="px-5 mt-8">
-              <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+              <Text className="text-xl font-semibold text-gray-800 mb-4 font-sans">
                 وضعیت کارمندان
               </Text>
               <CardComponent className="bg-white p-4 rounded-2xl mb-8 shadow-sm">
@@ -199,7 +199,7 @@ const Dashboard = () => {
 
             {/* Latest Activity */}
             <View className="px-5 mt-8">
-              <Text className="text-xl font-semibold text-gray-800 mb-4 text-right font-sans">
+              <Text className="text-xl font-semibold text-gray-800 mb-4  font-sans">
                 آخرین فعالیت‌ها
               </Text>
 
@@ -228,7 +228,7 @@ const Dashboard = () => {
                           </Text>
                         </View>
                         <View className="flex-1 ml-3">
-                          <Text className="text-base font-semibold text-gray-800 text-right font-sans">
+                          <Text className="text-base font-semibold text-gray-800  font-sans">
                             {`${fullName} درخواست ${typeLabel} داده است`}
                           </Text>
                         </View>
@@ -258,10 +258,10 @@ const Dashboard = () => {
 const StatCard = ({ label, value, color }) => {
   return (
     <CardComponent className="w-[48%] bg-white p-4 rounded-2xl mb-4 shadow-sm">
-      <Text className={`text-3xl font-bold ${color} font-sans text-right`}>
+      <Text className={`text-3xl font-bold ${color} font-sans `}>
         {value}
       </Text>
-      <Text className="text-gray-600 text-sm mt-2 font-sans text-right">
+      <Text className="text-gray-600 text-sm mt-2 font-sans ">
         {label}
       </Text>
     </CardComponent>

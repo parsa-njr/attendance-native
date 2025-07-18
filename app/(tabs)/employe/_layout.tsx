@@ -1,15 +1,58 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, View, I18nManager } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+function TabBarBackground() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View
+      style={{
+        height: 60 + insets.bottom,
+        backgroundColor: "#fff",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        overflow: "hidden",
+      }}
+    />
+  );
+}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
+
+  // تعریف تب‌ها داخل آرایه
+  const tabs = [
+    {
+      name: "dashboard/index",
+      title: "خانه",
+      icon: "home-outline",
+    },
+    {
+      name: "reports/index",
+      title: "گزارش",
+      icon: "document-text-outline",
+    },
+    {
+      name: "profile/index",
+      title: "پروفایل",
+      icon: "person-outline",
+    },
+    {
+      name: "requests/index",
+      title: "درخواست",
+      icon: "clipboard-outline",
+    },
+  ];
+
+  const isRTL = I18nManager.isRTL;
+  const orderedTabs = !isRTL ? tabs : tabs.slice().reverse();
 
   return (
     <Tabs
@@ -20,54 +63,35 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: "absolute",
+            borderTopWidth: 0,
+            backgroundColor: "transparent",
+            elevation: 0,
+            paddingBottom: insets.bottom,
+            height: 60 + insets.bottom,
           },
-          default: {},
+          default: {
+            height: 60,
+          },
         }),
-
         tabBarLabelStyle: {
-          fontFamily: "sans", // <-- replace with actual font name
+          fontFamily: "sans",
           fontSize: 11,
         },
       }}
     >
-      <Tabs.Screen
-        name="dashboard/index"
-        options={{
-          title: "خانه",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="reports/index"
-        options={{
-          title: "گزارش",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="document-text-outline" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile/index"
-        options={{
-          title: "پروفایل",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="requests/index"
-        options={{
-          title: "درخواست",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="clipboard-outline" size={28} color={color} />
-          ),
-        }}
-      />
+      {orderedTabs.map(({ name, title, icon }) => (
+        <Tabs.Screen
+          key={name}
+          name={name}
+          options={{
+            title,
+            tabBarIcon: ({ color }) => (
+              <Ionicons name={icon} size={28} color={color} />
+            ),
+          }}
+        />
+      ))}
     </Tabs>
   );
 }

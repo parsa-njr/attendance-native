@@ -138,12 +138,12 @@ const Index = () => {
         </View>
 
         <View className="flex-1 mr-2">
-          <Text className="text-base font-sans text-gray-800 text-right mb-1">
+          <Text className="text-base font-sans text-gray-800 mb-1">
             {item.name}
           </Text>
           <View className="flex-row-reverse items-center space-x-1 space-x-reverse">
             <Ionicons name="location-outline" size={14} color="#6B7280" />
-            <Text className="text-xs text-gray-500 text-right font-sans">
+            <Text className="text-xs text-gray-500  font-sans">
               {item.latitude.toFixed(4)} / {item.longitude.toFixed(4)}
             </Text>
           </View>
