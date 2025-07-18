@@ -12,6 +12,15 @@ import {
 } from "react-native";
 import BottomSheet from "../../shared/BottomSheet";
 
+ const DetailRow = ({ label, value }) => (
+    <View className="flex-row justify-between items-center border-b border-gray-200 py-2">
+      <Text className="text-sm text-gray-800 font-medium font-sans">
+        {value}
+      </Text>
+      <Text className="text-sm text-gray-500 font-sans">{label}:</Text>
+    </View>
+  );
+
 // Enable layout animation on Android
 if (
   Platform.OS === "android" &&
@@ -22,6 +31,8 @@ if (
 
 const DayReport = ({ visible, onClose, users = [] }) => {
   const [expandedUserIds, setExpandedUserIds] = useState([]);
+
+  console.log("usersss :: ", users);
 
   const toggleExpand = (userId) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -69,43 +80,45 @@ const DayReport = ({ visible, onClose, users = [] }) => {
 
             {isExpanded && (
               <View className="mt-3 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
-                <View className="flex-row justify-between mb-1">
-                  <Text className="text-xs text-gray-500 text-right">
-                    ساعت ورود:
-                  </Text>
-                  <Text className="text-xs text-slate-700">9:58 AM</Text>
-                </View>
-                <View className="flex-row justify-between mb-1">
-                  <Text className="text-xs text-gray-500 text-right">
-                    ساعت خروج:
-                  </Text>
-                  <Text className="text-xs text-slate-700">5:45 PM</Text>
-                </View>
-                <View className="flex-row justify-between mb-1">
-                  <Text className="text-xs text-gray-500 text-right">
-                    موقعیت مکانی:
-                  </Text>
-                  <Text className="text-xs text-slate-700">
-                    تهران، دفتر مرکزی
-                  </Text>
-                </View>
-                <View className="flex-row justify-between mb-1">
-                  <Text className="text-xs text-gray-500 text-right">
-                    دستگاه ورود:
-                  </Text>
-                  <Text className="text-xs text-slate-700">
-                    Android - Chrome
-                  </Text>
-                </View>
-                <View className="mt-2">
-                  <Text className="text-xs text-gray-500 text-right mb-1">
-                    توضیحات:
-                  </Text>
-                  <Text className="text-xs text-slate-600 leading-5 text-right">
-                    امروز با 10 دقیقه تاخیر وارد شد به دلیل ترافیک سنگین در مسیر
-                    خانه تا دفتر.
-                  </Text>
-                </View>
+                {item?.report.status !== "invalidShiftDay" ? (
+                  <>
+                    <View className="bg-gray-50 rounded-xl my-3 mx-4 px-4 py-3 shadow-sm">
+                        <DetailRow label="ورود" value={item?.report.actualCheckIn} />
+                        <DetailRow label="خروج" value={item?.report.actualCheckOut} />
+                        <DetailRow
+                          label="ساعات کاری"
+                          value={item?.report.actualMinutes}
+                        />
+                        <DetailRow label="غیبت" value={item?.report.leaveMinutes} />
+                      </View>
+                  </>
+                ) : (
+                  <>
+                    {item?.attendance.map((attendnaceItem) => (
+                      <>
+                        <View>
+                          <Text className="text-red-600">روز بدون شیفت</Text>
+                        </View>
+                        <View className="flex-row justify-between mb-1">
+                          <Text className="text-xs text-gray-500 text-right">
+                            ساعت ورود:
+                          </Text>
+                          <Text className="text-xs text-slate-700">
+                            {attendnaceItem.checkIn}
+                          </Text>
+                        </View>
+                        <View className="flex-row justify-between mb-1">
+                          <Text className="text-xs text-gray-500 text-right">
+                            ساعت خروج:
+                          </Text>
+                          <Text className="text-xs text-slate-700">
+                            {attendnaceItem.checkOut}
+                          </Text>
+                        </View>
+                      </>
+                    ))}
+                  </>
+                )}
               </View>
             )}
           </View>

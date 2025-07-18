@@ -12,7 +12,7 @@ import AddButton from "../../../../components/shared/buttons/AddButton";
 import ShiftForm from "../../../../components/admin/shift/ShiftForm";
 import CardComponent from "../../../../components/shared/CardComponent";
 import Wraper from "../../../../components/shared/Wraper";
-import Alert from "../../../../components/shared/alert/Alert";
+import Alert from "../../../../components/shared/modal/Alert";
 
 import Wrapper from "../../../../components/shared/Wraper";
 import Loading from "../../../../components/loading/Loading";
