@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // You can either hardcode the URL or use an .env file with react-native-dotenv
 
-const baseURL = "http://192.168.1.156:8080/api/v1/"; // Fallback if env is missing
+const baseURL = "https://attendance-back-end-production.up.railway.app/api/v1/"; // Fallback if env is missing
 
 // const baseURL = "http://192.168.1.3:8080/api/v1/"; // Fallback if env is missing
 

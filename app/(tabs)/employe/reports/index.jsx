@@ -2,13 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import ReportsSkeleton from "../../../../components/loading/Skeleton/Employee/Reports/ReportsSkeleton";
 import Loading from "../../../../components/loading/Loading";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ApiService from "@/services/apiService";
 import SelectInput from "../../../../components/shared/inputs/SelectInput";
@@ -85,7 +79,7 @@ const Index = () => {
     }, [])
   );
 
-  const downloadExcelReport = async () => {
+ const downloadExcelReport = async () => {
   try {
     if (!selectedMonth || !selectedYear) {
       alert("ابتدا ماه و سال را انتخاب کنید.");
@@ -99,10 +93,12 @@ const Index = () => {
     }
 
     const authDataStr = await AsyncStorage.getItem("authData");
-     const authData = JSON.parse(authDataStr);
-     const token = authData.token
-    const fileName = `report-${selectedYear}-${selectedMonth}.xlsx`;
-    const tempPath = FileSystem.documentDirectory + fileName;
+    const authData = JSON.parse(authDataStr);
+    const token = authData.token;
+
+    // 🟡 Save as .txt for testing
+    const fileName = `report-${selectedYear}-${selectedMonth}.txt`;
+    const tempPath = FileSystem.cacheDirectory + fileName;
 
     const downloadUrl = `${ApiService.defaults.baseURL}/user/reports?month=${selectedMonth}&year=${selectedYear}&excel=true`;
 
@@ -114,19 +110,28 @@ const Index = () => {
       }
     );
 
-    const { uri, status: downloadStatus } = await downloadResumable.downloadAsync();
-    console.log("Downloaded file URI:", uri, "Status:", downloadStatus);
+    const { uri, status: downloadStatus } =
+      await downloadResumable.downloadAsync();
+
+    console.log("📦 Downloaded file URI:", uri, "Status:", downloadStatus);
 
     const fileInfo = await FileSystem.getInfoAsync(uri);
-    console.log("File info:", fileInfo);
+    console.log("📄 File info:", fileInfo);
 
     if (!fileInfo.exists) {
       alert("فایل ایجاد نشد یا دانلود ناقص بود.");
       return;
     }
 
+    const contentSnippet = await FileSystem.readAsStringAsync(uri, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+    console.log("🧪 File content preview:", contentSnippet.slice(0, 200));
+
+    // ✅ Try creating asset
     const asset = await MediaLibrary.createAssetAsync(uri);
     const album = await MediaLibrary.getAlbumAsync("Download");
+
     if (album) {
       await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
     } else {
@@ -135,7 +140,7 @@ const Index = () => {
 
     alert("فایل با موفقیت در پوشه Downloads ذخیره شد.");
   } catch (error) {
-    console.error("Download error:", error);
+    console.error("❌ Download error:", error);
     alert("خطا در دانلود و ذخیره گزارش.");
   }
 };
@@ -143,7 +148,9 @@ const Index = () => {
 
   const DetailRow = ({ label, value }) => (
     <View className="flex-row justify-between items-center border-b border-gray-200 py-2">
-      <Text className="text-sm text-gray-800 font-medium font-sans">{value}</Text>
+      <Text className="text-sm text-gray-800 font-medium font-sans">
+        {value}
+      </Text>
       <Text className="text-sm text-gray-500 font-sans">{label}:</Text>
     </View>
   );
@@ -214,7 +221,11 @@ const Index = () => {
                     onPress={() => toggleExpand(index)}
                   >
                     <Ionicons
-                      name={expandedDay === index ? "chevron-up-outline" : "chevron-down-outline"}
+                      name={
+                        expandedDay === index
+                          ? "chevron-up-outline"
+                          : "chevron-down-outline"
+                      }
                       size={24}
                       color="gray"
                     />
@@ -230,9 +241,18 @@ const Index = () => {
 
                   {expandedDay === index && (
                     <View className="bg-gray-50 rounded-xl my-3 mx-4 px-4 py-3 shadow-sm">
-                      <DetailRow label="ورود" value={day.actualCheckIn || "-"} />
-                      <DetailRow label="خروج" value={day.actualCheckOut || "-"} />
-                      <DetailRow label="ساعات کاری" value={day.actualMinutes || "0"} />
+                      <DetailRow
+                        label="ورود"
+                        value={day.actualCheckIn || "-"}
+                      />
+                      <DetailRow
+                        label="خروج"
+                        value={day.actualCheckOut || "-"}
+                      />
+                      <DetailRow
+                        label="ساعات کاری"
+                        value={day.actualMinutes || "0"}
+                      />
                       <DetailRow label="غیبت" value={day.leaveMinutes || "0"} />
                     </View>
                   )}

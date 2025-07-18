@@ -3,27 +3,32 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-
 import "../global.css";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
   ImageBackground,
+  TouchableOpacity,
+  I18nManager,
+  Platform,
 } from "react-native";
 import FlashMessage from "react-native-flash-message";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import AppIntroSlider from "react-native-app-intro-slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// ✅ Force RTL (only once)
+if (Platform.OS === "android" && !I18nManager.isRTL) {
+  I18nManager.allowRTL(true);
+  I18nManager.forceRTL(true);
+  // ❗ On first run, you need to clear the build or reinstall app for it to take effect.
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -43,7 +48,6 @@ export default function RootLayout() {
       key: "one",
       title: "به اپ ما خوش آمدید",
       text: "دستیار هوشمند برای انجام سریع کارها",
-      backgroundColor: "#59b2ab",
       image: require("../assets/images/icon.png"),
     },
     {
@@ -64,9 +68,7 @@ export default function RootLayout() {
     const checkOnboarding = async () => {
       try {
         const seen = await AsyncStorage.getItem("hasSeenOnboarding");
-        if (!seen) {
-          setShowOnboarding(true);
-        }
+        if (!seen) setShowOnboarding(true);
       } catch (err) {
         console.error("Error checking onboarding:", err);
       } finally {
@@ -81,7 +83,7 @@ export default function RootLayout() {
     setShowOnboarding(false);
   };
 
-  const renderSlide = ({ item, index }) => (
+  const renderSlide = ({ item, index }: any) => (
     <ImageBackground
       source={item.image}
       style={styles.slide}
@@ -90,7 +92,6 @@ export default function RootLayout() {
       <View style={styles.overlay}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>{item.text}</Text>
-
         {index === slides.length - 1 && (
           <TouchableOpacity style={styles.button} onPress={onDone}>
             <Text style={styles.buttonText}>بزن بریم 🚀</Text>
@@ -106,9 +107,7 @@ export default function RootLayout() {
     }
   }, [loaded, ready, showOnboarding]);
 
-  if (!loaded || !ready) {
-    return null;
-  }
+  if (!loaded || !ready) return null;
 
   if (showOnboarding) {
     return (
@@ -178,15 +177,10 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // اختیاری برای تار کردن بکگراند
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-  },
-  image: {
-    width: 250,
-    height: 250,
-    marginBottom: 30,
   },
   title: {
     fontSize: 24,
