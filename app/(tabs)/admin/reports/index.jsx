@@ -23,6 +23,7 @@ import CardComponent from "../../../../components/shared/CardComponent";
 import ApiService from "../../../../services/apiService";
 import { convertToJalali } from "../../../../utils/dateFunctions";
 import { customToast } from "../../../../components/shared/toast/CustomeToast";
+import NoItemFound from "../../../../components/shared/NoItemFound";
 
 const Index = () => {
   const locations = [
@@ -341,7 +342,7 @@ const Index = () => {
 
     return activeTab === "daily" ? (
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {dailyReportData?.length > 0 && (
+        {dailyReportData?.length > 0 ? (
           <>
             {dailyReportData.map((item, index) => (
               <CardComponent className="mb-3">
@@ -365,46 +366,19 @@ const Index = () => {
                       {convertToJalali(item?.date)}
                     </Text>
                   </View>
-
-                  {/* <View className="flex-row justify-between mb-3">
-                <View className="flex-row items-center">
-                  <Ionicons name="log-in-outline" size={18} color="#334155" />
-                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                    ورود: {day.checkIn}
-                  </Text>
-                </View>
-
-                <View className="flex-row items-center">
-                  <Ionicons name="log-out-outline" size={18} color="#334155" />
-                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                    خروج: {day.checkOut}
-                  </Text>
-                </View>
-              </View> */}
-
-                  {/* <View className="flex-row justify-between">
-                <View className="flex-row items-center">
-                  <Ionicons name="timer-outline" size={18} color="#334155" />
-                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                    کارکرد: {day.workedHours}
-                  </Text>
-                </View>
-
-                <View className="flex-row items-center">
-                  <Text className="text-sm text-gray-600 font-sans text-right ml-2">
-                    غیبت: {day.absentHours}
-                  </Text>
-                </View>
-              </View> */}
                 </TouchableOpacity>
               </CardComponent>
             ))}
+          </>
+        ) : (
+          <>
+            <NoItemFound title="موردی یافت نشد" />
           </>
         )}
       </ScrollView>
     ) : (
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {userList?.length > 0 && (
+        {userList?.length > 0 ? (
           <>
             {userList.map((item, index) => (
               <TouchableOpacity
@@ -460,6 +434,10 @@ const Index = () => {
                 </View>
               </TouchableOpacity>
             ))}
+          </>
+        ) : (
+          <>
+            <NoItemFound title="موردی یافت نشد" />
           </>
         )}
       </ScrollView>

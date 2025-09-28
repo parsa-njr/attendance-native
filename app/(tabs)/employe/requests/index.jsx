@@ -16,6 +16,7 @@ import CardComponent from "../../../../components/shared/CardComponent";
 import ApiServiece from "../../../../services/apiService";
 import RequestsSkeleton from "../../../../components/loading/Skeleton/Employee/Requests/RequestsSkeleton";
 import Wraper from "../../../../components/shared/Wraper";
+import NoItemFound from "../../../../components/shared/NoItemFound";
 
 const Index = () => {
   const [addmodalVisible, setAddModalVisible] = useState(false);
@@ -114,57 +115,65 @@ const Index = () => {
               />
             </View>
 
-            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-              {requests.map((req) => (
-                <TouchableOpacity
-                  key={req._id}
-                  onPress={() => {
-                    setShowModalVisible(true);
-                    prepareModal(
-                      req?.requestType,
-                      req?.createdAt,
-                      req?.status,
-                      req?.customer_note
-                    );
-                  }}
-                  activeOpacity={0.8}
-                  className="mx-2 mt-3"
-                >
-                  <CardComponent className="bg-white p-5 rounded-2xl shadow-md flex-row-reverse justify-between items-center border border-gray-100">
-                    <View className="flex-1 pr-4">
-                      <Text className="text-lg font-semibold text-right text-gray-900 font-sans">
-                        {req?.requestType === "overtime"
-                          ? "اضافه کاری"
-                          : req?.requestType === "leave"
-                          ? "مرخصی"
-                          : "نامشخص"}
-                      </Text>
-                      <Text className="text-xs mt-1 text-right text-gray-400 font-sans">
-                        تاریخ درخواست: {toJalaliDate(req.createdAt)}
-                      </Text>
-                    </View>
-
-                    <View
-                      className={`px-3 py-1 rounded-full ${
-                        req.status === "accepted"
-                          ? "bg-green-100"
-                          : req.status === "pending"
-                          ? "bg-yellow-100"
-                          : "bg-red-100"
-                      }`}
+            {/* <ScrollView contentContainerStyle={{ paddingBottom: 100 }}> */}
+              {Array.isArray(requests) && requests.length === 0 ? (
+                <>
+                  <NoItemFound title="موردی یافت نشد" />
+                </>
+              ) : (
+                <>
+                  {requests.map((req) => (
+                    <TouchableOpacity
+                      key={req._id}
+                      onPress={() => {
+                        setShowModalVisible(true);
+                        prepareModal(
+                          req?.requestType,
+                          req?.createdAt,
+                          req?.status,
+                          req?.customer_note
+                        );
+                      }}
+                      activeOpacity={0.8}
+                      className="mx-2 mt-3"
                     >
-                      <Text
-                        className={`text-xs font-medium font-sans ${getStatusColor(
-                          req.status
-                        )}`}
-                      >
-                        {translateStatus(req.status)}
-                      </Text>
-                    </View>
-                  </CardComponent>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+                      <CardComponent className="bg-white p-5 rounded-2xl shadow-md flex-row-reverse justify-between items-center border border-gray-100">
+                        <View className="flex-1 pr-4">
+                          <Text className="text-lg font-semibold text-right text-gray-900 font-sans">
+                            {req?.requestType === "overtime"
+                              ? "اضافه کاری"
+                              : req?.requestType === "leave"
+                              ? "مرخصی"
+                              : "نامشخص"}
+                          </Text>
+                          <Text className="text-xs mt-1 text-right text-gray-400 font-sans">
+                            تاریخ درخواست: {toJalaliDate(req.createdAt)}
+                          </Text>
+                        </View>
+
+                        <View
+                          className={`px-3 py-1 rounded-full ${
+                            req.status === "accepted"
+                              ? "bg-green-100"
+                              : req.status === "pending"
+                              ? "bg-yellow-100"
+                              : "bg-red-100"
+                          }`}
+                        >
+                          <Text
+                            className={`text-xs font-medium font-sans ${getStatusColor(
+                              req.status
+                            )}`}
+                          >
+                            {translateStatus(req.status)}
+                          </Text>
+                        </View>
+                      </CardComponent>
+                    </TouchableOpacity>
+                  ))}
+                </>
+              )}
+            {/* </ScrollView> */}
           </>
         )}
       </Loading>

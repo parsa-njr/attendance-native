@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // const baseURL = "http://192.168.1.156:8080/api/v1/"; // Fallback if env is missing
 
-const baseURL = "http://192.168.1.10:8080/api/v1/"; // Fallback if env is missing
+const baseURL = "http://192.168.1.8:8080/api/v1/"; // Fallback if env is missing
 
 
 const ApiService = axios.create({

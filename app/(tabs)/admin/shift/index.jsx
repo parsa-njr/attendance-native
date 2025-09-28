@@ -26,6 +26,8 @@ import moment from "moment-jalaali";
 import { showMessage } from "react-native-flash-message";
 import { toJalaliDate } from "../../../../utils/dateFunctions";
 import { customToast } from "../../../../components/shared/toast/CustomeToast";
+import NoItemFound from "../../../../components/shared/NoItemFound";
+
 
 const Index = () => {
   const data = [
@@ -231,20 +233,9 @@ const Index = () => {
                   />
                 </View>
 
-                <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                   {Array.isArray(shiftList) && shiftList.length === 0 ? (
                     <>
-                      <View className="flex-1 justify-center items-center mt-10">
-                        <LottieView
-                          source={require("../../../../assets/animations/Animation - 1745703881904 (1).json")} // Replace with your actual Lottie file
-                          autoPlay
-                          loop
-                          style={{ width: 200, height: 200 }}
-                        />
-                        <Text className="text-gray-500 mt-4 text-lg font-sans">
-                          موردی یافت نشد
-                        </Text>
-                      </View>
+                      <NoItemFound title="موردی یافت نشد" />
                     </>
                   ) : (
                     <>
@@ -259,7 +250,6 @@ const Index = () => {
                       />
                     </>
                   )}
-                </ScrollView>
               </SafeAreaView>
             </>
           )}

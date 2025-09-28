@@ -2,9 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import ProfileSkeleton from "../../../../components/loading/Skeleton/Employee/Dashboard/DashboardSkeleton";
-import LottieView from "lottie-react-native";
 import Alert from "../../../../components/shared/modal/Alert";
-import { showMessage } from "react-native-flash-message";
 import { Menu, Divider } from "react-native-paper";
 import {
   View,
@@ -18,13 +16,15 @@ import {
 import Loading from "../../../../components/loading/Loading";
 import AddUser from "../../../../components/admin/users/AddUser";
 import EditUser from "../../../../components/admin/users/EditUser";
+import UserForm from "../../../../components/admin/users/UserForm";
 import AddButton from "../../../../components/shared/buttons/AddButton";
+import NoItemFound from "../../../../components/shared/NoItemFound";
 import ApiService from "@/services/apiService";
 import Wraper from "../../../../components/shared/Wraper";
+import { customToast } from "@/components/shared/toast/CustomeToast";
+
 const Index = () => {
-  const [addModalVisible, setaddModalVisible] = useState(false);
-  const [editModalVisible, seteditModalVisible] = useState(false);
-  const [users, setUsers] = useState();
+  const [userList, setUserList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [openMenuUserId, setOpenMenuUserId] = useState(null);
@@ -32,42 +32,47 @@ const Index = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [shifts, setShifts] = useState();
   const [locations, setLocations] = useState();
-  const [userData, setUserData] = useState({});
+  const [formData, setFormData] = useState(null);
+  const [mode, setMode] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleSearch = (text) => {
     setSearch(text);
     if (text) {
-      const filtered = users?.filter((user) =>
+      const filtered = userList?.filter((user) =>
         user.name.toLowerCase().includes(text.toLowerCase())
       );
-      setUsers(filtered);
+      setUserList(filtered);
     } else {
-      getUsers();
+      getUserList();
     }
   };
 
-  const onRefresh = () =>
-    new Promise(() => {
-      setRefreshing(true);
-      getUsers();
-    });
+  const onRefresh = () => {
+    getUserList();
+    getShifts();
+    getLocations();
+  };
 
   useFocusEffect(
     useCallback(() => {
-      getUsers();
+      setRefreshing(true);
+      getUserList();
       getShifts();
       getLocations();
     }, [])
   );
 
-  const getUsers = async () => {
+  const getUserList = async () => {
     try {
-      setRefreshing(true);
+      // setRefreshing(true);
       const response = await ApiService.get("/customer/users");
-      setUsers(response.data.data);
+      const data = response.data.data;
+      console.log("data ::: ", data);
+      setUserList(data);
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      console.log(" errorr :::: ", error);
       setRefreshing(false);
     }
   };
@@ -94,37 +99,35 @@ const Index = () => {
   const handleDelete = async (id) => {
     try {
       const response = await ApiService.delete(`/customer/users/${id}`);
-      const message = response.data.message;
 
-      showMessage({
-        message: "موفقیت آمیز بود",
-        description: `${message}`,
+      customToast({
+        title: "حذف با موفقیت انجام شد",
         type: "success",
-        icon: "success",
+        delay: 400, // ⏱️ delay in ms
       });
 
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+      getUserList();
     } catch (error) {
       const message =
         error?.response?.data?.errorDetails || "خطای ناشناخته‌ای رخ داده است.";
-      showMessage({
-        message: "مشکلی پیش آمد",
-        description: message,
+      customToast({
+        title: "مشکلی پیش آمد",
         type: "danger",
-        icon: "danger",
+        description: message,
+        delay: 300, // ⏱️ delay in ms
       });
     }
   };
 
-  const readyEditModal = (id, name, phone, location, shift) => {
-    setUserData({
-      id,
-      name,
-      phone,
-      location,
-      shift,
-    });
-  };
+  // const readyEditModal = (id, name, phone, location, shift) => {
+  //   setUserData({
+  //     id,
+  //     name,
+  //     phone,
+  //     location,
+  //     shift,
+  //   });
+  // };
 
   const renderUserItem = ({ item }) => {
     const isMenuVisible = openMenuUserId === item._id;
@@ -205,15 +208,19 @@ const Index = () => {
           />
           <Menu.Item
             onPress={() => {
-              seteditModalVisible(true);
+              setFormData(item);
+              setMode("edit");
+              setModalVisible(true);
               closeMenu();
-              readyEditModal(
-                item?._id,
-                item?.name,
-                item?.phone,
-                item?.location._id,
-                item?.shift._id
-              );
+              // seteditModalVisible(true);
+              // closeMenu();
+              // readyEditModal(
+              //   item?._id,
+              //   item?.name,
+              //   item?.phone,
+              //   item?.location._id,
+              //   item?.shift._id
+              // );
             }}
             title="ویرایش"
             titleStyle={{
@@ -270,54 +277,66 @@ const Index = () => {
               />
             </View>
 
-            {Array.isArray(users) && users.length === 0 ? (
-              <View className="flex-1 justify-center items-center mt-10">
-                <LottieView
-                  source={require("../../../../assets/animations/Animation - 1745703881904 (1).json")} // Replace with your actual Lottie file
-                  autoPlay
-                  loop
-                  style={{ width: 200, height: 200 }}
-                />
-                <Text className="text-gray-500 mt-4 text-lg font-sans">
-                  هیچ کاربری یافت نشد
-                </Text>
-              </View>
+            {console.log("userList :::: ", userList)}
+            {console.log("userList :::: ", userList.length)}
+
+            {Array.isArray(userList) && userList.length === 0 ? (
+              <>
+
+                <NoItemFound title=" کاربری یافت نشد" />
+              </>
             ) : (
-              <FlatList
-                contentContainerStyle={{ paddingBottom: 100 }}
-                data={users}
-                keyExtractor={(item) => item._id.toString()}
-                ItemSeparatorComponent={() => (
-                  <View className="h-px bg-gray-200 mx-5" />
-                )}
-                renderItem={renderUserItem}
-              />
+              <>
+                <FlatList
+                  contentContainerStyle={{ paddingBottom: 100 }}
+                  data={userList}
+                  keyExtractor={(item) => item._id.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View className="h-px bg-gray-200 mx-5" />
+                  )}
+                  renderItem={renderUserItem}
+                />
+              </>
             )}
           </SafeAreaView>
         )}
       </Loading>
-      <AddButton onPress={() => setaddModalVisible(true)} />
-
-      <AddUser
+      <AddButton
+        onPress={() => {
+          setModalVisible(true);
+          setMode("add");
+        }}
+      />
+      {/* <AddUser
         onSuccess={() => {
-          getUsers();
+          getUserList();
         }}
         visible={addModalVisible}
         locations={locations}
         shifts={shifts}
         onClose={() => setaddModalVisible(false)}
+      /> */}
+
+      <UserForm
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        mode={mode || null}
+        formData={formData || null}
+        getList={() => getUserList()}
+        locations={locations}
+        shifts={shifts}
       />
 
-      <EditUser
+      {/* <EditUser
         onSuccess={() => {
-          getUsers();
+          getUserList();
         }}
         visible={editModalVisible}
         locations={locations}
         shifts={shifts}
         userData={userData}
         onClose={() => seteditModalVisible(false)}
-      />
+      /> */}
 
       {/* Delete Confirmation Dialog */}
       <Alert

@@ -22,6 +22,8 @@ import Wraper from "../../../../components/shared/Wraper"; // Corrected name
 import Alert from "../../../../components/shared/modal/Alert";
 import { showMessage } from "react-native-flash-message";
 import SearchInput from "../../../../components/shared/inputs/SearchInput";
+import NoItemFound from "../../../../components/shared/NoItemFound";
+
 
 const Index = () => {
   const [showDialog, setShowDialog] = useState(false);
@@ -234,15 +236,23 @@ const Index = () => {
           <>
             <SearchInput value={search} onChangeText={handleSearch} />
 
-            <FlatList
-              contentContainerStyle={{ paddingBottom: 100 }}
-              data={locations}
-              keyExtractor={(item) => item._id.toString()}
-              ItemSeparatorComponent={() => (
-                <View className="h-px bg-gray-200 mx-5" />
-              )}
-              renderItem={({ item }) => <LocationCard item={item} />}
-            />
+            {Array.isArray(locations) && locations.length === 0 ? (
+              <>
+                <NoItemFound title="موردی یافت نشد" />
+              </>
+            ) : (
+              <>
+                <FlatList
+                  contentContainerStyle={{ paddingBottom: 100 }}
+                  data={locations}
+                  keyExtractor={(item) => item._id.toString()}
+                  ItemSeparatorComponent={() => (
+                    <View className="h-px bg-gray-200 mx-5" />
+                  )}
+                  renderItem={({ item }) => <LocationCard item={item} />}
+                />
+              </>
+            )}
           </>
         )}
       </Loading>

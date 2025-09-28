@@ -16,6 +16,7 @@ import moment from "moment-jalaali";
 import CardComponent from "../../../../components/shared/CardComponent";
 import Wraper from "../../../../components/shared/Wraper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NoItemFound from "../../../../components/shared/NoItemFound";
 
 const Index = () => {
   const currentJalaliYear = moment().jYear();
@@ -90,7 +91,7 @@ const Index = () => {
 
       setRefreshing(true);
       loadStoredFilters().finally(() => {
-       getReport()
+        getReport();
       });
     }, [])
   );
@@ -155,44 +156,55 @@ const Index = () => {
               </View>
 
               <View className="px-5 mt-10 space-y-4">
-                {finalReport.map((day, index) => (
-                  <CardComponent key={index} className="mb-3">
-                    <TouchableOpacity
-                      className="flex-row justify-between items-center p-4"
-                      onPress={() => toggleExpand(index)}
-                    >
-                      <Ionicons
-                        name={
-                          expandedDay === index
-                            ? "chevron-up-outline"
-                            : "chevron-down-outline"
-                        }
-                        size={24}
-                        color="gray"
-                      />
-                      <View className="flex-col items-end">
-                        <Text className="text-gray-800 font-semibold font-sans">
-                          {toJalaliDate(day?.date)}
-                        </Text>
-                        <Text className="text-gray-500 text-sm font-sans">
-                          {day.workedHours} کار شده
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
+                {finalReport?.length > 0 ? (
+                  <>
+                    {finalReport.map((day, index) => (
+                      <CardComponent key={index} className="mb-3">
+                        <TouchableOpacity
+                          className="flex-row justify-between items-center p-4"
+                          onPress={() => toggleExpand(index)}
+                        >
+                          <Ionicons
+                            name={
+                              expandedDay === index
+                                ? "chevron-up-outline"
+                                : "chevron-down-outline"
+                            }
+                            size={24}
+                            color="gray"
+                          />
+                          <View className="flex-col items-end">
+                            <Text className="text-gray-800 font-semibold font-sans">
+                              {toJalaliDate(day?.date)}
+                            </Text>
+                            <Text className="text-gray-500 text-sm font-sans">
+                              {day.workedHours} کار شده
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
 
-                    {expandedDay === index && (
-                      <View className="bg-gray-50 rounded-xl my-3 mx-4 px-4 py-3 shadow-sm">
-                        <DetailRow label="ورود" value={day.actualCheckIn} />
-                        <DetailRow label="خروج" value={day.actualCheckOut} />
-                        <DetailRow
-                          label="ساعات کاری"
-                          value={day.actualMinutes}
-                        />
-                        <DetailRow label="غیبت" value={day.leaveMinutes} />
-                      </View>
-                    )}
-                  </CardComponent>
-                ))}
+                        {expandedDay === index && (
+                          <View className="bg-gray-50 rounded-xl my-3 mx-4 px-4 py-3 shadow-sm">
+                            <DetailRow label="ورود" value={day.actualCheckIn} />
+                            <DetailRow
+                              label="خروج"
+                              value={day.actualCheckOut}
+                            />
+                            <DetailRow
+                              label="ساعات کاری"
+                              value={day.actualMinutes}
+                            />
+                            <DetailRow label="غیبت" value={day.leaveMinutes} />
+                          </View>
+                        )}
+                      </CardComponent>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <NoItemFound title="موردی یافت نشد" />
+                  </>
+                )}
               </View>
             </>
           </ScrollView>
