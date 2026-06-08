@@ -1,50 +1,228 @@
-# Welcome to your Expo app 👋
+# Attendance App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern and scalable attendance management mobile application built with React Native, Expo, and TypeScript.
+This project is designed to help businesses manage employee attendance, work shifts, leaves, overtime, and location-based check-ins.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Features
 
-   ```bash
-   npm install
-   ```
+* 🔐 Authentication & Secure Storage
+* 📍 GPS-based Attendance Validation
+* 🕒 Shift Management
+* 📅 Attendance & Work Calendar
+* 📊 Reports & Charts
+* 🧾 Leave & Overtime Requests
+* 🔔 Push Notifications
+* 🌙 Modern UI/UX with Animations
+* 📱 Cross-platform (Android, iOS, Web)
+* 🇮🇷 Jalali (Persian) Calendar Support
+* ⚡ Optimized Performance with Reanimated & Moti
 
-2. Start the app
+---
 
-   ```bash
-    npx expo start
-   ```
+## 🛠️ Tech Stack
 
-In the output, you'll find options to open the app in a
+### Core
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* React Native
+* Expo SDK 53
+* TypeScript
+* Expo Router
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### State & Forms
 
-## Get a fresh project
+* Formik
+* Yup
 
-When you're ready, run:
+### UI & Animations
+
+* NativeWind (TailwindCSS)
+* React Native Paper
+* Moti
+* Reanimated
+* Lottie
+
+### Navigation
+
+* React Navigation
+* Expo Router
+
+### Utilities
+
+* Axios
+* Day.js
+* Moment & Moment-Jalaali
+* Jalaali-JS
+* Geolib
+
+### Native Features
+
+* Expo Location
+* Expo Notifications
+* Expo Image Picker
+* Expo Secure Store
+* Expo File System
+* React Native Maps
+
+### Charts & Data Visualization
+
+* Victory Native
+* React Native Chart Kit
+
+---
+
+# 📦 Installation
+
+## 1. Clone the repository
 
 ```bash
-npm run reset-project
+git clone <repository-url>
+cd attendance
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 2. Install dependencies
 
-To learn more about developing your project with Expo, look at the following resources:
+Using npm:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm install
+```
 
-## Join the community
+Or using yarn:
 
-Join our community of developers creating universal apps.
+```bash
+yarn install
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 3. Start the development server
+
+```bash
+npm run start
+```
+
+---
+
+## 4. Run on Android
+
+```bash
+npm run android
+```
+
+---
+
+## 5. Run on iOS
+
+```bash
+npm run ios
+```
+
+---
+
+## 6. Run on Web
+
+```bash
+npm run web
+```
+
+---
+
+# 📁 Project Structure
+
+```bash
+attendance/
+│
+├── app/                 # Expo Router screens
+├── components/          # Reusable UI components
+├── services/            # API services
+├── hooks/               # Custom hooks
+├── utils/               # Helper functions
+├── constants/           # App constants
+├── assets/              # Images, fonts, animations
+├── store/               # State management
+├── types/               # TypeScript types
+└── scripts/             # Utility scripts
+```
+
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+API_BASE_URL=https://your-api-url.com
+GOOGLE_MAPS_API_KEY=your_google_maps_key
+```
+
+---
+
+# 🧪 Testing
+
+Run tests using:
+
+```bash
+npm run test
+```
+
+---
+
+# 🧹 Linting
+
+```bash
+npm run lint
+```
+
+---
+
+# 📱 Build Production App
+
+## Android
+
+```bash
+eas build --platform android
+```
+
+## iOS
+
+```bash
+eas build --platform ios
+```
+
+---
+
+# 🌍 Supported Platforms
+
+* Android
+* iOS
+* Web
+
+---
+
+# ✨ Main Libraries Used
+
+* expo-router
+* react-native-reanimated
+* nativewind
+* react-native-paper
+* react-native-maps
+* expo-location
+* expo-notifications
+* react-native-chart-kit
+* victory-native
+
+---
+
+# 👨‍💻 Developer
+
+Developed with ❤️ using React Native & Expo.
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
